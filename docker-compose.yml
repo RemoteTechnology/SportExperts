@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  server:
+    ports:
+      - 8080:80
+    restart: always
+    build:
+      context: docker
+      dockerfile: server.Dockerfile
+    volumes:
+      - ./configuration/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./src:/var/www/src
+  
+  db:
+    ports:
+      - 5431:5432
+    restart: always
+    build:
+      context: docker
+      dockerfile: db.Dockerfile
+    env_file:
+      - configuration/db.env
+    volumes:
+      - .:/docker-entrypoint-initdb.d
+    
