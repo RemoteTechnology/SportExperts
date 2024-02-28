@@ -12,6 +12,7 @@ use App\Http\Resources\UserResource;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 
 
@@ -30,15 +31,23 @@ class UserController extends Controller
         return response()->json(
             new UserResource(
                 $this->userService->create($user)
-            ),
-            201
-        );
+            )
+        )->setStatusCode(201);
     }
 
     final public function auth(AuthorizationUserRequest $request)
     {
-        $this->userService->auth($request->validated());
-        // redirect
+        $request->validated();
+        $user = $this->userService->showByEmail($request->toArray());
+
+        if (Hash::check($request['password'], $user['password']))
+        {
+            return response()->json([
+                'user' => new UserResource($user),
+                'personal_access_token' => $this->userService->auth($user)
+            ])->setStatusCode(201);
+        }
+        return response()->json($user)->setStatusCode(201);
     }
 
     final public function authSocialCallback(string $driver)
@@ -59,9 +68,13 @@ class UserController extends Controller
         );
         // redirect
     }
-    final public function show(ShowByIdRequest|ShowByEmailRequest $request)
+    final public function show(ShowByIdRequest|ShowByEmailRequest|array $request)
     {
-        if ($request::class == 'ShowByIdRequest')
+        try{
+            $request->validated();
+        }
+        catch (\Error $e) {}
+        if (key_exists('id', $request))
         {
             return response()->json(
                 new UserResource(
@@ -69,7 +82,7 @@ class UserController extends Controller
                 )
             );
         }
-        else
+        if (key_exists('email', $request))
         {
             return response()->json(
                 new UserResource(
@@ -77,6 +90,5 @@ class UserController extends Controller
                 )
             );
         }
-
     }
 }

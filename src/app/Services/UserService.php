@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Http\Requests\Users\AuthorizationUserRequest;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -17,12 +19,13 @@ class UserService
 
     public function create(array $context): User
     {
+        $context['password'] = Hash::make($context['password']);
         return $this->userRepository->create($context);
     }
 
-    public function auth(array $context): User
+    public function auth(User $user): string
     {
-        return Auth::login($this->userRepository->show($context));
+        return User::createBearerTocken($user);
     }
 
     public function authSocial(array $context): User
@@ -36,9 +39,9 @@ class UserService
         }
     }
 
-    public function logout(User $user): void
+    public function logout(User $user)
     {
-        Auth::logout();
+        return User::deleteBearerTocken($user);
     }
 
     public function showById(array|User $context): User
@@ -46,7 +49,7 @@ class UserService
         return $this->userRepository->show($context);
     }
 
-    public function showByEmail(array|User $context): User
+    public function showByEmail(array|User $context)
     {
         return $this->userRepository->show($context);
     }

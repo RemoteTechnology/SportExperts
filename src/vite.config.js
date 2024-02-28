@@ -7,6 +7,11 @@ export default defineConfig({
         rollupOptions: {
         }
     },
+    server: {
+        hmr: {
+            host: 'localhost'
+        }
+    },
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
@@ -31,4 +36,10 @@ export default defineConfig({
             },
         }),
     ],
+    resolve: {
+        alias: {
+            // '@': path.resolve(__dirname, 'resources/js'),
+            '@': __dirname + '/resources/js',
+        },
+    }
 });

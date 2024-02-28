@@ -1,7 +1,3 @@
-<script setup>
-
-</script>
-
 <template>
     <div class="lds-ring">
         <div></div>
@@ -11,7 +7,11 @@
     </div>
 </template>
 
-<style scoped>
+<script>
+
+</script>
+
+<style>
     .lds-ring {
         display: inline-block;
         position: relative;
