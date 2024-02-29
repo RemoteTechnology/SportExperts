@@ -26,10 +26,10 @@ Route::prefix('user')->group(function () {
         Route::post('/', [UserController::class, 'auth'])
             ->name('user.auth');
         // Vk Авторизация
-//        Route::post('callback', [UserController::class, 'authSocialCallback'])
-//            ->name('user.auth');
-//        Route::post('callback', [UserController::class, 'authSocialCallback'])
-//            ->name('user.auth');
+        Route::get('vk/callback', [UserController::class, 'authSocialCallback'])
+            ->name('user.auth');
+        Route::post('callback', [UserController::class, 'authSocialCallback'])
+            ->name('user.auth');
         // Google Авторизация
 //        Route::post('callback', [UserController::class, 'authSocialCallback'])
 //            ->name('user.auth');

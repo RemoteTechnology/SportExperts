@@ -42,3 +42,6 @@ header nav *.btn:active{
 .mt-10{
     margin-top: 10em;
 }
+.abcRioButton{
+    width: 100%!important;
+}

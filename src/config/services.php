@@ -36,7 +36,15 @@ return [
         // TODO: Сделать получение client_secret из .env
         'client_secret' => env('dMCbOehONBWAgQM8y36S'),
         // TODO: Сделать получение redirect из .env
-        'redirect' => env('http://localhost:80/user/vk/login/callback')
+        'redirect' => env('http://localhost:80/user/auth/vk/callback')
+    ],
+
+    'google' => [
+        'client_id' => env('28317098568-gq1dl8s4f636s0sft3h8ro135ivom0vd.apps.googleusercontent.com'),
+        // TODO: Сделать получение client_secret из .env
+        'client_secret' => env('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'),
+        // TODO: Сделать получение redirect из .env
+        'redirect' => env('http://localhost:80/user/auth/google/callback')
     ],
 
 ];

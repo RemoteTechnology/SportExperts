@@ -50,10 +50,10 @@ class UserController extends Controller
         return response()->json($user)->setStatusCode(201);
     }
 
-    final public function authSocialCallback(string $driver)
-    {
-        return Socialite::driver($driver)->redirect();
-    }
+//    final public function authSocialCallback(Request $request)
+//    {
+//        return Socialite::driver('vkontakte')->redirect();
+//    }
 
     final public function authSocial(Request $request)
     {
