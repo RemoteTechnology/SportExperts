@@ -2,7 +2,11 @@ import { createWebHistory, createRouter } from "vue-router";
 import Home from "@/views/HomeView.vue";
 import Registration from "@/views/RegistrationView.vue";
 import Login from "@/views/LoginView.vue";
-import Error404 from "@/views/Error404View.vue"
+import Profile from "@/views/ProfileView.vue";
+import Events from "@/views/events/EventsView.vue";
+import CreateEvent from "@/views/events/CreateEventView.vue";
+import MyEvents from "@/views/events/MyEventsView.vue";
+import Error404 from "@/views/Error404View.vue";
 
 const routes = [
     {
@@ -19,6 +23,26 @@ const routes = [
         path: "/login",
         name: "Login",
         component: Login,
+    },
+    {
+        path: "/profile",
+        name: "Profile",
+        component: Profile,
+    },
+    {
+        path: "/events",
+        name: "Events",
+        component: Events,
+    },
+    {
+        path: "/events/create",
+        name: "CreateEvent",
+        component: CreateEvent,
+    },
+    {
+        path: "/events/my",
+        name: "MyEvents",
+        component: MyEvents,
     },
     {
         path: '/:pathMatch(.*)*',

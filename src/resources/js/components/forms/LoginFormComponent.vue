@@ -62,7 +62,7 @@
                             $cookies.set('bearerToken', `Bearer ${response.data.personal_access_token}`);
                             $cookies.set('user_id', response.data.user.id);
                             console.log( $cookies.get('bearerToken'))
-                            this.$router.push('/');
+                            this.$router.push('/profile').redirect('/');
                         })
                         .catch((error) => {
                             this.response_code = error.statusCode;
