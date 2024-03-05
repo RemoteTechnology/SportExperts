@@ -25,16 +25,8 @@ Route::prefix('user')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('/', [UserController::class, 'auth'])
             ->name('user.auth');
-        // Vk Авторизация
-        Route::get('vk/callback', [UserController::class, 'authSocialCallback'])
-            ->name('user.auth');
-        Route::post('callback', [UserController::class, 'authSocialCallback'])
-            ->name('user.auth');
-        // Google Авторизация
-//        Route::post('callback', [UserController::class, 'authSocialCallback'])
-//            ->name('user.auth');
-//        Route::post('callback', [UserController::class, 'authSocialCallback'])
-//            ->name('user.auth');
+        Route::post('callback/{mode}', [UserController::class, 'authSocialCallback'])
+            ->name('user.auth.callback');
     });
     Route::get('logout', [UserController::class, 'logout'])
         ->middleware('auth')

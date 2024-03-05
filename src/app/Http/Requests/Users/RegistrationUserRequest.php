@@ -22,6 +22,7 @@ class RegistrationUserRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'auth_platform'             => ['required'],
             'first_name'                => ['required', 'max:30'],
             'first_name_eng'            => ['required'],
             'last_name'                 => ['required', 'max:30'],
@@ -36,6 +37,7 @@ class RegistrationUserRequest extends FormRequest
     public function messages()
     {
         return [
+            'auth_platform.required'    => 'Ошибка определения платформы!',
             'first_name.required'       => 'Имя - обязательный параметр!',
             'first_name.max'            => 'Имя не может превышать :max символов!',
             'first_name_eng.required'   => 'Имя на латинице - обязательный параметр!',

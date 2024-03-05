@@ -18,6 +18,15 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'auth_platform',
+
+        'vk_id',
+        'vk_sid_token',
+        'vk_sig_token',
+
+        'google_id',
+        'google_access_token',
+
         'first_name',
         'first_name_eng',
         'last_name',

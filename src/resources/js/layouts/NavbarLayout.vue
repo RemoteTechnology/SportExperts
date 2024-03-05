@@ -63,7 +63,7 @@
                 $cookies.remove('bearerToken');
                 $cookies.remove('user_id');
                 this.isAuth = false;
-                this.$router.push('/').redirect('/');
+                this.$router.push('/');
             }
         },
         beforeMount() {

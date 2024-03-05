@@ -101,6 +101,7 @@
         name: 'RegistrationFormComponent',
         data () {
             return {
+                auth_platform: 'Сайт',
                 first_name: null,
                 last_name: null,
                 first_name_eng: null,
@@ -155,6 +156,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
+                        auth_platform: this.auth_platform,
                         first_name: this.first_name,
                         last_name: this.last_name,
                         first_name_eng: this.first_name_eng,

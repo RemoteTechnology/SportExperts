@@ -17,8 +17,5 @@ import Footer from "@/layouts/FooterLayout.vue";
             Navbar,
             Footer
         },
-        beforeMount() {
-            console.log( $cookies.get('bearerToken'))
-        }
     }
 </script>

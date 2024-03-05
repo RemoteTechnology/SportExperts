@@ -28,15 +28,21 @@ class UserService
         return User::createBearerTocken($user);
     }
 
-    public function authSocial(array $context): User
+    public function authSocial(string $mode, array $context): User
     {
-        try {
-            return $this->auth($context);
-        }
-        catch (\Exception $e)
+        if ($mode == 'Вконтакте')
         {
-            return $this->auth((array)$this->create($context));
+            $user = User::where('vk_id', $context['vk_id'])->first();
         }
+        elseif ($mode == 'Google')
+        {
+            $user = User::where('google_id', $context['google_id'])->first();
+        }
+        if ($user)
+        {
+            return $user;
+        }
+        return User::create($context);
     }
 
     public function logout(User $user)
