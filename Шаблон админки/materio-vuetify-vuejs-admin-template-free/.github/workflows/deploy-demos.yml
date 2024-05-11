@@ -1,0 +1,42 @@
+name: 🚀 Deploy Demo
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⚙️ Set BRAND_NAME environment variable from repo name
+        run: echo BRAND_NAME=${{ github.event.repository.name }} | cut -d '-' -f1 >> $GITHUB_ENV
+
+      - name: ⬇️ Checkout template
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: ⬇️ Install packages
+        run: pnpm install
+        working-directory: ./typescript-version
+
+      - name: 📦 Generate demo
+        run: pnpm build --base=/${{ env.BRAND_NAME }}-vuetify-vuejs-admin-template-free/demo/
+        working-directory: ./typescript-version
+
+      - name: 🚀 Upload demo
+        uses: appleboy/scp-action@master
+        with:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.SSHKEY }}
+          source: ./typescript-version/dist
+          target: ${{ secrets.PROD_DIR }}/demo
+
+          # remove target folder before uploading data 
+          rm: true
+
+          # Setting it to `1` will upload all the files inside "dist" dir instead of "dist" dir itself
+          strip_components: 3
