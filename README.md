@@ -52,4 +52,17 @@
         <b style="color: #222;">sudo docker-compose run php-fpm artisan migrate</b><br>
     </li>
     <br />
+    <li>
+        <span>Запустить сборку фронтенда:</span><br>
+        <b style="color: #222;">sudo docker-compose run node run build</b><br>
+    </li>
 </ul>
+<hr />
+<h3>Дополнительно:</h3>
+<div style="padding: 0.7em;background-color: #edf2f7;border-radius: 0.4em">
+    <p>
+        API описано по спецификации <b>JSON-RPC</b>. Саму спецификацию можно посмотреть тут:<br />
+        <a href="https://www.jsonrpc.org/specification">https://www.jsonrpc.org/specification</a><br />
+        <small>В проекте используется версия <span style="color: red;">2.0</span></small>
+    </p>
+</div>

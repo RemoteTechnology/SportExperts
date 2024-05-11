@@ -212,14 +212,6 @@
       <path value="$PROJECT_DIR$/sources/vendor/symfony/routing" />
       <path value="$PROJECT_DIR$/sources/vendor/symfony/polyfill-php72" />
       <path value="$PROJECT_DIR$/sources/vendor/theseer/tokenizer" />
-      <path value="$PROJECT_DIR$/sources/vendor/laravel-json-api/neomerx-json-api" />
-      <path value="$PROJECT_DIR$/sources/vendor/laravel-json-api/encoder-neomerx" />
-      <path value="$PROJECT_DIR$/sources/vendor/laravel-json-api/spec" />
-      <path value="$PROJECT_DIR$/sources/vendor/laravel-json-api/core" />
-      <path value="$PROJECT_DIR$/sources/vendor/laravel-json-api/validation" />
-      <path value="$PROJECT_DIR$/sources/vendor/laravel-json-api/laravel" />
-      <path value="$PROJECT_DIR$/sources/vendor/laravel-json-api/eloquent" />
-      <path value="$PROJECT_DIR$/sources/vendor/laravel-json-api/exceptions" />
       <path value="$PROJECT_DIR$/sources/vendor/laravel/ui" />
       <path value="$PROJECT_DIR$/sources/vendor/fruitcake/php-cors" />
       <path value="$PROJECT_DIR$/sources/vendor/carbonphp/carbon-doctrine-types" />
@@ -254,6 +246,14 @@
       <path value="$PROJECT_DIR$/sources/vendor/guzzlehttp/promises" />
       <path value="$PROJECT_DIR$/sources/vendor/guzzlehttp/uri-template" />
       <path value="$PROJECT_DIR$/sources/vendor/graham-campbell/result-type" />
+      <path value="$PROJECT_DIR$/sources/vendor/phpstan/phpdoc-parser" />
+      <path value="$PROJECT_DIR$/sources/vendor/sajya/server" />
+      <path value="$PROJECT_DIR$/sources/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/sources/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/sources/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/sources/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/sources/vendor/doctrine/annotations" />
+      <path value="$PROJECT_DIR$/sources/vendor/doctrine/deprecations" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

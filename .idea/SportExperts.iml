@@ -204,14 +204,6 @@
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/graham-campbell/result-type" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/guzzlehttp/uri-template" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/hamcrest/hamcrest-php" />
-      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/laravel-json-api/core" />
-      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/laravel-json-api/eloquent" />
-      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/laravel-json-api/encoder-neomerx" />
-      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/laravel-json-api/exceptions" />
-      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/laravel-json-api/laravel" />
-      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/laravel-json-api/neomerx-json-api" />
-      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/laravel-json-api/spec" />
-      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/laravel-json-api/validation" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/laravel/framework" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/laravel/pint" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/laravel/prompts" />
@@ -258,6 +250,14 @@
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/webmozart/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/doctrine/annotations" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/doctrine/deprecations" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/phpdocumentor/reflection-common" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/phpdocumentor/reflection-docblock" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/phpdocumentor/type-resolver" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/phpstan/phpdoc-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/psr/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/sajya/server" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

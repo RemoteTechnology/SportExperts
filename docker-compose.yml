@@ -15,7 +15,7 @@ services:
 
   postgres:
     container_name: ${NAME}_postgres
-    hostname: ${NAME}-postgres
+    hostname: ${NAME}_postgres
     restart: always
     ports:
       - ${POSTGRES_PORT}:5432
@@ -33,7 +33,7 @@ services:
 
   mongodb:
     container_name: ${NAME}_mongodb
-    hostname: ${NAME}-mongodb
+    hostname: ${NAME}_mongodb
     ports:
       - ${MONGO_PORT}:27017
     build:
@@ -62,7 +62,7 @@ services:
 
   php-fpm:
     container_name: ${NAME}_php-fpm
-    hostname: "${NAME}_php-fpm"
+    hostname: ${NAME}_php-fpm
     environment:
       docker: "true"
     extra_hosts:
@@ -95,7 +95,7 @@ services:
 
   node:
     container_name: ${NAME}_node
-    hostname: "${NAME}-node"
+    hostname: ${NAME}_node
     environment:
       docker: "true"
     build:
