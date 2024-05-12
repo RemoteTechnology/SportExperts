@@ -12,6 +12,6 @@ trait ReadQueryTrait
      */
     public function findById(int $id): Model
     {
-        return get_class($this)->model::find($id);
+        return $this->model::find($id);
     }
 }

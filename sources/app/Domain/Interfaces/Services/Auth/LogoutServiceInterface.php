@@ -3,6 +3,7 @@
 namespace App\Domain\Interfaces\Services\Auth;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
 interface LogoutServiceInterface
 {
@@ -13,7 +14,8 @@ interface LogoutServiceInterface
     public static function deleteBearerToken(User $user): void;
 
     /**
-     * @return void
+     * @param mixed $userContext
+     * @return Model
      */
-    public function logout(): void;
+    public function logout(mixed $userContext): Model;
 }

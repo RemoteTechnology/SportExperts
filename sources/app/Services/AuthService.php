@@ -3,17 +3,14 @@
 namespace App\Services;
 
 use App\Domain\Interfaces\Repositories\Filters\Users\FindByEmailRepositoryInterface;
+use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
 use App\Domain\Interfaces\Services\Auth\AuthenticationServiceInterface;
 use App\Domain\Interfaces\Services\Auth\AuthenticationSocialServiceInterface;
 use App\Domain\Interfaces\Services\Auth\AuthorizationServiceInterface;
 use App\Domain\Interfaces\Services\Auth\LogoutServiceInterface;
-use App\Exceptions\Auth\AuthenticationException;
 use App\Models\User;
 use App\Services\Traits\ValidationTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Ramsey\Collection\Collection;
 
 require_once dirname(__DIR__) . '/Domain/Constants/FieldConst.php';
 
@@ -24,17 +21,17 @@ class AuthService implements
     LogoutServiceInterface
 {
     use ValidationTrait;
-    /**
-     * @var FindByEmailRepositoryInterface
-     */
-    private FindByEmailRepositoryInterface $byEmailRepository;
 
-    /**
-     * @param FindByEmailRepositoryInterface $byEmailRepository;
-     */
-    public function __construct(FindByEmailRepositoryInterface $byEmailRepository)
+    private FindByEmailRepositoryInterface $byEmailRepository;
+    private LCRUD_OperationInterface $operation;
+
+    public function __construct(
+        FindByEmailRepositoryInterface $byEmailRepository,
+        LCRUD_OperationInterface $operation
+    )
     {
         $this->byEmailRepository = $byEmailRepository;
+        $this->operation = $operation;
     }
 
 
@@ -64,7 +61,6 @@ class AuthService implements
     public function authorization(array $attributes): array
     {
         $user = $this->identificationByEmail($attributes);
-        Auth::login($user);
         return ['user' => $user, 'token' => $this->generateBearerToken($user)];
     }
 
@@ -80,10 +76,13 @@ class AuthService implements
     }
 
     /**
-     * @return void
+     * @param mixed $userContext
+     * @return Model
      */
-    public function logout(): void
+    public function logout(mixed $userContext): Model
     {
-        Auth::logout();
+        $user = $this->operation->findById($userContext['id']);
+        self::deleteBearerToken($user);
+        return $user;
     }
 }

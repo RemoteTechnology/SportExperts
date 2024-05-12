@@ -3,6 +3,7 @@
 use App\Http\Procedures\V1\Auth\AuthByEmailProcedure;
 use App\Http\Procedures\V1\Auth\AuthByGoogleProcedure;
 use App\Http\Procedures\V1\Auth\AuthByVkontakteProcedure;
+use App\Http\Procedures\V1\Auth\LogoutProcedure;
 use App\Http\Procedures\V1\UserProcedures\UserRegistrationProcedure;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,9 @@ Route::prefix('v1')->group(function () {
             });
             //// END V1 AUTH SOCIAL ENDPOINTS
 
+        });
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::rpc(ROUTE_DEFAULT . 'logout', [LogoutProcedure::class])->name('v1.user.logout');
         });
         //// END V1 AUTH ENDPOINTS
     });

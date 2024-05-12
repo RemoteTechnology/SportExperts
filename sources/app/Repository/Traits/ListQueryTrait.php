@@ -12,6 +12,6 @@ trait ListQueryTrait
      */
     public function list(): Collection
     {
-        return get_class($this)->model::all();
+        return $this->model::all();
     }
 }
