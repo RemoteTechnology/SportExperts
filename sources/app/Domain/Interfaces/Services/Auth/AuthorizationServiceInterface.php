@@ -16,7 +16,7 @@ interface AuthorizationServiceInterface
 
     /**
      * @param array $attributes
-     * @return array
+     * @return array|AuthenticationException
      */
-    public function authorization(array $attributes): array;
+    public function authorization(array $attributes): array|AuthenticationException;
 }

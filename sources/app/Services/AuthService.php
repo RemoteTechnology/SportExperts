@@ -8,9 +8,11 @@ use App\Domain\Interfaces\Services\Auth\AuthenticationServiceInterface;
 use App\Domain\Interfaces\Services\Auth\AuthenticationSocialServiceInterface;
 use App\Domain\Interfaces\Services\Auth\AuthorizationServiceInterface;
 use App\Domain\Interfaces\Services\Auth\LogoutServiceInterface;
+use App\Exceptions\Auth\AuthenticationException;
 use App\Models\User;
 use App\Services\Traits\ValidationTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 
 require_once dirname(__DIR__) . '/Domain/Constants/FieldConst.php';
 
@@ -37,11 +39,12 @@ class AuthService implements
 
     public function identificationByEmail(array $attributes): Model|null
     {
-//        $user = $this->byEmailRepository->findByEmailQuery($attributes[FIELD_EMAIL]);
-//        if (self::doubleToOldString($attributes[FIELD_PASSWORD], $user->password))
-//        {
-//        }
-        return $this->byEmailRepository->findByEmailQuery($attributes[FIELD_EMAIL]);
+        $user = $this->byEmailRepository->findByEmailQuery($attributes[FIELD_EMAIL]);
+        if (Hash::check($attributes['password'], $user->password))
+        {
+            return $user;
+        }
+        return null;
     }
 
     /**
@@ -58,10 +61,10 @@ class AuthService implements
      * @param array $attributes
      * @return array
      */
-    public function authorization(array $attributes): array
+    public function authorization(array $attributes): array|AuthenticationException
     {
         $user = $this->identificationByEmail($attributes);
-        return ['user' => $user, 'token' => $this->generateBearerToken($user)];
+        return !is_null($user) ? ['user' => $user, 'token' => $this->generateBearerToken($user)] : new AuthenticationException();
     }
 
     //TODO: Реализовать интерфейс AuthenticationSocialServiceInterface

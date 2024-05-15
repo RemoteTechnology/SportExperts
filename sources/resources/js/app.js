@@ -6,6 +6,9 @@
 
 import './bootstrap';
 import { createApp } from 'vue';
+import PrimeVue from 'primevue/config';
+import 'primevue/resources/themes/aura-light-blue/theme.css';
+import "primeicons/primeicons.css";
 
 /**
  * Next, we will create a fresh Vue application instance. You may thlayouten begin
@@ -14,9 +17,23 @@ import { createApp } from 'vue';
  */
 
 const app = createApp({});
+app.use(PrimeVue, { unstyled: false });
+// Use Layouts
+import HeaderComponent from './layouts/HeaderComponent.vue';
+app.component('header-component', HeaderComponent);
 
+// Use View
 import HomeView from './views/HomeView.vue';
 app.component('home-view', HomeView);
+
+import RegistrationView from './views/Users/RegistrationView.vue';
+app.component('registration-view', RegistrationView);
+
+import LoginView from './views/Users/LoginView.vue';
+app.component('login-view', LoginView);
+
+import RecoveryView from './views/Users/RecoveryView.vue';
+app.component('recovery-view', RecoveryView);
 
 /**
  * The following block of code may be used to automatically register your
@@ -35,5 +52,4 @@ app.component('home-view', HomeView);
  * an "id" attribute of "app". This element is included with the "auth"
  * scaffolding. Otherwise, you will need to add an element yourself.
  */
-
 app.mount('#app');

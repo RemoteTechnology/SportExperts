@@ -8,6 +8,7 @@ use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
 use App\Http\Requests\Users\RegistrationUserRequest;
 use App\Http\Resources\Users\UserResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 use Sajya\Server\Procedure;
 
 class UserRegistrationProcedure extends Procedure
@@ -25,11 +26,11 @@ class UserRegistrationProcedure extends Procedure
      */
     public function handle(RegistrationUserRequest $request): JsonResponse
     {
+        $inputData = $request->validated();
+        $inputData['password'] = Hash::make($inputData['password']);
         return new JsonResponse(
             new UserResource(
-                $this->operation->store(
-                    $request->validated()
-                )
+                $this->operation->store($inputData)
             )
         );
     }

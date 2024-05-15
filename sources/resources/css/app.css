@@ -1,0 +1,38 @@
+*{
+    box-sizing: border-box;
+}
+html, body{
+    height: 100%;
+}
+.wrapper{
+    min-height: 100%;
+}
+.d-flex{
+    display: flex;
+}
+.d-center{
+    justify-content: center;
+    align-items: center;
+}
+.d-between{
+    justify-content: space-between;
+    align-items: center;
+}
+.mt-5{
+    margin-top: 5em;
+}
+.w-30{
+    width: 30%;
+}
+.w-100{
+    width: 100%;
+}
+.form-block{
+    margin-top: 2em;
+}
+.form-block label{
+    display: block;
+}
+.text-center{
+    text-align: center;
+}
