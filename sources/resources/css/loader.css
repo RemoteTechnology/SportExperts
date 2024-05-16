@@ -1,79 +1,65 @@
-body {
-    margin: 0;
-}
-
-html {
-    overflow-x: hidden;
-    overflow-y: scroll;
-}
-
-#loading-bg {
-    position: absolute;
+#loader{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #303030;
+    top: 0;
+    left: 0;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    background: var(--initial-loader-bg, #fff);
-    block-size: 100%;
-    gap: 1rem 0;
-    inline-size: 100%;
+    align-items: center;
 }
-
-.loading {
+.lds-ripple {
+    /* change color here */
+    color: #ffffff
+}
+.lds-ripple,
+.lds-ripple div {
+    box-sizing: border-box;
+}
+.lds-ripple {
+    display: inline-block;
     position: relative;
-    box-sizing: border-box;
-    border: 3px solid transparent;
-    border-radius: 50%;
-    block-size: 55px;
-    inline-size: 55px;
+    width: 80px;
+    height: 80px;
 }
-
-.loading .effect-1,
-.loading .effect-2,
-.loading .effect-3 {
+.lds-ripple div {
     position: absolute;
-    box-sizing: border-box;
-    border: 3px solid transparent;
+    border: 4px solid currentColor;
+    opacity: 1;
     border-radius: 50%;
-    block-size: 100%;
-    border-inline-start: 3px solid var(--initial-loader-color, #eee);
-    inline-size: 100%;
+    animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
 }
-
-.loading .effect-1 {
-    animation: rotate 1s ease infinite;
+.lds-ripple div:nth-child(2) {
+    animation-delay: -0.5s;
 }
-
-.loading .effect-2 {
-    animation: rotate-opacity 1s ease infinite 0.1s;
-}
-
-.loading .effect-3 {
-    animation: rotate-opacity 1s ease infinite 0.2s;
-}
-
-.loading .effects {
-    transition: all 0.3s ease;
-}
-
-@keyframes rotate {
+@keyframes lds-ripple {
     0% {
-        transform: rotate(0deg);
+        top: 36px;
+        left: 36px;
+        width: 8px;
+        height: 8px;
+        opacity: 0;
     }
-
-    100% {
-        transform: rotate(1turn);
+    4.9% {
+        top: 36px;
+        left: 36px;
+        width: 8px;
+        height: 8px;
+        opacity: 0;
     }
-}
-
-@keyframes rotate-opacity {
-    0% {
-        opacity: 0.1;
-        transform: rotate(0deg);
-    }
-
-    100% {
+    5% {
+        top: 36px;
+        left: 36px;
+        width: 8px;
+        height: 8px;
         opacity: 1;
-        transform: rotate(1turn);
+    }
+    100% {
+        top: 0;
+        left: 0;
+        width: 80px;
+        height: 80px;
+        opacity: 0;
     }
 }

@@ -26,5 +26,13 @@
     <main class="wrapper">
         @yield('content')
     </main>
+    <section id="loader">
+        <div class="lds-ripple"><div></div><div></div></div>
+    </section>
+    <script type="text/javascript">
+        window.onload = function() {
+            document.getElementById('loader').style.display = 'none';
+        };
+    </script>
 </body>
 </html>

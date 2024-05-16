@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Domain\Interfaces\Repositories\Entities\UserRepositoryInterface;
 use App\Domain\Interfaces\Repositories\Filters\Users\FindByEmailRepositoryInterface;
-use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
 use App\Domain\Interfaces\Services\Auth\AuthenticationServiceInterface;
 use App\Domain\Interfaces\Services\Auth\AuthenticationSocialServiceInterface;
 use App\Domain\Interfaces\Services\Auth\AuthorizationServiceInterface;
@@ -24,22 +24,22 @@ class AuthService implements
 {
     use ValidationTrait;
 
-    private FindByEmailRepositoryInterface $byEmailRepository;
-    private LCRUD_OperationInterface $operation;
+    private FindByEmailRepositoryInterface $filter;
+    private UserRepositoryInterface $operation;
 
     public function __construct(
-        FindByEmailRepositoryInterface $byEmailRepository,
-        LCRUD_OperationInterface $operation
+        FindByEmailRepositoryInterface $filter,
+        UserRepositoryInterface $operation
     )
     {
-        $this->byEmailRepository = $byEmailRepository;
+        $this->filter = $filter;
         $this->operation = $operation;
     }
 
 
     public function identificationByEmail(array $attributes): Model|null
     {
-        $user = $this->byEmailRepository->findByEmailQuery($attributes[FIELD_EMAIL]);
+        $user = $this->filter->query([FIELD_EMAIL => $attributes[FIELD_EMAIL]]);
         if (Hash::check($attributes['password'], $user->password))
         {
             return $user;
