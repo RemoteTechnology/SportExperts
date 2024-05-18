@@ -11,9 +11,14 @@ use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\UpdateQueryTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class UserRepository implements LCRUD_OperationInterface
+final class UserRepository implements LCRUD_OperationInterface
 {
-    use ListQueryTrait, CreateQueryTrait, ReadQueryTrait, UpdateQueryTrait, DestroyQueryTrait;
+    use ListQueryTrait;
+    use CreateQueryTrait;
+    use ReadQueryTrait;
+    use UpdateQueryTrait;
+    use DestroyQueryTrait;
+
     protected Model $model;
     public function __construct(User $model = new User())
     {

@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Procedures\V1\Auth\AuthByEmailProcedure;
-use App\Http\Procedures\V1\Auth\AuthByGoogleProcedure;
-use App\Http\Procedures\V1\Auth\AuthByVkontakteProcedure;
-use App\Http\Procedures\V1\Auth\LogoutProcedure;
-use App\Http\Procedures\V1\UserProcedures\UserRegistrationProcedure;
+use App\Http\Procedures\V1\Authorizations\AuthByEmailProcedure;
+use App\Http\Procedures\V1\Authorizations\AuthByGoogleProcedure;
+use App\Http\Procedures\V1\Authorizations\AuthByVkontakteProcedure;
+use App\Http\Procedures\V1\Authorizations\LogoutProcedure;
+use App\Http\Procedures\V1\Users\UserRegistrationProcedure;
 use Illuminate\Support\Facades\Route;
 
 require_once dirname(__DIR__) . '/app/Domain/Constants/RouteConst.php';
