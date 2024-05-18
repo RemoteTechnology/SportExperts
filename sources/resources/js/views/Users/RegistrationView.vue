@@ -18,6 +18,7 @@ export default {
             nameLat: "",
             lastName: "",
             lastNameLat: "",
+            numberPhone: "",
         };
     },
     components: {
@@ -114,9 +115,9 @@ export default {
                     </div>
                 </div>
                 <div class="form-block">
-                    <FloatLabel>
+                    <FloatLabel class="nameLatInput">
                         <label for="tel">Номер телефона</label>
-                        <InputMask id="tel" v-model="numberPhone" mask="+7 (999) 999-99-99" placeholder="+7 (999) 999-99-99" class="w-100" />
+                        <InputMask id="tel" v-model="numberPhone" mask="+7 (999) 999-99-99" class="w-100" />
                     </FloatLabel>
                 </div>
                 <div class="form-block">
