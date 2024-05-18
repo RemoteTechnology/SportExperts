@@ -22,21 +22,21 @@ return new class extends Migration
             $table->uuid('key')
                 ->unique()
                 ->nullable(false);
-            $table->string("first_name")
+            $table->string("first_name", 255)
                 ->nullable(false);
-            $table->string("last_name")
+            $table->string("last_name", 255)
                 ->nullable(false);
             $table->date('birth_date')
                 ->nullable();
-            $table->string('email')
+            $table->string('email', 255)
                 ->unique()
                 ->nullable();
-            $table->string("phone")
+            $table->string('phone', 18)
                 ->unique()
                 ->nullable();
             $table->enum('gender', ['Мужчина', 'Женщина'])
                 ->nullable();
-            $table->string('location')
+            $table->string('location', 255)
                 ->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');

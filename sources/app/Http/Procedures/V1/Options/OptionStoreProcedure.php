@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Options;
 
 use App\Domain\Interfaces\Repositories\Entities\OptionRepositoryInterface;
-use App\Http\Requests\Parametrs\StoreParametrRequest;
+use App\Http\Requests\Options\StoreOptionRequest;
 use App\Http\Resources\ParametrResource;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
@@ -28,11 +28,11 @@ class OptionStoreProcedure extends Procedure
     /**
      * Execute the procedure.
      *
-     * @param StoreParametrRequest $request
+     * @param StoreOptionRequest $request
      *
      * @return JsonResponse
      */
-    public function handle(StoreParametrRequest $request): JsonResponse
+    public function handle(StoreOptionRequest $request): JsonResponse
     {
         return new JsonResponse(
             data: new ParametrResource(

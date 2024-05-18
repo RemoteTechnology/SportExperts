@@ -24,7 +24,7 @@ return new class extends Migration
                 ->nullable();
             $table->string('image', 255)
                 ->nullable();
-            $table->string('location')
+            $table->string('location', 255)
                 ->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');

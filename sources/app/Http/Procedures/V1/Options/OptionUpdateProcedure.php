@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Options;
 
 use App\Domain\Interfaces\Repositories\Entities\OptionRepositoryInterface;
-use App\Http\Requests\Parametrs\UpdateParametrRequest;
+use App\Http\Requests\Options\UpdateOptionRequest;
 use App\Http\Resources\ParametrResource;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
@@ -28,11 +28,11 @@ class OptionUpdateProcedure extends Procedure
     /**
      * Execute the procedure.
      *
-     * @param UpdateParametrRequest $request
+     * @param UpdateOptionRequest $request
      *
      * @return JsonResponse
      */
-    public function handle(UpdateParametrRequest $request): JsonResponse
+    public function handle(UpdateOptionRequest $request): JsonResponse
     {
         $parametr = $request->validated();
         return new JsonResponse(

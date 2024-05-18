@@ -22,16 +22,16 @@ class RegistrationUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'min:2', 'max:255'],
-            'first_name_eng' => ['required', 'min:2', 'max:255'],
-            'last_name' => ['required', 'min:2', 'max:255'],
-            'last_name_eng' => ['required', 'min:2', 'max:255'],
-            'birth_date' => ['nullable'],
-            'gender' => ['nullable'],
-            'email' => ['nullable', 'min:8', 'max:255', 'unique:users'],
-            'phone' => ['nullable', 'max:18', 'unique:users'],
-            'location' => ['nullable'],
-            'password' => ['required', 'min:8', 'max:30'],
+            'first_name'        => ['required', 'min:2', 'max:255'],
+            'first_name_eng'    => ['required', 'min:2', 'max:255'],
+            'last_name'         => ['required', 'min:2', 'max:255'],
+            'last_name_eng'     => ['required', 'min:2', 'max:255'],
+            'birth_date'        => ['nullable'],
+            'gender'            => ['nullable'],
+            'email'             => ['nullable', 'min:8', 'max:255', 'unique:users'],
+            'phone'             => ['nullable', 'max:18', 'unique:users'],
+            'location'          => ['nullable'],
+            'password'          => ['required', 'min:8', 'max:30'],
         ];
     }
 }

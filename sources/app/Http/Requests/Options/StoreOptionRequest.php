@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Teams;
+namespace App\Http\Requests\Options;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreTeamRequest extends FormRequest
+class StoreOptionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,12 @@ class StoreTeamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'users_id'      => ['required', 'numeric'],
-            'key'           => ['required'],
-            'name'          => ['required', 'string', 'min:6', 'max:255'],
-            'description'   => ['required', 'string'],
-            'image'         => ['required', 'string', 'max:255'],
-            'location'      => ['required', 'string', 'max:255'],
+            'event_key'         => ['required'],
+            'participant_key'   => ['required'],
+            'entity'            => ['required', 'string'],
+            'name'              => ['required', 'string', 'min:2', 'max:255'],
+            'value'             => ['required', 'string', 'min:2', 'max:255'],
+            'type'              => ['required', 'string'],
         ];
     }
 }
