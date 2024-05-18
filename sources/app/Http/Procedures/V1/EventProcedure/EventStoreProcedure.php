@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\EventProcedure;
 
-use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
-use Illuminate\Http\Request;
+use App\Domain\Interfaces\Repositories\Entities\EventRepositoryInterface;
+use App\Http\Requests\Events\StoreEventRequest;
+use App\Http\Resources\EventResource;
+use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
 
 class EventStoreProcedure extends Procedure
@@ -17,21 +19,28 @@ class EventStoreProcedure extends Procedure
      */
     public static string $name = 'EventStoreProcedure';
 
-    private LCRUD_OperationInterface $operation;
+    private EventRepositoryInterface $operation;
 
-    public function __construct(LCRUD_OperationInterface $operation) {
+    public function __construct(EventRepositoryInterface $operation) {
         $this->operation = $operation;
     }
 
     /**
      * Execute the procedure.
      *
-     * @param Request $request
+     * @param StoreEventRequest $request
      *
-     * @return array|string|integer
+     * @return JsonResponse
      */
-    public function handle(Request $request)
+    public function handle(StoreEventRequest $request): JsonResponse
     {
-        // write your code
+        return new JsonResponse(
+            data: new EventResource(
+                $this->operation->store(
+                    $request->validated()
+                )
+            ),
+            status: 201
+        );
     }
 }

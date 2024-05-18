@@ -7,17 +7,16 @@ namespace App\Http\Procedures\V1\EventProcedure;
 use App\Domain\Interfaces\Repositories\Entities\EventRepositoryInterface;
 use App\Http\Resources\EventResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Sajya\Server\Procedure;
 
-class EventReadProcedure extends Procedure
+class EventListProcedure extends Procedure
 {
     /**
      * The name of the procedure that is used for referencing.
      *
      * @var string
      */
-    public static string $name = 'EventReadProcedure';
+    public static string $name = 'EventListProcedure';
 
     private EventRepositoryInterface $operation;
 
@@ -28,15 +27,13 @@ class EventReadProcedure extends Procedure
     /**
      * Execute the procedure.
      *
-     * @param int $id
-     *
      * @return JsonResponse
      */
-    public function handle(int $id): JsonResponse
+    public function handle(): JsonResponse
     {
         return new JsonResponse(
-            data: new EventResource(
-                $this->operation->findById($id)
+            data: EventResource::collection(
+                $this->operation->list()
             ),
             status: 200
         );

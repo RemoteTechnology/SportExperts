@@ -28,33 +28,33 @@
     <li>
         <p>
             <span>Поднять docker:</span><br>
-            <b style="color: #222;">sudo docker-compose up --build</b>
+            <b style="color: #222;">(sudo) docker-compose up --build</b>
         </p>
     </li>
     <br />
     <li>
         <p>
             <span>Создать/настроить конфиг, как минимум надо настроить подключение к БД:</span><br>
-            <b style="color: #222;">sudo cp .example.env .env</b>
+            <b style="color: #222;">(sudo) cp .example.env .env</b>
         </p>
     </li>
     <br />
     <li>
         <p>
             <span>Установить зависимости:</span><br>
-            <b style="color: #222;">sudo docker-compose run php-fpm install</b><br>
-            <b style="color: #222;">sudo docker-compose run node install</b><br>
+            <b style="color: #222;">(sudo) docker-compose run php-fpm composer install</b><br>
+            <b style="color: #222;">(sudo) docker-compose run node npm install</b><br>
         </p>
     </li>
     <br />
     <li>
-        <span>Создать миграции:</span><br>
-        <b style="color: #222;">sudo docker-compose run php-fpm artisan migrate</b><br>
+        <span>Создать миграции: <small>(Нужно проверить есть ли база)</small></span><br>
+        <b style="color: #222;">(sudo) docker-compose run php-fpm artisan migrate</b><br>
     </li>
     <br />
     <li>
         <span>Запустить сборку фронтенда:</span><br>
-        <b style="color: #222;">sudo docker-compose run node run build</b><br>
+        <b style="color: #222;">(sudo) docker-compose run node run build</b><br>
     </li>
 </ul>
 <hr />

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\EventProcedure\User;
 
+use App\Domain\Interfaces\Repositories\Entities\EventUserRepositoryInterface;
 use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
+use App\Http\Resources\ParticipantResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Sajya\Server\Procedure;
 
@@ -17,21 +20,28 @@ class EventUserDestroyProcedure extends Procedure
      */
     public static string $name = 'EventUserDestroyProcedure';
 
-    private LCRUD_OperationInterface $operation;
+    private EventUserRepositoryInterface $operation;
 
-    public function __construct(LCRUD_OperationInterface $operation) {
+    public function __construct(EventUserRepositoryInterface $operation) {
         $this->operation = $operation;
     }
 
     /**
      * Execute the procedure.
      *
-     * @param Request $request
+     * @param int $id
      *
-     * @return array|string|integer
+     * @return JsonResponse
      */
-    public function handle(Request $request)
+    public function handle(int $id): JsonResponse
     {
-        // write your code
+        return new JsonResponse(
+            data: new ParticipantResource(
+                $this->operation->destroy(
+                    $this->operation->findById($id)
+                )
+            ),
+            status: 200
+        );
     }
 }

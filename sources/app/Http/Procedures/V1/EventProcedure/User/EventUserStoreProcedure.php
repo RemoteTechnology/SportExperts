@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\EventProcedure\User;
 
-use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
+use App\Domain\Interfaces\Repositories\Entities\EventUserRepositoryInterface;
+use App\Http\Requests\Participants\StoreParticipantReqest;
+use App\Http\Resources\ParticipantResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Sajya\Server\Procedure;
 
@@ -17,21 +20,26 @@ class EventUserStoreProcedure extends Procedure
      */
     public static string $name = 'EventUserStoreProcedure';
 
-    private LCRUD_OperationInterface $operation;
+    private EventUserRepositoryInterface $operation;
 
-    public function __construct(LCRUD_OperationInterface $operation) {
+    public function __construct(EventUserRepositoryInterface $operation) {
         $this->operation = $operation;
     }
 
     /**
      * Execute the procedure.
      *
-     * @param Request $request
+     * @param StoreParticipantReqest $request
      *
-     * @return array|string|integer
+     * @return JsonResponse
      */
-    public function handle(Request $request)
+    public function handle(StoreParticipantReqest $request): JsonResponse
     {
-        // write your code
+        return new JsonResponse(
+            data: new ParticipantResource(
+                $request->validated()
+            ),
+            status: 201
+        );
     }
 }

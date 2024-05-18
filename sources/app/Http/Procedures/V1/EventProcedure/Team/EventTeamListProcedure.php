@@ -5,20 +5,19 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\EventProcedure\Team;
 
 use App\Domain\Interfaces\Repositories\Entities\TeamRepositoryInterface;
-use App\Http\Requests\Teams\StoreTeamRequest;
 use App\Http\Resources\TeamResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Sajya\Server\Procedure;
 
-class EventTeamStoreProcedure extends Procedure
+class EventTeamListProcedure extends Procedure
 {
     /**
      * The name of the procedure that is used for referencing.
      *
      * @var string
      */
-    public static string $name = 'EventTeamStoreProcedure';
+    public static string $name = 'EventTeamListProcedure';
 
     private TeamRepositoryInterface $operation;
 
@@ -29,17 +28,15 @@ class EventTeamStoreProcedure extends Procedure
     /**
      * Execute the procedure.
      *
-     * @param StoreTeamRequest $request
-     *
      * @return JsonResponse
      */
-    public function handle(StoreTeamRequest $request): JsonResponse
+    public function handle(): JsonResponse
     {
         return new JsonResponse(
-            data: new TeamResource(
-                $this->operation->store($request->validated())
+            data: TeamResource::collection(
+                $this->operation->list()
             ),
-            status: 201
+            status: 200
         );
     }
 }

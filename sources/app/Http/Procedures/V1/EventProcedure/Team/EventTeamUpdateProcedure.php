@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\EventProcedure\Team;
 
-use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
-use Illuminate\Http\Request;
+use App\Domain\Interfaces\Repositories\Entities\TeamRepositoryInterface;
+use App\Http\Requests\Teams\UpdateTeamRequest;
+use App\Http\Resources\TeamResource;
+use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
 
 class EventTeamUpdateProcedure extends Procedure
@@ -17,21 +19,30 @@ class EventTeamUpdateProcedure extends Procedure
      */
     public static string $name = 'EventTeamUpdateProcedure';
 
-    private LCRUD_OperationInterface $operation;
+    private TeamRepositoryInterface $operation;
 
-    public function __construct(LCRUD_OperationInterface $operation) {
+    public function __construct(TeamRepositoryInterface $operation) {
         $this->operation = $operation;
     }
 
     /**
      * Execute the procedure.
      *
-     * @param Request $request
+     * @param UpdateTeamRequest $request
      *
-     * @return array|string|integer
+     * @return JsonResponse
      */
-    public function handle(Request $request)
+    public function handle(UpdateTeamRequest $request): JsonResponse
     {
-        // write your code
+        $team = $request->validated(); // $this->operation->findById()
+        return new JsonResponse(
+            data: new TeamResource(
+                $this->operation->update(
+                    $this->operation->findById($team['id']),
+                    $team
+                )
+            ),
+            status: 201
+        );
     }
 }

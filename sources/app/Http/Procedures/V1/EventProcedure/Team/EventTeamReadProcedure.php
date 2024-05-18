@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\EventProcedure\Team;
 
-use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
-use Illuminate\Http\Request;
+use App\Domain\Interfaces\Repositories\Entities\TeamRepositoryInterface;
+use App\Http\Resources\TeamResource;
+use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
 
 class EventTeamReadProcedure extends Procedure
@@ -17,21 +18,26 @@ class EventTeamReadProcedure extends Procedure
      */
     public static string $name = 'EventTeamReadProcedure';
 
-    private LCRUD_OperationInterface $operation;
+    private TeamRepositoryInterface $operation;
 
-    public function __construct(LCRUD_OperationInterface $operation) {
+    public function __construct(TeamRepositoryInterface $operation) {
         $this->operation = $operation;
     }
 
     /**
      * Execute the procedure.
      *
-     * @param Request $request
+     * @param int $id
      *
-     * @return array|string|integer
+     * @return JsonResponse
      */
-    public function handle(Request $request)
+    public function handle(int $id): JsonResponse
     {
-        // write your code
+        return new JsonResponse(
+            data: new TeamResource(
+                $this->operation->findById($id)
+            ),
+            status: 200
+        );
     }
 }
