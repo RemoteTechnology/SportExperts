@@ -1,5 +1,6 @@
 <script>
 import { baseUrl } from '../../constant';
+import { registrationRequest } from '../../api/UserRequest';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
@@ -11,14 +12,25 @@ export default {
     data() {
         return {
             baseUrl: baseUrl,
-            login: null,
-            password: null,
-            gender: null,
-            name: "",
-            nameLat: "",
-            lastName: "",
-            lastNameLat: "",
-            numberPhone: "",
+            user: {
+                firstName: null,
+                firstNameEng: null,
+                lastName: null,
+                lastNameEng: null,
+                birthDate: null,
+                gender: null,
+                email: null,
+                phone: null,
+                password: null,
+            }
+            // login: null,
+            // password: null,
+            // gender: null,
+            // name: "",
+            // nameLat: "",
+            // lastName: "",
+            // lastNameLat: "",
+            // numberPhone: "",
         };
     },
     components: {
@@ -43,7 +55,7 @@ export default {
                 'у': 'u',    'ф': 'f',    'х': 'h',    'ц': 'c',    'ч': 'ch',
                 'ш': 'sh',   'щ': 'sch',  'ь': '',     'ы': 'y',    'ъ': '',
                 'э': 'e',    'ю': 'yu',   'я': 'ya',
-        
+
                 'А': 'A',    'Б': 'B',    'В': 'V',    'Г': 'G',    'Д': 'D',
                 'Е': 'E',    'Ё': 'E',    'Ж': 'Zh',   'З': 'Z',    'И': 'I',
                 'Й': 'Y',    'К': 'K',    'Л': 'L',    'М': 'M',    'Н': 'N',
@@ -60,6 +72,14 @@ export default {
                 }
             }
             return answer;
+        },
+        sendFormToSignUp: function() {
+            registrationRequest(this.user) !== null ?
+                /*TODO: проверить код статуса*/
+                /*TODO: перенаправить на страницу авторизации*/:
+                /*TODO: уведомить об ошибке и подчеркнуть поля которые были зафаршмачены*/;
+
+
         }
     }
 }
@@ -129,7 +149,7 @@ export default {
                     <InputText type="password" v-model="secondPassword" class="w-100" required />
                 </div>
                 <div class="form-block d-flex d-between">
-                    <Button label="Создать аккаунт" class="w-100" severity="success"/>
+                    <Button label="Создать аккаунт" @click="sendFormToSignUp" class="w-100" severity="success"/>
                 </div>
             </form>
         </section>
