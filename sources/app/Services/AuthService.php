@@ -10,7 +10,6 @@ use App\Domain\Interfaces\Services\Auth\AuthorizationServiceInterface;
 use App\Domain\Interfaces\Services\Auth\LogoutServiceInterface;
 use App\Exceptions\Auth\AuthenticationException;
 use App\Models\User;
-use App\Services\Traits\ValidationTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,8 +21,6 @@ class AuthService implements
     AuthenticationSocialServiceInterface,
     LogoutServiceInterface
 {
-    use ValidationTrait;
-
     private FindByEmailRepositoryInterface $filter;
     private UserRepositoryInterface $operation;
 
@@ -36,11 +33,14 @@ class AuthService implements
         $this->operation = $operation;
     }
 
-
+    /**
+     * @param array $attributes
+     * @return Model|null
+     */
     public function identificationByEmail(array $attributes): Model|null
     {
         $user = $this->filter->query([FIELD_EMAIL => $attributes[FIELD_EMAIL]]);
-        if (Hash::check($attributes['password'], $user->password))
+        if (Hash::check($attributes[FIELD_PASSWORD], $user->password))
         {
             return $user;
         }
@@ -84,7 +84,7 @@ class AuthService implements
      */
     public function logout(mixed $userContext): Model
     {
-        $user = $this->operation->findById($userContext['id']);
+        $user = $this->operation->findById($userContext[FIELD_ID]);
         self::deleteBearerToken($user);
         return $user;
     }

@@ -197,6 +197,7 @@ return [
 
         App\Providers\QueriesServiceProvider::class,
         App\Providers\FilterOperationServiceProvider::class,
+        App\Providers\TournamentServiceProvider::class,
     ],
 
     /*
