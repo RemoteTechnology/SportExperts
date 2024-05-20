@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->boolean('is_admin')
-                ->default(false);
             $table->string('first_name', 255)
                 ->nullable(false);
             $table->string('first_name_eng')
@@ -35,12 +33,22 @@ return new class extends Migration
                 ->nullable();
             $table->string('location')
                 ->nullable();
+            $table->enum('role', ['superuser', 'admin', 'athlete'])
+                ->default('athlete');
             $table->string('password')
                 ->nullable(false);
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')
                 ->nullable();
+            // Индексы
+            $table->index([
+                'id',
+                'email',
+                'phone',
+                'gender',
+                'role',
+            ]);
         });
     }
 
