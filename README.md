@@ -35,7 +35,8 @@
     <li>
         <p>
             <span>Создать/настроить конфиг, как минимум надо настроить подключение к БД:</span><br>
-            <b style="color: #222;">(sudo) cp .example.env .env</b>
+            <b style="color: #222;">(sudo) cp .example.env .env</b><br>
+            <span>Так же рекоммендуется создацть коллекцию для журнала ошибок.</span><br>
         </p>
     </li>
     <br />

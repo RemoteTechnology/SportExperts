@@ -258,6 +258,9 @@
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/psr/cache" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/sajya/server" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/php-amqplib/php-amqplib" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/mongodb/laravel-mongodb" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/mongodb/mongodb" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/polyfill-php81" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
