@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
-            $table->integer('users_id')
+            $table->integer('user_id')
                 ->nullable(false);
             $table->uuid('key')
                 ->unique()
@@ -31,13 +31,13 @@ return new class extends Migration
             $table->timestamp('deleted_at')
                 ->nullable();
             // Связи
-            $table->foreign('users_id')
+            $table->foreign('user_id')
                 ->on('users')
                 ->references('id')
                 ->onDelete("CASCADE");
             // Индексы
             $table->index([
-                'users_id',
+                'user_id',
                 'key',
                 'name',
             ]);

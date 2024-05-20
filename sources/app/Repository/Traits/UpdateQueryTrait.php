@@ -4,6 +4,9 @@ namespace App\Repository\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @template T as Model
+ */
 trait UpdateQueryTrait
 {
     /**
@@ -13,7 +16,14 @@ trait UpdateQueryTrait
      */
     public function update(Model $entity, array $attributes): Model
     {
-//        $entity->update($attributes);
+        foreach ($attributes as $field => $value)
+        {
+            if (property_exists($entity, $field) && !is_null($value))
+            {
+                $entity->$field = $value;
+            }
+        }
+        $entity->save();
         return $entity;
     }
 }

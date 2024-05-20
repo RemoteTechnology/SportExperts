@@ -14,16 +14,10 @@ class Participant extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'events_id',
-        'users_id',
+        'event_id',
+        'user_id',
         'team_key',
-        'first_name',
-        'last_name',
-        'birth_date',
-        'email',
-        'phone',
-        'gender',
-        'location',
+        'invited_user_id',
         'created_at',
         'updated_at',
         'deleted_at',

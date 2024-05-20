@@ -35,7 +35,8 @@
     <li>
         <p>
             <span>Создать/настроить конфиг, как минимум надо настроить подключение к БД:</span><br>
-            <b style="color: #222;">(sudo) cp .example.env .env</b>
+            <b style="color: #222;">(sudo) cp .example.env .env</b><br>
+            <span>Так же рекоммендуется создацть коллекцию для журнала ошибок.</span><br>
         </p>
     </li>
     <br />
@@ -59,10 +60,24 @@
 </ul>
 <hr />
 <h3>Дополнительно:</h3>
-<div style="padding: 0.7em;background-color: #edf2f7;border-radius: 0.4em">
+<div style="padding: 0.7em;background-color: #edf2f7;border-radius: 0.4em;margin-bottom:10px;">
     <p>
         API описано по спецификации <b>JSON-RPC</b>. Саму спецификацию можно посмотреть тут:<br />
         <a href="https://www.jsonrpc.org/specification">https://www.jsonrpc.org/specification</a><br />
         <small>В проекте используется версия <span style="color: red;">2.0</span></small>
+    </p>
+</div>
+<div style="padding: 0.7em;background-color: #edf2f7;border-radius: 0.4em;margin-bottom:10px;">
+    <p>
+        Ссылка на документацию по методам API:<br />
+        <a href="https://www.postman.com/gold-satellite-925746/workspace/sportexperts/overview">
+            https://www.postman.com/gold-satellite-925746/workspace/sportexperts/overview
+        </a><br />
+    </p>
+</div>
+<div style="padding: 0.7em;background-color: #edf2f7;border-radius: 0.4em;margin-bottom:10px;">
+    <p>
+        Файл schema.drawio можно открыть в приложении <b>draw.io</b> или на сайте:<br />
+        <a href="https://app.diagrams.net/">https://app.diagrams.net/</a><br />
     </p>
 </div>

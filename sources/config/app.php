@@ -194,10 +194,13 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
+        // using database for logging
+        \MongoDB\Laravel\MongoDBServiceProvider::class,
+        // using my service provider
         App\Providers\QueriesServiceProvider::class,
         App\Providers\FilterOperationServiceProvider::class,
         App\Providers\TournamentServiceProvider::class,
+        App\Providers\LoggingServiceProvider::class,
     ],
 
     /*

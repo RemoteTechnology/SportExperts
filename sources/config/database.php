@@ -78,6 +78,20 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        'mongodb' => [
+            'driver' => 'mongodb',
+            // 'dsn' => "mongodb+srv://" . env('DB_LOG_USER') . ":" . env('DB_LOG_PASSWORD') . "@" . env('DB_LOG_HOST'),
+            'charset' => 'utf8',
+            'host' => env('DB_LOG_HOST'),
+            'port' => env('DB_LOG_PORT'),
+            'database' => env('DB_LOG_DATABASE'),
+            'username' => env('DB_LOG_USER'),
+            'password' => env('DB_LOG_PASSWORD'),
+            'options'  => [
+                'database' => env('DB_LOG_AUTHENTICATION_DATABASE'), // sets the authentication database required by mongo 3
+            ],
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),

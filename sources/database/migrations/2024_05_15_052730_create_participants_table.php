@@ -13,41 +13,31 @@ return new class extends Migration
     {
         Schema::create('participants', function (Blueprint $table) {
             $table->id();
-            $table->integer('events_id')
+            $table->integer('event_id')
+                ->nullable();
+            $table->integer('user_id')
                 ->nullable(false);
-            $table->integer('users_id')
-                ->nullable(false);
+            $table->integer('invited_user_id')
+                ->nullable();
             $table->uuid('team_key')
                 ->nullable();
             $table->uuid('key')
                 ->unique()
                 ->nullable(false);
-            $table->string("first_name", 255)
-                ->nullable(false);
-            $table->string("last_name", 255)
-                ->nullable(false);
-            $table->date('birth_date')
-                ->nullable();
-            $table->string('email', 255)
-                ->unique()
-                ->nullable();
-            $table->string('phone', 18)
-                ->unique()
-                ->nullable();
-            $table->enum('gender', ['Мужчина', 'Женщина'])
-                ->nullable();
-            $table->string('location', 255)
-                ->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')
                 ->nullable();
             // Связи
-            $table->foreign('events_id')
+            $table->foreign('event_id')
                 ->on('events')
                 ->references('id')
                 ->onDelete("CASCADE");
-            $table->foreign('users_id')
+            $table->foreign('user_id')
+                ->on('users')
+                ->references('id')
+                ->onDelete("CASCADE");
+            $table->foreign('invited_user_id')
                 ->on('users')
                 ->references('id')
                 ->onDelete("CASCADE");
@@ -58,8 +48,9 @@ return new class extends Migration
             // Индексы
             $table->index([
                 'id',
-                'events_id',
-                'users_id',
+                'event_id',
+                'user_id',
+                'invited_user_id',
                 'team_key',
                 'email',
                 'phone',

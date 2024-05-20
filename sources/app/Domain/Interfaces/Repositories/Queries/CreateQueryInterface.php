@@ -9,7 +9,7 @@ interface CreateQueryInterface
 {
     /**
      * @param array $attributes
-     * @return Model|Exception
+     * @return Model|Exception|bool
      */
-    public function store(array $attributes): Model|Exception;
+    public function store(array $attributes): Model|Exception|bool;
 }

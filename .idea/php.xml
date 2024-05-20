@@ -255,6 +255,9 @@
       <path value="$PROJECT_DIR$/sources/vendor/doctrine/annotations" />
       <path value="$PROJECT_DIR$/sources/vendor/doctrine/deprecations" />
       <path value="$PROJECT_DIR$/sources/vendor/php-amqplib/php-amqplib" />
+      <path value="$PROJECT_DIR$/sources/vendor/symfony/polyfill-php81" />
+      <path value="$PROJECT_DIR$/sources/vendor/mongodb/laravel-mongodb" />
+      <path value="$PROJECT_DIR$/sources/vendor/mongodb/mongodb" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
