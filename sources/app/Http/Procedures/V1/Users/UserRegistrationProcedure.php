@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Users;
 
 use App\Domain\Constants\LogLevelEnum;
+use App\Domain\Interfaces\Repositories\Entities\UserRepositoryInterface;
 use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
 use App\Domain\Interfaces\Services\LoggingServiceInterface;
 use App\Http\Requests\Users\RegistrationUserRequest;
 use App\Http\Resources\UserResource;
+use App\Repository\UserRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,23 +20,30 @@ use Sajya\Server\Procedure;
 class UserRegistrationProcedure extends Procedure
 {
     public static string $name = 'UserRegistrationProcedure';
-    private LCRUD_OperationInterface $operation;
-    private LoggingServiceInterface $loggingService;
+    /**
+     * @var UserRepository
+     */
+    private UserRepository $operation;
+//    private LoggingServiceInterface $loggingService;
 
-    public function __construct(LCRUD_OperationInterface $operation, LoggingServiceInterface $loggingService)
+    /**
+     * @param UserRepository $operation
+     */
+    public function __construct(UserRepository $operation)//, LoggingServiceInterface $loggingService)
     {
         $this->operation = $operation;
-        $this->loggingService = $loggingService;
+//        $this->loggingService = $loggingService;
     }
 
     /**
      * @param RegistrationUserRequest $request
      * @return JsonResponse
      */
-    public function handle(Request $http, RegistrationUserRequest $request): JsonResponse
+    public function handle(RegistrationUserRequest $request): JsonResponse
     {
         $inputData = $request->validated();
         $inputData['password'] = Hash::make($inputData['password']);
+        $inputData['role'] = 'admin';
         try {
             return new JsonResponse(
                 new UserResource(
@@ -44,12 +53,12 @@ class UserRegistrationProcedure extends Procedure
         }
         catch (Exception $e)
         {
-            $this->loggingService->write(LogLevelEnum::Error, [
-                'action'        => self::$name,
-                'description'   => $e->getMessage(),
-                'input_data'    => $inputData,
-                'slug'          => $http->url(),
-            ]);
+//            $this->loggingService->write(LogLevelEnum::Error, [
+//                'action'        => self::$name,
+//                'description'   => $e->getMessage(),
+//                'input_data'    => $inputData,
+//                'slug'          => $http->url(),
+//            ]);
             return new JsonResponse();
         }
     }

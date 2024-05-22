@@ -1,4 +1,4 @@
-import { axios } from 'axios';
+import axios from "axios";
 import {
     baseUrl,
     jsonRpcVersion,
@@ -35,3 +35,5 @@ function registrationRequest(data)
         .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error) })
     return response;
 }
+
+export { registrationRequest }

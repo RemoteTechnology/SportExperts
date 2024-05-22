@@ -27,7 +27,8 @@ return new class extends Migration
             // Индексы
             $table->index([
                 'id',
-                'event_id',
+                'key',
+                'event_key',
             ]);
         });
     }

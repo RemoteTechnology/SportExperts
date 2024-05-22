@@ -1,12 +1,11 @@
 <script>
 import { baseUrl } from '../../constant';
-// import { registrationRequest } from '../../api/UserRequest';
+import { registrationRequest } from '../../api/UserRequest';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import InputMask from 'primevue/inputmask';
 import FloatLabel from 'primevue/floatlabel';
-import { ref } from 'vue';
 
 export default {
     data() {
@@ -74,6 +73,7 @@ export default {
             return answer;
         },
         sendFormToSignUp: function() {
+            console.log(registrationRequest(this.user))
             // registrationRequest(this.user) !== null ?
             //     /*TODO: проверить код статуса*/
             //     /*TODO: перенаправить на страницу авторизации*/:
