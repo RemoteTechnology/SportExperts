@@ -6,6 +6,7 @@
 
 import './bootstrap';
 import { createApp } from 'vue';
+import VueCookies from 'vue-cookies'
 import PrimeVue from 'primevue/config';
 import 'primevue/resources/themes/aura-light-blue/theme.css';
 import "primeicons/primeicons.css";
@@ -18,6 +19,14 @@ import "primeicons/primeicons.css";
 
 const app = createApp({});
 app.use(PrimeVue, { unstyled: false });
+app.use(VueCookies, {
+    expires: '7d',
+    path: '/',
+    domain: '',
+    secure: '',
+    sameSite: 'Lax' ,
+    partitioned: false
+});
 // Use Layouts
 import HeaderComponent from './layouts/HeaderComponent.vue';
 app.component('header-component', HeaderComponent);

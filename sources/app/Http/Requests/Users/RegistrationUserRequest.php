@@ -29,7 +29,7 @@ class RegistrationUserRequest extends FormRequest
             'birth_date'        => ['nullable'],
             'gender'            => ['nullable'],
             'email'             => ['nullable', 'min:8', 'max:255', 'unique:users'],
-            'phone'             => ['nullable', 'max:18', 'unique:users'],
+            'phone'             => ['nullable', 'max:20', 'unique:users'],
             'location'          => ['nullable'],
             'password'          => ['required', 'min:8', 'max:30'],
         ];

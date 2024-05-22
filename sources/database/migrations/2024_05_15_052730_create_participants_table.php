@@ -52,9 +52,7 @@ return new class extends Migration
                 'user_id',
                 'invited_user_id',
                 'team_key',
-                'email',
-                'phone',
-                'gender',
+                'key',
             ]);
         });
     }

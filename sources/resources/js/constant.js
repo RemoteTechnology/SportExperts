@@ -3,7 +3,10 @@ const jsonRpcVersion = '2.0';
 // Процедуры
 const procedures = {
     users: {
-        registration: 'UserRegistrationProcedure'
+        registration: 'UserRegistrationProcedure',
+    },
+    auth: {
+        login: 'AuthByEmailProcedure',
     }
 };
 const requestMethodDefault = 'handle';

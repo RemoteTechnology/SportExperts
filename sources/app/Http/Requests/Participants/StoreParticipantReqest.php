@@ -22,17 +22,10 @@ class StoreParticipantReqest extends FormRequest
     public function rules(): array
     {
         return [
-            'events_id'     => ['required', 'numeric'],
-            'users_id'      => ['required', 'numeric'],
-            'team_key'      => ['required'],
-            'key'           => ['required'],
-            'first_name'    => ['required', 'string', 'min:2', 'max:255'],
-            'last_name'     => ['required', 'string', 'min:2', 'max:255'],
-            'birth_date'    => ['required'],
-            'email'         => ['required', 'string', 'max:255'],
-            'phone'         => ['required', 'string', 'max:18'],
-            'gender'        => ['required', 'string', 'max:255'],
-            'location'      => ['required', 'string', 'max:255'],
+            'event_id'          => ['required', 'numeric'],
+            'user_id'           => ['required', 'numeric'],
+            'invited_user_id'   => ['required'],
+            'team_key'          => ['required'],
         ];
     }
 }

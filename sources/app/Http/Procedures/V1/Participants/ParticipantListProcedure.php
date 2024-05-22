@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Participants;
 
-use App\Domain\Interfaces\Repositories\Entities\ParticipantRepositoryInterface;
 use App\Http\Resources\ParticipantResource;
+use App\Repository\ParticipantRepository;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
 
@@ -18,9 +18,9 @@ class ParticipantListProcedure extends Procedure
      */
     public static string $name = 'ParticipantListProcedure';
 
-    private ParticipantRepositoryInterface $operation;
+    private ParticipantRepository $operation;
 
-    public function __construct(ParticipantRepositoryInterface $operation) {
+    public function __construct(ParticipantRepository $operation) {
         $this->operation = $operation;
     }
 
@@ -35,7 +35,7 @@ class ParticipantListProcedure extends Procedure
             data: ParticipantResource::collection(
                 $this->operation->list()
             ),
-            status: 200
+            status: 201
         );
     }
 }

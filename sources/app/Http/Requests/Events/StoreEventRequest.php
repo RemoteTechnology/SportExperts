@@ -23,7 +23,6 @@ class StoreEventRequest extends FormRequest
     {
         return [
             'user_id'           => ['required', 'numeric'],
-            'key'               => ['required'],
             'name'              => ['required', 'string', 'min:5', 'max:255'],
             'description'       => ['required', 'string'],
             'image'             => ['required', 'string', 'max:255'],

@@ -25,17 +25,17 @@ return new class extends Migration
                 ->nullable();
             $table->enum('gender', ['Мужчина', 'Женщина'])
                 ->nullable();
-            $table->string('email')
+            $table->string('email', 255)
                 ->unique()
                 ->nullable();
-            $table->string('phone')
+            $table->string('phone', 20)
                 ->unique()
                 ->nullable();
-            $table->string('location')
+            $table->string('location', 255)
                 ->nullable();
             $table->enum('role', ['superuser', 'admin', 'athlete'])
                 ->default('athlete');
-            $table->string('password')
+            $table->string('password', 255)
                 ->nullable(false);
             $table->timestamp('created_at');
             $table->timestamp('updated_at');

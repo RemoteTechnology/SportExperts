@@ -4,42 +4,42 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Teams;
 
-use App\Domain\Interfaces\Repositories\Entities\TeamRepositoryInterface;
+use App\Http\Requests\Teams\TeamReadRequest;
 use App\Http\Resources\TeamResource;
+use App\Repository\TeamRepository;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
 
-class EventTeamDestroyProcedure extends Procedure
+class TeamReadProcedure extends Procedure
 {
     /**
      * The name of the procedure that is used for referencing.
      *
      * @var string
      */
-    public static string $name = 'EventTeamDestroyProcedure';
+    public static string $name = 'TeamReadProcedure';
 
-    private TeamRepositoryInterface $operation;
+    private TeamRepository $operation;
 
-    public function __construct(TeamRepositoryInterface $operation) {
+    public function __construct(TeamRepository $operation) {
         $this->operation = $operation;
     }
 
     /**
      * Execute the procedure.
      *
-     * @param int $id
+     * @param TeamReadRequest $request
      *
      * @return JsonResponse
      */
-    public function handle(int $id): JsonResponse
+    public function handle(TeamReadRequest $request): JsonResponse
     {
+        $team = $request->validated();
         return new JsonResponse(
             data: new TeamResource(
-                $this->operation->destroy(
-                    $this->operation->findById($id)
-                )
+                $this->operation->findById($team['id'])
             ),
-            status: 200
+            status: 201
         );
     }
 }

@@ -24,7 +24,6 @@ class UpdateEventRequest extends FormRequest
         return [
             'id'                => ['required', 'numeric'],
             'user_id'           => ['required', 'numeric'],
-            'key'               => ['required'],
             'name'              => ['required', 'string', 'min:5', 'max:255'],
             'description'       => ['required', 'string'],
             'image'             => ['required', 'string', 'max:255'],
