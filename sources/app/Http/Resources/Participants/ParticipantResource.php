@@ -23,10 +23,10 @@ class ParticipantResource extends JsonResource
         return [
             'id' => $this->id,
             'key' => $this->key,
-            'event' => new EventResource(Event::first($this->event_id)),
-            'user' => new UserResource(User::first($this->user_id)),
+            'event' => new EventResource(Event::find($this->event_id)),
+            'user' => new UserResource(User::find($this->user_id)),
             'team' => new TeamResource(Team::where(['key' => $this->team_key])->first()),
-            'invited_user' => new UserResource(User::first($this->invited_user_id)),
+            'invited_user' => new UserResource(User::find($this->invited_user_id)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

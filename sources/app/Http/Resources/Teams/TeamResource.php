@@ -22,10 +22,10 @@ class TeamResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'location' => $this->location,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
             'user' => new UserResource(User::find($this->user_id)),
 //            'image' => new FileResource(File::where(['key' => $this->key])->first()),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
