@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Event extends Model
+class File extends Model
 {
     use HasFactory;
 
@@ -15,16 +15,11 @@ class Event extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
         'key',
         'name',
-        'description',
-        'image',
-        'start_date',
-        'start_time',
-        'expiration_date',
-        'expiration_time',
-        'location',
+        'mime',
+        'size',
+        'extension',
         'created_at',
         'updated_at',
         'deleted_at',

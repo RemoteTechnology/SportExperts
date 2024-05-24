@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Events;
 
 use App\Http\Requests\Events\EventReadRequest;
-use App\Http\Resources\EventResource;
+use App\Http\Resources\Events\EventResource;
 use App\Repository\EventRepository;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;

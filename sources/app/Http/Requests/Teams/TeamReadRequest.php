@@ -22,7 +22,7 @@ class TeamReadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required'],
+            'id' => ['required', 'exists:teams,id'],
         ];
     }
 }

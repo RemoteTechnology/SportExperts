@@ -22,8 +22,8 @@ class StoreOptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_key'         => ['nullable'],
-            'participant_key'   => ['nullable'],
+            'event_key'         => ['nullable', 'exists:events,key'],
+            'participant_key'   => ['nullable', 'exists:participants,key'],
             'entity'            => ['required', 'string'],
             'name'              => ['required', 'string', 'min:2', 'max:255'],
             'value'             => ['required', 'string', 'min:2', 'max:255'],

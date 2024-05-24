@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Teams;
 
 use App\Http\Requests\Teams\UpdateTeamRequest;
-use App\Http\Resources\TeamResource;
+use App\Http\Resources\Teams\TeamResource;
 use App\Repository\TeamRepository;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;

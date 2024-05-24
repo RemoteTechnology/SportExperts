@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Events;
 
-use App\Http\Resources\EventResource;
+use App\Http\Resources\Events\EventCollection;
+use App\Http\Resources\Events\EventResource;
 use App\Repository\EventRepository;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
@@ -31,10 +32,9 @@ class EventListProcedure extends Procedure
      */
     public function handle(): JsonResponse
     {
+        $events = new EventCollection($this->operation->list('paginate'));
         return new JsonResponse(
-            data: EventResource::collection(
-                $this->operation->list()
-            ),
+            data: $events->resource,
             status: 201
         );
     }

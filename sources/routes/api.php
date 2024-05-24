@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\V1\Files\FileDestroyController;
+use App\Http\Controllers\V1\Files\FileReadController;
+use App\Http\Controllers\V1\Files\FileUploadController;
 use App\Http\Procedures\V1\Authorizations\AuthByEmailProcedure;
 use App\Http\Procedures\V1\Authorizations\AuthByGoogleProcedure;
 use App\Http\Procedures\V1\Authorizations\AuthByVkontakteProcedure;
@@ -41,8 +44,26 @@ require_once dirname(__DIR__) . '/app/Domain/Constants/SocialConst.php';
 |
 */
 
+/**
+ * @param string $className
+ * @param string $method
+ * @return string[]
+ */
+function operation(string $className, string $method='__invoke'): array
+{
+    return [$className, $method];
+}
+
 //// V1 USER ENDPOINTS
 Route::prefix('v1')->group(function () {
+    //// V1 FILE ENDPOINTS
+    Route::prefix('file')->group(function () {
+        Route::post(ROUTE_DEFAULT, operation(FileUploadController::class))->name('v1.file.uploaded');
+        Route::get(ROUTE_DEFAULT, operation(FileReadController::class))->name('v1.file.read');
+        Route::delete(ROUTE_DEFAULT, operation(FileDestroyController::class))->name('v1.file.delete');
+    });
+    //// END V1 FILE ENDPOINTS
+
     //// V1 USER ENDPOINTS
     Route::prefix('user')->group(function () {
         //// V1 AUTH ENDPOINTS
@@ -50,8 +71,8 @@ Route::prefix('v1')->group(function () {
             Route::rpc(ROUTE_DEFAULT, [AuthByEmailProcedure::class])->name('v1.user.auth.email');
             //// V1 AUTH SOCIAL ENDPOINTS
             Route::prefix('social')->group(function (){
-                Route::rpc(ROUTE_DEFAULT . '{mode}', [AuthByVkontakteProcedure::class])->name('v1.user.auth.vkontakte');
-                Route::rpc(ROUTE_DEFAULT . '{mode}', [AuthByGoogleProcedure::class])->name('v1.user.auth.google');
+                Route::rpc(ROUTE_DEFAULT, [AuthByVkontakteProcedure::class])->name('v1.user.auth.vkontakte');
+                Route::rpc(ROUTE_DEFAULT, [AuthByGoogleProcedure::class])->name('v1.user.auth.google');
             });
             //// END V1 AUTH SOCIAL ENDPOINTS
         });

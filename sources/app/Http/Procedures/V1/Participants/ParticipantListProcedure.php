@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Participants;
 
-use App\Http\Resources\ParticipantResource;
+use App\Http\Resources\Participants\ParticipantCollection;
+use App\Http\Resources\Participants\ParticipantResource;
 use App\Repository\ParticipantRepository;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
@@ -31,10 +32,9 @@ class ParticipantListProcedure extends Procedure
      */
     public function handle(): JsonResponse
     {
+        $participants = new ParticipantCollection($this->operation->list('paginate'));
         return new JsonResponse(
-            data: ParticipantResource::collection(
-                $this->operation->list()
-            ),
+            data: $participants->resource,
             status: 201
         );
     }

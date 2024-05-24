@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Events;
 
 use App\Domain\Interfaces\Repositories\Entities\EventRepositoryInterface;
-use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
-use App\Http\Resources\EventResource;
+use App\Http\Resources\Events\EventResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Sajya\Server\Procedure;
 
 class EventDestroyProcedure extends Procedure

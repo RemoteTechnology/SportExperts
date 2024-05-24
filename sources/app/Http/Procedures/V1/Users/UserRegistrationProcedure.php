@@ -4,16 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Users;
 
-use App\Domain\Constants\LogLevelEnum;
-use App\Domain\Interfaces\Repositories\Entities\UserRepositoryInterface;
-use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
-use App\Domain\Interfaces\Services\LoggingServiceInterface;
 use App\Http\Requests\Users\RegistrationUserRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\Users\UserResource;
 use App\Repository\UserRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Sajya\Server\Procedure;
 

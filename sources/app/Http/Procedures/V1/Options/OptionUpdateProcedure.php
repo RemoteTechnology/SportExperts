@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Options;
 
 use App\Http\Requests\Options\UpdateOptionRequest;
-use App\Http\Resources\ParametrResource;
+use App\Http\Resources\Options\OptionResource;
 use App\Repository\OptionRepository;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
@@ -36,7 +36,7 @@ class OptionUpdateProcedure extends Procedure
     {
         $option = $request->validated();
         return new JsonResponse(
-            data: new ParametrResource(
+            data: new OptionResource(
                 $this->operation->update(
                     $this->operation->findById($option['id']),
                     $option

@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 trait ListQueryTrait
 {
     /**
-     * @return Collection<Model>
+     * @param string $mode
+     * @return Collection
      */
-    public function list(): Collection
+    public function list(string $mode='list'): mixed
     {
-        return $this->model::all();
+        return $mode === 'list' ? $this->model::all() : $this->model::paginate(10);
+
     }
 }

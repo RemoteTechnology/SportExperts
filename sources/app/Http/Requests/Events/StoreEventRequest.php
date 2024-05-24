@@ -22,10 +22,10 @@ class StoreEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id'           => ['required', 'numeric'],
+            'user_id'           => ['required', 'numeric', 'exists:users,id'],
             'name'              => ['required', 'string', 'min:5', 'max:255'],
             'description'       => ['required', 'string'],
-            'image'             => ['required', 'string', 'max:255'],
+            'image'             => ['required', 'string', 'max:255', 'exists:files,key'],
             'start_date'        => ['required'],
             'start_time'        => ['required'],
             'expiration_date'   => ['required'],

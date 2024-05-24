@@ -22,7 +22,7 @@ class ReadOptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required']
+            'id' => ['required', 'exists:options,id']
         ];
     }
 }
