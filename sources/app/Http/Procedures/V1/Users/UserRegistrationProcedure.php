@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Users;
 
+use App\Domain\Constants\LogLevelEnum;
 use App\Http\Requests\Users\RegistrationUserRequest;
 use App\Http\Resources\Users\UserResource;
 use App\Repository\UserRepository;
+use App\Services\LoggingService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Request;
 use Sajya\Server\Procedure;
 
 class UserRegistrationProcedure extends Procedure
@@ -19,22 +22,22 @@ class UserRegistrationProcedure extends Procedure
      * @var UserRepository
      */
     private UserRepository $operation;
-//    private LoggingServiceInterface $loggingService;
+    private LoggingService $loggingService;
 
     /**
      * @param UserRepository $operation
      */
-    public function __construct(UserRepository $operation)//, LoggingServiceInterface $loggingService)
+    public function __construct(UserRepository $operation, LoggingService $loggingService)
     {
         $this->operation = $operation;
-//        $this->loggingService = $loggingService;
+        $this->loggingService = $loggingService;
     }
 
     /**
      * @param RegistrationUserRequest $request
      * @return JsonResponse
      */
-    public function handle(RegistrationUserRequest $request): JsonResponse
+    public function handle(Request $http, RegistrationUserRequest $request): JsonResponse
     {
         $inputData = $request->validated();
         $inputData['password'] = Hash::make($inputData['password']);
@@ -48,12 +51,12 @@ class UserRegistrationProcedure extends Procedure
         }
         catch (Exception $e)
         {
-//            $this->loggingService->write(LogLevelEnum::Error, [
-//                'action'        => self::$name,
-//                'description'   => $e->getMessage(),
-//                'input_data'    => $inputData,
-//                'slug'          => $http->url(),
-//            ]);
+            $this->loggingService->write(LogLevelEnum::Error, [
+                'action'        => self::$name,
+                'description'   => $e->getMessage(),
+                'input_data'    => $inputData,
+                'slug'          => $http->url(),
+            ]);
             return new JsonResponse();
         }
     }
