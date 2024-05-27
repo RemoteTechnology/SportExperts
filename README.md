@@ -57,6 +57,7 @@
         <span>Запустить сборку фронтенда:</span><br>
         <b style="color: #222;">(sudo) docker-compose run node run build</b><br>
     </li>
+    <br />
     <li>
         <span>Заполнить базу тестовыми данными:</span><br>
         <b style="color: #222;">(sudo) docker-compose run php-fpm artisan db:seed</b><br>

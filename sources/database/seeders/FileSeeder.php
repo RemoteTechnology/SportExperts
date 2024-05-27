@@ -3,11 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\File;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
-require_once __DIR__ . '/generate.php';
 
 class FileSeeder extends Seeder
 {
@@ -16,8 +14,6 @@ class FileSeeder extends Seeder
      */
     public function run(): void
     {
-        global $fileTeam;
-        global $fileEvent;
         for ($ft=0; $ft < 300; $ft++)
         {
             File::create([

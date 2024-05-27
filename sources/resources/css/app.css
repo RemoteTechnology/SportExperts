@@ -7,28 +7,52 @@ html, body{
     margin: 0;
     height: 100%;
 }
+ul li{
+    list-style: none;
+}
 .wrapper{
     min-height: 100%;
 }
 .d-flex{
     display: flex;
 }
+.d-align-center{
+    align-items: center;
+}
 .d-center{
     justify-content: center;
-    align-items: center;
+    /*align-items: center;*/
 }
 .d-between{
     justify-content: space-between;
-    align-items: center;
+    /*align-items: center;*/
+}
+.p-1{
+    padding: 1em;
+}
+.mt-06{
+    margin-top: 0.6em;
+}
+.mt-3{
+    margin-top: 3em;
 }
 .mt-5{
     margin-top: 5em;
+}
+.mb-5{
+    margin-bottom: 5em;
 }
 .w-30{
     width: 30%;
 }
 .w-46{
     width: 46%;
+}
+.w-50{
+    width: 50%;
+}
+.w-70{
+    width: 69%;
 }
 .w-100{
     width: 100%;
@@ -41,4 +65,8 @@ html, body{
 }
 .text-center{
     text-align: center;
+}
+.container{
+    width: 90%;
+    margin: 0 auto;
 }

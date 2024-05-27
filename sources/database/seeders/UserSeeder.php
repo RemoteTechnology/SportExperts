@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
@@ -27,7 +26,7 @@ class UserSeeder extends Seeder
             'phone' => '+7 (000) 000-00-01',
             'location' => 'гор. Новосибирск. ',
             'role' => 'superuser',
-            'password' => 'superadmin',
+            'password' => Hash::make('superadmin'),
         ]);
         // Тестовый админ
         User::create([
@@ -41,7 +40,7 @@ class UserSeeder extends Seeder
             'phone' => '+7 (000) 000-00-02',
             'location' => 'гор. Питер. ст. м. Приморская.',
             'role' => 'admin',
-            'password' => 'admin',
+            'password' => Hash::make('admin'),
         ]);
         // Участник мероприятия админ
         User::create([
@@ -55,7 +54,7 @@ class UserSeeder extends Seeder
             'phone' => '+7 (000) 000-00-03',
             'location' => 'гор. Новосибирск. ст. м. Берёзовая роща.',
             'role' => 'athlete',
-            'password' => 'athlete',
+            'password' => Hash::make('athlete'),
         ]);
         // Генерация случайных юзеров
         $i = 0;
@@ -72,7 +71,7 @@ class UserSeeder extends Seeder
                 'phone' => '+7 (' . mt_rand(100, 999) . ') ' . mt_rand(100, 999) . '-' . mt_rand(10, 99) . '-' . mt_rand(10, 99),
                 'location' => fake('ru')->city(),
                 'role' => $i < 400 ? 'admin' : 'athlete',
-                'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+                'password' => Hash::make('password')
             ]);
             $i++;
         }

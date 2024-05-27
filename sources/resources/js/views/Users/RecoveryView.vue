@@ -1,5 +1,5 @@
 <script>
-import { baseUrl } from '../../constant';
+import { BASE_URL } from '../../constant';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
@@ -7,8 +7,8 @@ import Button from 'primevue/button';
 export default {
     data() {
         return {
-            baseUrl: baseUrl,
-            login: null,
+            baseUrl: BASE_URL,
+            email: null,
         };
     },
     components: {
@@ -29,10 +29,10 @@ export default {
             <form>
                 <div class="form-block">
                     <label for="#">Введите E-mail</label>
-                    <InputText v-model="login" class="w-100"/>
+                    <InputText type="email" v-model="email" class="w-100"/>
                 </div>
                 <div class="form-block d-flex d-between">
-                    <Button label="Отправить письмо" class="w-30" severity="success" />
+                    <Button type="button" label="Отправить письмо" class="w-30" severity="success" />
                 </div>
             </form>
         </section>

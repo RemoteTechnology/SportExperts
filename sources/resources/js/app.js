@@ -44,6 +44,11 @@ app.component('login-view', LoginView);
 import RecoveryView from './views/Users/RecoveryView.vue';
 app.component('recovery-view', RecoveryView);
 
+import ProfileView from './views/Users/ProfileView.vue';
+app.component('profile-view', ProfileView);
+import Settings from './views/Users/SettingsView.vue';
+app.component('settings-view', Settings);
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

@@ -12,7 +12,7 @@ use App\Repository\Traits\DestroyQueryTrait;
 use App\Repository\Traits\ReadQueryTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class FileRepository implements
+final class FileRepository implements
     CreateQueryInterface,
     ReadQueryInterface,
     DestroyQueryInterface

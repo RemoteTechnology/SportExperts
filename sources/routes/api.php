@@ -27,6 +27,7 @@ use App\Http\Procedures\V1\Teams\TeamListProcedure;
 use App\Http\Procedures\V1\Teams\TeamReadProcedure;
 use App\Http\Procedures\V1\Teams\TeamStoreProcedure;
 use App\Http\Procedures\V1\Teams\TeamUpdateProcedure;
+use App\Http\Procedures\V1\Users\UserReadProcedure;
 use App\Http\Procedures\V1\Users\UserRegistrationProcedure;
 use Illuminate\Support\Facades\Route;
 
@@ -78,6 +79,7 @@ Route::prefix('v1')->group(function () {
         });
         //// END V1 AUTH ENDPOINTS
         Route::rpc(ROUTE_DEFAULT, [UserRegistrationProcedure::class])->name('v1.user.registration');
+        Route::rpc(ROUTE_READ, [UserReadProcedure::class])->name('v1.user.read');
         Route::middleware('auth:sanctum')->group(function () {
             Route::rpc(ROUTE_DEFAULT . 'logout', [LogoutProcedure::class])->name('v1.user.logout');
         });

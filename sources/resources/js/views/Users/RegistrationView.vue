@@ -1,5 +1,5 @@
 <script>
-import { baseUrl } from '../../constant';
+import { BASE_URL } from '../../constant';
 import { registrationRequest } from '../../api/UserRequest';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
@@ -10,7 +10,7 @@ import FloatLabel from 'primevue/floatlabel';
 export default {
     data() {
         return {
-            baseUrl: baseUrl,
+            baseUrl: BASE_URL,
             user: {
                 firstName: null,
                 firstNameEng: null,
@@ -91,7 +91,7 @@ export default {
         <section class="mt-5">
             <div class="text-center">
                 <h2>Регистрация</h2>
-                <a :href="baseUrl + 'login'">
+                <a :href="this.baseUrl + 'login'">
                     <Button label="Вход" severity="info" link />
                 </a>
             </div>

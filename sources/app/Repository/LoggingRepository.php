@@ -7,7 +7,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class LoggingRepository implements LoggingRepositoryInterface
+final class LoggingRepository implements LoggingRepositoryInterface
 {
     public function store(array $attributes): Model|Exception|bool
     {

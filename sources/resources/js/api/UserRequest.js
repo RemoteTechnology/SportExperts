@@ -1,24 +1,24 @@
 import axios from "axios";
 import {
-    baseUrl,
-    jsonRpcVersion,
-    requestMethodDefault,
-    procedures
+    BASE_URL,
+    JSON_RPC_VERSION,
+    REQUEST_METHOD_DEFAULT,
+    PROCEDURES
 } from '../constant';
 
 
 function registrationRequest(data)
 {
     var response = null;
-    axios.post(`${baseUrl}api/v1/user/`, {
+    axios.post(`${BASE_URL}api/v1/user/`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept':       'application/json',
         },
-        'jsonrpc':          jsonRpcVersion,
+        'jsonrpc':          JSON_RPC_VERSION,
         'id':               '1',
         'notification':     false,
-        'method':           `${procedures.users.registration}@${requestMethodDefault}`,
+        'method':           `${PROCEDURES.users.registration}@${REQUEST_METHOD_DEFAULT}`,
         'params': {
             first_name:     data.firstName,
             first_name_eng: data.firstNameEng,
@@ -36,4 +36,21 @@ function registrationRequest(data)
     return response;
 }
 
-export { registrationRequest }
+async function getUser(data)
+{
+    return await axios.post(`${BASE_URL}api/v1/user/read`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        'jsonrpc': JSON_RPC_VERSION,
+        'id': '1',
+        'notification': false,
+        'method': `${PROCEDURES.users.read}@${REQUEST_METHOD_DEFAULT}`,
+        'params': {
+            id: data.id
+        }
+    });
+}
+
+export { registrationRequest, getUser }
