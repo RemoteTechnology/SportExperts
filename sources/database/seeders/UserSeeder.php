@@ -7,6 +7,8 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
+require_once dirname(__DIR__,2) . '/app/Domain/Constants/PointSeeder.php';
+
 class UserSeeder extends Seeder
 {
     /**
@@ -58,7 +60,7 @@ class UserSeeder extends Seeder
         ]);
         // Генерация случайных юзеров
         $i = 0;
-        while($i <= 10000)
+        while($i <= USER)
         {
             User::create([
                 'first_name' => fake('ru')->firstName(),
@@ -70,7 +72,7 @@ class UserSeeder extends Seeder
                 'email' => Str::random(10).'@example.com',
                 'phone' => '+7 (' . mt_rand(100, 999) . ') ' . mt_rand(100, 999) . '-' . mt_rand(10, 99) . '-' . mt_rand(10, 99),
                 'location' => fake('ru')->city(),
-                'role' => $i < 400 ? 'admin' : 'athlete',
+                'role' => $i < (USER / 20) ? 'admin' : 'athlete',
                 'password' => Hash::make('password')
             ]);
             $i++;

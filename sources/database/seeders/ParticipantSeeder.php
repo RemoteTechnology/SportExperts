@@ -9,6 +9,8 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
+require_once dirname(__DIR__,2) . '/app/Domain/Constants/PointSeeder.php';
+
 class ParticipantSeeder extends Seeder
 {
     /**
@@ -18,7 +20,7 @@ class ParticipantSeeder extends Seeder
     {
         $i = 0;
         $userAdminCount = $i+1;
-        while ($i < 10000)
+        while ($i < PARTICIPANT)
         {
             $y = 400;
             $event = Event::find($i+1);

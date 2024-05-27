@@ -6,6 +6,7 @@ use App\Models\File;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
+require_once dirname(__DIR__,2) . '/app/Domain/Constants/PointSeeder.php';
 
 class FileSeeder extends Seeder
 {
@@ -24,7 +25,7 @@ class FileSeeder extends Seeder
                 'extension' => 'png',
             ]);
         }
-        for ($fe=0; $fe < 15000; $fe++)
+        for ($fe=0; $fe < FILE; $fe++)
         {
             File::create([
                 'key' => Str::uuid()->toString(),

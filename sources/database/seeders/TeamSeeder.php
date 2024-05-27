@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
+require_once dirname(__DIR__,2) . '/app/Domain/Constants/PointSeeder.php';
+
 class TeamSeeder extends Seeder
 {
     /**
@@ -16,7 +18,7 @@ class TeamSeeder extends Seeder
     public function run(): void
     {
         $i = 0;
-        while ($i < 400)
+        while ($i < TEAM)
         {
             $user = User::find($i+1);
             $file = File::find($i+1);

@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
+require_once dirname(__DIR__,2) . '/app/Domain/Constants/PointSeeder.php';
+
 class EventSeeder extends Seeder
 {
     /**
@@ -18,7 +20,7 @@ class EventSeeder extends Seeder
         $i = 0;
         $userCount = 1;
         $fileId = 300;
-        while ($i < 15000)
+        while ($i < EVENT)
         {
             $user = User::find($userCount+1);
             $file = File::find($fileId+1);
@@ -33,7 +35,7 @@ class EventSeeder extends Seeder
                 'expiration_date' => fake()->date(),
                 'expiration_time' => fake()->time(),
             ]);
-            $userCount = $userCount === 400 ? 1 : $userCount + 1;
+            $userCount = $userCount === (COUNT - 600) ? 1 : $userCount + 1;
             $fileId++;
             $i++;
         }
