@@ -6,8 +6,8 @@ import {
     PROCEDURES
 } from '../constant';
 
-async function getEventListRequest() {
-    return await axios.post(`${BASE_URL}api/v1/event/`, {
+async function getUserRecordRequest(data) {
+    return await axios.post(`${BASE_URL}api/v1/user/auth/`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -15,8 +15,12 @@ async function getEventListRequest() {
         'jsonrpc': JSON_RPC_VERSION,
         'id': '1',
         'notification': false,
-        'method': `${PROCEDURES.event.list}@${REQUEST_METHOD_DEFAULT}`,
+        'method': `${PROCEDURES.auth.login}@${REQUEST_METHOD_DEFAULT}`,
+        'params': {
+            email: data.email,
+            password: data.password
+        }
     })
 }
 
-export { getEventListRequest }
+export { getUserRecordRequest }

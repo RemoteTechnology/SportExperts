@@ -23,7 +23,7 @@ class UpdateOptionRequest extends FormRequest
     {
         return [
             'id'                => ['required', 'numeric', 'exists:options,id'],
-            'event_key'         => ['required', 'exists:events,key'],
+            'event_key'         => ['required', 'exists:event,key'],
             'participant_key'   => ['required', 'exists:participants,key'],
             'entity'            => ['required', 'string'],
             'name'              => ['required', 'string', 'min:2', 'max:255'],

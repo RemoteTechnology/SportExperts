@@ -22,7 +22,7 @@ class UpdateEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'                => ['required', 'numeric', 'exists:events,id'],
+            'id'                => ['required', 'numeric', 'exists:event,id'],
             'user_id'           => ['required', 'numeric', 'exists:users,id'],
             'name'              => ['required', 'string', 'min:5', 'max:255'],
             'description'       => ['required', 'string'],

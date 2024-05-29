@@ -1,5 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
-    <event-view />
+    <history-view />
 @endsection

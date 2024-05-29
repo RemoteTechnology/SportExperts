@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Participants;
+namespace App\Http\Requests\Filter;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreParticipantReqest extends FormRequest
+class ParticipantFilterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,9 @@ class StoreParticipantReqest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_id'          => ['required', 'numeric', 'exists:event,id'],
-            'user_id'           => ['required', 'numeric', 'exists:users,id'],
-            'invited_user_id'   => ['required', 'exists:users,id'],
-            'team_key'          => ['required', 'exists:team,key'],
+            'filter'    => ['required', 'string'],
+            'mode'      => ['required', 'string'],
+            'limit'     => ['required', 'numeric']
         ];
     }
 }

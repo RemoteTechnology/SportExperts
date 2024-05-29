@@ -23,7 +23,7 @@ class UpdateParticipantReqest extends FormRequest
     {
         return [
             'id'                => ['required', 'numeric'],
-            'event_id'          => ['required', 'numeric', 'exists:events,id'],
+            'event_id'          => ['required', 'numeric', 'exists:event,id'],
             'user_id'           => ['required', 'numeric', 'exists:users,id'],
             'invited_user_id'   => ['required', 'exists:users,id'],
             'team_key'          => ['required', 'exists:team,key'],

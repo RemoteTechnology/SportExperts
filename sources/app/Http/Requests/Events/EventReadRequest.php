@@ -22,7 +22,7 @@ class EventReadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'exists:events,id'],
+            'id' => ['required', 'exists:event,id'],
         ];
     }
 }

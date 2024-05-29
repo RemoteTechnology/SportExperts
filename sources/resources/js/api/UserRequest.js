@@ -3,14 +3,15 @@ import {
     BASE_URL,
     JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
-    PROCEDURES
+    PROCEDURES,
+    TOKEN
 } from '../constant';
 
 
 function registrationRequest(data)
 {
     var response = null;
-    axios.post(`${BASE_URL}api/v1/user/`, {
+    axios.post(`${BASE_URL}api/v1/user/registration`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept':       'application/json',
@@ -53,4 +54,21 @@ async function getUser(data)
     });
 }
 
-export { registrationRequest, getUser }
+async function updateUser(attributes)
+{
+    return await axios.post(`${BASE_URL}api/v1/user/update`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer Bearer ${window.$cookies.get(TOKEN)}`
+        },
+        validateStatus: () => true,
+        'jsonrpc': JSON_RPC_VERSION,
+        'id': '1',
+        'notification': false,
+        'method': `${PROCEDURES.users.update}@${REQUEST_METHOD_DEFAULT}`,
+        'params': attributes
+    });
+}
+
+export { registrationRequest, getUser, updateUser }

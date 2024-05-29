@@ -26,7 +26,7 @@ export default {
             authorizationRequest({email: this.email, password: this.password})
                 .then((response) => {
                     try {
-                        window.$cookies.set(TOKEN, `Bearer ${response.data.result.original.token}`);
+                        window.$cookies.set(TOKEN, response.data.result.original.token);
                         window.$cookies.set(IDENTIFIER, response.data.result.original.user.id);
                         window.location = this.baseUrl + 'profile';
                     }

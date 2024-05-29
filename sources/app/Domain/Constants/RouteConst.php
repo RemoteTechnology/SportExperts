@@ -5,6 +5,5 @@ const ROUTE_STORE = '/store';
 const ROUTE_READ = '/read';
 const ROUTE_UPDATE = '/update';
 const ROUTE_DESTROY = '/destroy';
+const ROUTE_FILTER = 'filter';
 
-const ACTION_DEFAULT = '__invoke';
-const ACTION_FILTER = 'filter';

@@ -17,6 +17,7 @@ use App\Http\Procedures\V1\Options\OptionListProcedure;
 use App\Http\Procedures\V1\Options\OptionReadProcedure;
 use App\Http\Procedures\V1\Options\OptionStoreProcedure;
 use App\Http\Procedures\V1\Options\OptionUpdateProcedure;
+use App\Http\Procedures\V1\Participants\Filter\ParticipantFilterProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantDestroyProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantListProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantReadProcedure;
@@ -29,6 +30,7 @@ use App\Http\Procedures\V1\Teams\TeamStoreProcedure;
 use App\Http\Procedures\V1\Teams\TeamUpdateProcedure;
 use App\Http\Procedures\V1\Users\UserReadProcedure;
 use App\Http\Procedures\V1\Users\UserRegistrationProcedure;
+use App\Http\Procedures\V1\Users\UserUpdateProcedure;
 use Illuminate\Support\Facades\Route;
 
 require_once dirname(__DIR__) . '/app/Domain/Constants/RouteConst.php';
@@ -78,11 +80,12 @@ Route::prefix('v1')->group(function () {
             //// END V1 AUTH SOCIAL ENDPOINTS
         });
         //// END V1 AUTH ENDPOINTS
-        Route::rpc(ROUTE_DEFAULT, [UserRegistrationProcedure::class])->name('v1.user.registration');
+        Route::rpc(ROUTE_DEFAULT . 'registration', [UserRegistrationProcedure::class])->name('v1.user.registration');
         Route::rpc(ROUTE_READ, [UserReadProcedure::class])->name('v1.user.read');
-        Route::middleware('auth:sanctum')->group(function () {
+//        Route::middleware('auth:sanctum')->group(function () {
+            Route::rpc(ROUTE_UPDATE, [UserUpdateProcedure::class])->name('v1.user.update');
             Route::rpc(ROUTE_DEFAULT . 'logout', [LogoutProcedure::class])->name('v1.user.logout');
-        });
+//        });
     });
     //// END V1 USER ENDPOINTS
 
@@ -118,6 +121,9 @@ Route::prefix('v1')->group(function () {
             Route::rpc(ROUTE_STORE, [ParticipantStoreProcedure::class])->name('participant.store');
             Route::rpc(ROUTE_UPDATE, [ParticipantUpdateProcedure::class])->name('participant.update');
             Route::rpc(ROUTE_DESTROY, [ParticipantDestroyProcedure::class])->name('participant.destroy');
+        });
+        Route::prefix(ROUTE_FILTER)->group(function () {
+            Route::rpc(ROUTE_DEFAULT, [ParticipantFilterProcedure::class])->name('participant.filter');
         });
     });
     //// END V1 PARTICIPANT ENDPOINTS
