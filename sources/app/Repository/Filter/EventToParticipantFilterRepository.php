@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 require_once dirname(__DIR__, 2) . '/Domain/Constants/FieldConst.php';
 
-class ProceduresFilterRepository
+class EventToParticipantFilterRepository
 {
     public mixed $table;
     public function __construct()

@@ -23,7 +23,7 @@ class ParticipantFilterRequest extends FormRequest
     {
         return [
             'filter'    => ['required', 'string'],
-            'mode'      => ['required', 'string'],
+            'mode'      => ['nullable', 'string'],
             'limit'     => ['required', 'numeric']
         ];
     }

@@ -13,7 +13,9 @@ const PROCEDURES = {
         login: 'AuthByEmailProcedure',
     },
     filter: {
-        userRecord: 'ParticipantFilterProcedure',
+        userRecord: 'EventDateFilterProcedure',
+        ownerParticipantList: 'ParticipantOwnerFilterProcedure',
+        ownerEventsList: 'EventOwnerFilterProcedure',
     },
     event: {
         list: 'EventListProcedure'
@@ -21,4 +23,10 @@ const PROCEDURES = {
 };
 const REQUEST_METHOD_DEFAULT = 'handle';
 
-export { BASE_URL, JSON_RPC_VERSION, TOKEN, IDENTIFIER, REQUEST_METHOD_DEFAULT, PROCEDURES };
+export {
+    BASE_URL,
+    JSON_RPC_VERSION,
+    TOKEN, IDENTIFIER,
+    REQUEST_METHOD_DEFAULT,
+    PROCEDURES
+};

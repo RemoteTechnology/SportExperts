@@ -12,12 +12,14 @@ use App\Http\Procedures\V1\Events\EventListProcedure;
 use App\Http\Procedures\V1\Events\EventReadProcedure;
 use App\Http\Procedures\V1\Events\EventStoreProcedure;
 use App\Http\Procedures\V1\Events\EventUpdateProcedure;
+use App\Http\Procedures\V1\Events\Filter\EventDateFilterProcedure;
+use App\Http\Procedures\V1\Events\Filter\EventOwnerFilterProcedure;
 use App\Http\Procedures\V1\Options\OptionDestroyProcedure;
 use App\Http\Procedures\V1\Options\OptionListProcedure;
 use App\Http\Procedures\V1\Options\OptionReadProcedure;
 use App\Http\Procedures\V1\Options\OptionStoreProcedure;
 use App\Http\Procedures\V1\Options\OptionUpdateProcedure;
-use App\Http\Procedures\V1\Participants\Filter\ParticipantFilterProcedure;
+use App\Http\Procedures\V1\Participants\Filter\ParticipantOwnerFilterProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantDestroyProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantListProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantReadProcedure;
@@ -110,6 +112,10 @@ Route::prefix('v1')->group(function () {
             Route::rpc(ROUTE_UPDATE, [EventUpdateProcedure::class])->name('event.update');
             Route::rpc(ROUTE_DESTROY, [EventDestroyProcedure::class])->name('event.destroy');
         });
+        Route::prefix(ROUTE_FILTER)->group(function () {
+            Route::rpc(ROUTE_DEFAULT . '/participant/to/events', [EventDateFilterProcedure::class])->name('event.to.events.filter');
+            Route::rpc(ROUTE_DEFAULT . '/my/events', [EventOwnerFilterProcedure::class])->name('event.my.events.filter');
+        });
     });
     //// END V1 EVENT ENDPOINTS
 
@@ -123,7 +129,7 @@ Route::prefix('v1')->group(function () {
             Route::rpc(ROUTE_DESTROY, [ParticipantDestroyProcedure::class])->name('participant.destroy');
         });
         Route::prefix(ROUTE_FILTER)->group(function () {
-            Route::rpc(ROUTE_DEFAULT, [ParticipantFilterProcedure::class])->name('participant.filter');
+            Route::rpc(ROUTE_DEFAULT . '/events/my/participants', [ParticipantOwnerFilterProcedure::class])->name('participant.owner.filter');
         });
     });
     //// END V1 PARTICIPANT ENDPOINTS
