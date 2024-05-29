@@ -22,11 +22,10 @@ class StoreTeamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'users_id'      => ['required', 'numeric'],
-            'key'           => ['required'],
+            'user_id'      => ['required', 'numeric', 'exists:users,id'],
             'name'          => ['required', 'string', 'min:6', 'max:255'],
             'description'   => ['required', 'string'],
-            'image'         => ['required', 'string', 'max:255'],
+            'image'         => ['required', 'string', 'max:255', 'exists:files,key'],
             'location'      => ['required', 'string', 'max:255'],
         ];
     }

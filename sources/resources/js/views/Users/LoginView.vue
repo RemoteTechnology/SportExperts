@@ -1,14 +1,17 @@
 <script>
-import { baseUrl } from '../../constant';
+import { BASE_URL, TOKEN, IDENTIFIER } from '../../constant';
+import { authorizationRequest } from '../../api/AuthRequest';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
+import Message from 'primevue/message';
 
 export default {
     data() {
         return {
-            baseUrl: baseUrl,
-            login: null,
+            messageError: null,
+            baseUrl: BASE_URL,
+            email: null,
             password: null,
         };
     },
@@ -16,6 +19,24 @@ export default {
         Card: Card,
         InputText: InputText,
         Button: Button,
+        Message: Message,
+    },
+    methods: {
+        authorizationRequest: function() {
+            authorizationRequest({email: this.email, password: this.password})
+                .then((response) => {
+                    try {
+                        window.$cookies.set(TOKEN, response.data.result.original.token);
+                        window.$cookies.set(IDENTIFIER, response.data.result.original.user.id);
+                        window.location = this.baseUrl + 'profile';
+                    }
+                    catch (TypeError)
+                    {
+                        this.messageError = 'Не правильный логин или пароль';
+                    }
+                })
+                .catch(function (error) { console.log(error) })
+        },
     }
 }
 </script>
@@ -23,26 +44,29 @@ export default {
 <template>
     <section class="d-flex d-center">
         <section class="mt-5">
+            <section class="mt-1 mb-2" v-if="this.messageError !== null">
+                <Message severity="error">{{ this.messageError }}</Message>
+            </section>
             <div class="text-center">
                 <h2>Вход</h2>
-                <a :href="baseUrl + 'registration'">
+                <a :href="this.baseUrl + 'registration'">
                     <Button label="Регистрация" severity="info" link />
                 </a>
             </div>
             <form>
                 <div class="form-block">
                     <label for="#">Введите логин</label>
-                    <InputText v-model="login" class="w-100"/>
+                    <InputText type="email" v-model="email" class="w-100"/>
                 </div>
                 <div class="form-block">
                     <label for="#">Введите пароль</label>
-                    <InputText v-model="password" class="w-100"/>
+                    <InputText type="password" v-model="password" class="w-100"/>
                 </div>
                 <div class="form-block d-flex d-between">
-                    <a :href="baseUrl + 'recovery'">
-                        <Button label="Забыли пароль?" severity="info" link />
+                    <a :href="this.baseUrl + 'recovery'">
+                        <Button type="button" label="Забыли пароль?" severity="info" link />
                     </a>
-                    <Button label="Войти" class="w-30" severity="success" />
+                    <Button type="button" label="Войти" class="w-30" severity="success" @click="authorizationRequest" />
                 </div>
             </form>
         </section>

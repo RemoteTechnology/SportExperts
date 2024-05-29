@@ -22,9 +22,9 @@ class UpdateOptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'                => ['required', 'numeric'],
-            'event_key'         => ['required'],
-            'participant_key'   => ['required'],
+            'id'                => ['required', 'numeric', 'exists:options,id'],
+            'event_key'         => ['required', 'exists:event,key'],
+            'participant_key'   => ['required', 'exists:participants,key'],
             'entity'            => ['required', 'string'],
             'name'              => ['required', 'string', 'min:2', 'max:255'],
             'value'             => ['required', 'string', 'min:2', 'max:255'],

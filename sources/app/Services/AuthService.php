@@ -10,6 +10,8 @@ use App\Domain\Interfaces\Services\Auth\AuthorizationServiceInterface;
 use App\Domain\Interfaces\Services\Auth\LogoutServiceInterface;
 use App\Exceptions\Auth\AuthenticationException;
 use App\Models\User;
+use App\Repository\Filter\Entities\Users\FindByEmailRepository;
+use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,12 +23,12 @@ class AuthService implements
     AuthenticationSocialServiceInterface,
     LogoutServiceInterface
 {
-    private FindByEmailRepositoryInterface $filter;
-    private UserRepositoryInterface $operation;
+    private FindByEmailRepository $filter;
+    private UserRepository $operation;
 
     public function __construct(
-        FindByEmailRepositoryInterface $filter,
-        UserRepositoryInterface $operation
+        FindByEmailRepository $filter,
+        UserRepository $operation
     )
     {
         $this->filter = $filter;

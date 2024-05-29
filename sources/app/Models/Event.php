@@ -25,7 +25,6 @@ class Event extends Model
         'expiration_date',
         'expiration_time',
         'location',
-        'password',
         'created_at',
         'updated_at',
         'deleted_at',

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Options;
 
-use App\Domain\Interfaces\Repositories\Entities\OptionRepositoryInterface;
-use App\Http\Resources\ParametrResource;
+use App\Http\Resources\Options\OptionCollection;
+use App\Http\Resources\Options\OptionResource;
+use App\Repository\OptionRepository;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
 
@@ -18,9 +19,9 @@ class OptionListProcedure extends Procedure
      */
     public static string $name = 'OptionListProcedure';
 
-    private OptionRepositoryInterface $operation;
+    private OptionRepository $operation;
 
-    public function __construct(OptionRepositoryInterface $operation) {
+    public function __construct(OptionRepository $operation) {
         $this->operation = $operation;
     }
 
@@ -31,11 +32,10 @@ class OptionListProcedure extends Procedure
      */
     public function handle(): JsonResponse
     {
+        $options = new OptionCollection($this->operation->list('paginate'));
         return new JsonResponse(
-            data: ParametrResource::collection(
-                $this->operation->list()
-            ),
-            status: 200
+            data: $options->resource,
+            status: 201
         );
     }
 }

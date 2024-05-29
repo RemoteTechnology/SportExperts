@@ -18,7 +18,7 @@ trait UpdateQueryTrait
     {
         foreach ($attributes as $field => $value)
         {
-            if (property_exists($entity, $field) && !is_null($value))
+            if (!is_null($value)) // &&property_exists($entity, $field))
             {
                 $entity->$field = $value;
             }

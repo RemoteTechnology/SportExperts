@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Participants;
 
-use App\Domain\Interfaces\Repositories\Entities\ParticipantRepositoryInterface;
 use App\Http\Requests\Participants\StoreParticipantReqest;
-use App\Http\Resources\ParticipantResource;
+use App\Http\Resources\Participants\ParticipantResource;
+use App\Repository\ParticipantRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 use Sajya\Server\Procedure;
 
 class ParticipantStoreProcedure extends Procedure
@@ -19,9 +20,9 @@ class ParticipantStoreProcedure extends Procedure
      */
     public static string $name = 'ParticipantStoreProcedure';
 
-    private ParticipantRepositoryInterface $operation;
+    private ParticipantRepository $operation;
 
-    public function __construct(ParticipantRepositoryInterface $operation) {
+    public function __construct(ParticipantRepository $operation) {
         $this->operation = $operation;
     }
 
@@ -34,9 +35,11 @@ class ParticipantStoreProcedure extends Procedure
      */
     public function handle(StoreParticipantReqest $request): JsonResponse
     {
+        $participant = $request->validated();
+        $participant['key'] = Str::uuid()->toString();
         return new JsonResponse(
             data: new ParticipantResource(
-                $request->validated()
+                $this->operation->store($participant)
             ),
             status: 201
         );

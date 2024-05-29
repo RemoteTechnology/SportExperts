@@ -19,7 +19,7 @@ final class TeamRepository implements LCRUD_OperationInterface
     use UpdateQueryTrait;
     use DestroyQueryTrait;
 
-    protected Model $model;
+    public Model $model;
     public function __construct(Team $model = new Team())
     {
         $this->model = $model;

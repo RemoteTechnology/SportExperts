@@ -6,6 +6,7 @@
 
 import './bootstrap';
 import { createApp } from 'vue';
+import VueCookies from 'vue-cookies'
 import PrimeVue from 'primevue/config';
 import 'primevue/resources/themes/aura-light-blue/theme.css';
 import "primeicons/primeicons.css";
@@ -18,6 +19,14 @@ import "primeicons/primeicons.css";
 
 const app = createApp({});
 app.use(PrimeVue, { unstyled: false });
+app.use(VueCookies, {
+    expires: '7d',
+    path: '/',
+    domain: '',
+    secure: '',
+    sameSite: 'Lax' ,
+    partitioned: false
+});
 // Use Layouts
 import HeaderComponent from './layouts/HeaderComponent.vue';
 app.component('header-component', HeaderComponent);
@@ -34,6 +43,21 @@ app.component('login-view', LoginView);
 
 import RecoveryView from './views/Users/RecoveryView.vue';
 app.component('recovery-view', RecoveryView);
+
+import ProfileView from './views/Users/ProfileView.vue';
+app.component('profile-view', ProfileView);
+
+import Settings from './views/Users/SettingsView.vue';
+app.component('settings-view', Settings);
+
+import ParticipantView from './views/Participant/ParticipantView.vue';
+app.component('participant-view', ParticipantView);
+
+import HistoryView from './views/Events/HistoryView.vue';
+app.component('history-view', HistoryView);
+
+import ListView from './views/Events/ListView.vue';
+app.component('event-view', ListView);
 
 /**
  * The following block of code may be used to automatically register your

@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('options', function (Blueprint $table) {
             $table->id();
-            $table->uuid('event_key');
-            $table->uuid('participant_key');
+            $table->uuid('event_key')
+                ->nullable();
+            $table->uuid('participant_key')
+                ->nullable();
             $table->enum('entity', ['event', 'event_user']);
             $table->string('name', 255)
                 ->nullable(false);
@@ -29,7 +31,7 @@ return new class extends Migration
                 ->nullable();
             // Связи
             $table->foreign('event_key')
-                ->on('events')
+                ->on('event')
                 ->references('key')
                 ->onDelete('CASCADE');
             $table->foreign('participant_key')

@@ -5,23 +5,29 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Users;
 
 use App\Domain\Constants\LogLevelEnum;
-use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
-use App\Domain\Interfaces\Services\LoggingServiceInterface;
 use App\Http\Requests\Users\RegistrationUserRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\Users\UserResource;
+use App\Repository\UserRepository;
+use App\Services\LoggingService;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Request;
 use Sajya\Server\Procedure;
 
 class UserRegistrationProcedure extends Procedure
 {
     public static string $name = 'UserRegistrationProcedure';
-    private LCRUD_OperationInterface $operation;
-    private LoggingServiceInterface $loggingService;
+    /**
+     * @var UserRepository
+     */
+    private UserRepository $operation;
+    private LoggingService $loggingService;
 
-    public function __construct(LCRUD_OperationInterface $operation, LoggingServiceInterface $loggingService)
+    /**
+     * @param UserRepository $operation
+     */
+    public function __construct(UserRepository $operation, LoggingService $loggingService)
     {
         $this->operation = $operation;
         $this->loggingService = $loggingService;
@@ -35,6 +41,7 @@ class UserRegistrationProcedure extends Procedure
     {
         $inputData = $request->validated();
         $inputData['password'] = Hash::make($inputData['password']);
+        $inputData['role'] = 'admin';
         try {
             return new JsonResponse(
                 new UserResource(

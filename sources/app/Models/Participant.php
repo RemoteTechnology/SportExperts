@@ -18,6 +18,7 @@ class Participant extends Model
         'user_id',
         'team_key',
         'invited_user_id',
+        'key',
         'created_at',
         'updated_at',
         'deleted_at',

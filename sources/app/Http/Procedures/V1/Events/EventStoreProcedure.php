@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Events;
 
-use App\Domain\Interfaces\Repositories\Entities\EventRepositoryInterface;
 use App\Http\Requests\Events\StoreEventRequest;
-use App\Http\Resources\EventResource;
+use App\Http\Resources\Events\EventResource;
+use App\Repository\EventRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 use Sajya\Server\Procedure;
 
 class EventStoreProcedure extends Procedure
@@ -19,9 +20,9 @@ class EventStoreProcedure extends Procedure
      */
     public static string $name = 'EventStoreProcedure';
 
-    private EventRepositoryInterface $operation;
+    private EventRepository $operation;
 
-    public function __construct(EventRepositoryInterface $operation) {
+    public function __construct(EventRepository $operation) {
         $this->operation = $operation;
     }
 
@@ -34,10 +35,12 @@ class EventStoreProcedure extends Procedure
      */
     public function handle(StoreEventRequest $request): JsonResponse
     {
+        $event = $request->validated();
+        $event['key'] = Str::uuid()->toString();
         return new JsonResponse(
             data: new EventResource(
                 $this->operation->store(
-                    $request->validated()
+                    $event
                 )
             ),
             status: 201

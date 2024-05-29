@@ -1,17 +1,16 @@
 <script>
-import { baseUrl } from '../../constant';
+import { BASE_URL } from '../../constant';
 import { registrationRequest } from '../../api/UserRequest';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import InputMask from 'primevue/inputmask';
 import FloatLabel from 'primevue/floatlabel';
-import { ref } from 'vue';
 
 export default {
     data() {
         return {
-            baseUrl: baseUrl,
+            baseUrl: BASE_URL,
             user: {
                 firstName: null,
                 firstNameEng: null,
@@ -74,10 +73,11 @@ export default {
             return answer;
         },
         sendFormToSignUp: function() {
-            registrationRequest(this.user) !== null ?
-                /*TODO: проверить код статуса*/
-                /*TODO: перенаправить на страницу авторизации*/:
-                /*TODO: уведомить об ошибке и подчеркнуть поля которые были зафаршмачены*/;
+            console.log(registrationRequest(this.user))
+            // registrationRequest(this.user) !== null ?
+            //     /*TODO: проверить код статуса*/
+            //     /*TODO: перенаправить на страницу авторизации*/:
+            //     /*TODO: уведомить об ошибке и подчеркнуть поля которые были зафаршмачены*/;
 
 
         }
@@ -91,54 +91,58 @@ export default {
         <section class="mt-5">
             <div class="text-center">
                 <h2>Регистрация</h2>
-                <a :href="baseUrl + 'login'">
+                <a :href="this.baseUrl + 'login'">
                     <Button label="Вход" severity="info" link />
                 </a>
             </div>
             <form>
-                <div class="form-block">
-                    <label for="name">Имя</label>
-                    <InputText type="text" id="name" v-model="name" @change="onChange($event, 'nameLat')"
-                     placeholder="Сергей" class="w-100" required />
-                    <FloatLabel class="nameLatInput">
-                        <label for="nameLat">Имя на латинице</label>
-                        <InputText type="text" id="nameLat" v-model="nameLat" placeholder="Sergey" class="w-100" required />
-                    </FloatLabel>
-                </div>
-                <div class="form-block">
-                    <label for="lastName">Фамилия</label>
-                    <InputText type="text" id="lastName" v-model="lastName" placeholder="Губин" @change="onChange($event, 'lastNameLat')" class="w-100" required />
-                    <FloatLabel class="nameLatInput">
-                        <label for="lastNameLat">Фамилия на латинице</label>
-                        <InputText type="text" id="lastNameLat" v-model="lastNameLat" placeholder="Gubin" class="w-100" required />
-                    </FloatLabel>
+                <div class="d-flex d-between">
+                    <div class="form-block w-46">
+                        <label for="name">Имя</label>
+                        <InputText type="text" id="name" v-model="name" @change="onChange($event, 'nameLat')"
+                                   placeholder="Сергей" class="w-100" required />
+                        <FloatLabel class="nameLatInput">
+                            <label for="nameLat">Имя на латинице</label>
+                            <InputText type="text" id="nameLat" v-model="nameLat" placeholder="Sergey" class="w-100" required />
+                        </FloatLabel>
+                    </div>
+                    <div class="form-block w-46">
+                        <label for="lastName">Фамилия</label>
+                        <InputText type="text" id="lastName" v-model="lastName" placeholder="Губин" @change="onChange($event, 'lastNameLat')" class="w-100" required />
+                        <FloatLabel class="nameLatInput">
+                            <label for="lastNameLat">Фамилия на латинице</label>
+                            <InputText type="text" id="lastNameLat" v-model="lastNameLat" placeholder="Gubin" class="w-100" required />
+                        </FloatLabel>
+                    </div>
                 </div>
                 <div class="form-block">
                     <label for="#">email</label>
                     <InputText type="email" v-model="email" class="w-100" required />
                 </div>
                 <div class="form-block">
-                    <label for="#">Дата рождения</label>
-                    <InputText type="date" v-model="birthday" class="w-100"/>
-                </div>
-                <div class="form-block">
-                    <label for="#">Укажите ваш пол</label>
-                    <div class="flexing">
-                        <label for="radioMale" class="w-auto">
-                            <input type="radio" v-model="picked" id="radioMale" name="gender" value="male" class="w-auto" />
-                            Мужской
-                        </label>
-                        <label for="radioFemale" class="w-auto">
-                            <input type="radio" v-model="picked" id="radioFemale" name="gender" value="female" class="w-auto" />
-                            Женский
-                        </label>
-                    </div>
-                </div>
-                <div class="form-block">
                     <FloatLabel class="nameLatInput">
                         <label for="tel">Номер телефона</label>
                         <InputMask id="tel" v-model="numberPhone" mask="+7 (999) 999-99-99" class="w-100" />
                     </FloatLabel>
+                </div>
+                <div class="d-flex d-between">
+                    <div class="form-block w-46">
+                        <label for="#">Дата рождения</label>
+                        <InputText type="date" v-model="birthday" class="w-100"/>
+                    </div>
+                    <div class="form-block w-46">
+                        <label for="#">Укажите ваш пол</label>
+                        <div class="flexing">
+                            <label for="radioMale" class="w-auto">
+                                <input type="radio" v-model="picked" id="radioMale" name="gender" value="male" class="w-auto" />
+                                Мужской
+                            </label>
+                            <label for="radioFemale" class="w-auto">
+                                <input type="radio" v-model="picked" id="radioFemale" name="gender" value="female" class="w-auto" />
+                                Женский
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-block">
                     <label for="#">Придумайте пароль</label>

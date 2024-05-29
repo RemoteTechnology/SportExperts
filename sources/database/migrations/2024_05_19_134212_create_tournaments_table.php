@@ -21,13 +21,14 @@ return new class extends Migration
                 ->nullable();
             // Связи
             $table->foreign('event_key')
-                ->on('events')
+                ->on('event')
                 ->references('key')
                 ->onDelete('CASCADE');
             // Индексы
             $table->index([
                 'id',
-                'event_id',
+                'key',
+                'event_key',
             ]);
         });
     }

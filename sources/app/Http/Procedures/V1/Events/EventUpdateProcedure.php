@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Events;
 
-use App\Domain\Interfaces\Repositories\Entities\EventRepositoryInterface;
-use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
 use App\Http\Requests\Events\UpdateEventRequest;
-use App\Http\Resources\EventResource;
+use App\Http\Resources\Events\EventResource;
+use App\Repository\EventRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Sajya\Server\Procedure;
 
 class EventUpdateProcedure extends Procedure
@@ -21,9 +19,9 @@ class EventUpdateProcedure extends Procedure
      */
     public static string $name = 'EventUpdateProcedure';
 
-    private EventRepositoryInterface $operation;
+    private EventRepository $operation;
 
-    public function __construct(EventRepositoryInterface $operation) {
+    public function __construct(EventRepository $operation) {
         $this->operation = $operation;
     }
 

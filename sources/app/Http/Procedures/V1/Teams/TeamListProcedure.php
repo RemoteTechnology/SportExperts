@@ -4,23 +4,25 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Teams;
 
-use App\Domain\Interfaces\Repositories\Entities\TeamRepositoryInterface;
-use App\Http\Resources\TeamResource;
+use App\Http\Resources\Teams\TeamCollection;
+use App\Http\Resources\Teams\TeamResource;
+use App\Models\Team;
+use App\Repository\TeamRepository;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
 
-class EventTeamListProcedure extends Procedure
+class TeamListProcedure extends Procedure
 {
     /**
      * The name of the procedure that is used for referencing.
      *
      * @var string
      */
-    public static string $name = 'EventTeamListProcedure';
+    public static string $name = 'TeamListProcedure';
 
-    private TeamRepositoryInterface $operation;
+    private TeamRepository $operation;
 
-    public function __construct(TeamRepositoryInterface $operation) {
+    public function __construct(TeamRepository $operation) {
         $this->operation = $operation;
     }
 
@@ -31,11 +33,10 @@ class EventTeamListProcedure extends Procedure
      */
     public function handle(): JsonResponse
     {
+        $teams = new TeamCollection($this->operation->list('paginate'));
         return new JsonResponse(
-            data: TeamResource::collection(
-                $this->operation->list()
-            ),
-            status: 200
+            data: $teams->resource,
+            status: 201
         );
     }
 }

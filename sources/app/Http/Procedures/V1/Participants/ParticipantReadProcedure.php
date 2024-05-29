@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Participants;
 
-use App\Domain\Interfaces\Repositories\Entities\ParticipantRepositoryInterface;
-use App\Http\Resources\ParticipantResource;
+use App\Http\Requests\Participants\ReadParticipantRequest;
+use App\Http\Resources\Participants\ParticipantResource;
+use App\Repository\ParticipantRepository;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
 
@@ -18,26 +19,27 @@ class ParticipantReadProcedure extends Procedure
      */
     public static string $name = 'ParticipantReadProcedure';
 
-    private ParticipantRepositoryInterface $operation;
+    private ParticipantRepository $operation;
 
-    public function __construct(ParticipantRepositoryInterface $operation) {
+    public function __construct(ParticipantRepository $operation) {
         $this->operation = $operation;
     }
 
     /**
      * Execute the procedure.
      *
-     * @param int $id
+     * @param ReadParticipantRequest $request
      *
      * @return JsonResponse
      */
-    public function handle(int $id): JsonResponse
+    public function handle(ReadParticipantRequest $request): JsonResponse
     {
+        $participant = $request->validated();
         return new JsonResponse(
             data: new ParticipantResource(
-                $this->operation->findById($id)
+                $this->operation->findById($participant['id'])
             ),
-            status: 200
+            status: 201
         );
     }
 }

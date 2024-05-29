@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Participants;
 
 use App\Domain\Interfaces\Repositories\Entities\ParticipantRepositoryInterface;
-use App\Http\Resources\ParticipantResource;
+use App\Http\Resources\Participants\ParticipantResource;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
 

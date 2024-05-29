@@ -30,7 +30,7 @@ return new class extends Migration
                 ->nullable();
             // Связи
             $table->foreign('event_id')
-                ->on('events')
+                ->on('event')
                 ->references('id')
                 ->onDelete("CASCADE");
             $table->foreign('user_id')
@@ -52,9 +52,7 @@ return new class extends Migration
                 'user_id',
                 'invited_user_id',
                 'team_key',
-                'email',
-                'phone',
-                'gender',
+                'key',
             ]);
         });
     }

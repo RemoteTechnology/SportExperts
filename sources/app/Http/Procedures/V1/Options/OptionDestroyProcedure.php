@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Options;
 
 use App\Domain\Interfaces\Repositories\Entities\OptionRepositoryInterface;
-use App\Http\Resources\ParametrResource;
+use App\Http\Resources\Options\OptionResource;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
 
@@ -34,7 +34,7 @@ class OptionDestroyProcedure extends Procedure
     public function handle(int $id)
     {
         return new JsonResponse(
-            data: new ParametrResource(
+            data: new OptionResource(
                 $this->operation->destroy(
                     $this->operation->findById($id)
                 )

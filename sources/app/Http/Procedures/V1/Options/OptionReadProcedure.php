@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Options;
 
-use App\Domain\Interfaces\Repositories\Entities\OptionRepositoryInterface;
-use App\Http\Resources\ParametrResource;
+use App\Http\Requests\Options\ReadOptionRequest;
+use App\Http\Resources\Options\OptionResource;
+use App\Repository\OptionRepository;
 use Illuminate\Http\JsonResponse;
 use Sajya\Server\Procedure;
 
@@ -18,26 +19,27 @@ class OptionReadProcedure extends Procedure
      */
     public static string $name = 'OptionReadProcedure';
 
-    private OptionRepositoryInterface $operation;
+    private OptionRepository $operation;
 
-    public function __construct(OptionRepositoryInterface $operation) {
+    public function __construct(OptionRepository $operation) {
         $this->operation = $operation;
     }
 
     /**
      * Execute the procedure.
      *
-     * @param int $id
+     * @param ReadOptionRequest $request
      *
      * @return JsonResponse
      */
-    public function handle(int $id): JsonResponse
+    public function handle(ReadOptionRequest $request): JsonResponse
     {
+        $option = $request->validated();
         return new JsonResponse(
-            data: new ParametrResource(
-                $this->operation->findById($id)
+            data: new OptionResource(
+                $this->operation->findById($option['id'])
             ),
-            status: 200
+            status: 201
         );
     }
 }

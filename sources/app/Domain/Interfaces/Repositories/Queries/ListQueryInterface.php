@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 interface ListQueryInterface
 {
     /**
-     * @return Collection<Model>
+     * @param string $mode
+     * @return mixed
      */
-    public function list(): Collection;
+    public function list(string $mode='list'): mixed;
 }
