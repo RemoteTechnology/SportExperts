@@ -38,7 +38,7 @@ class EventUpdateProcedure extends Procedure
         return new JsonResponse(
             data: new EventResource(
                 $this->operation->update(
-                    $this->operation->findById($event['id']),
+                    $this->operation->findById((int)$event['id']),
                     $event
                 )
             ),

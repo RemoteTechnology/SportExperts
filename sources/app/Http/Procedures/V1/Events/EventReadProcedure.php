@@ -37,7 +37,7 @@ class EventReadProcedure extends Procedure
         $event = $request->validated();
         return new JsonResponse(
             data: new EventResource(
-                $this->operation->findById($event['id'])
+                $this->operation->findById((int)$event['id'])
             ),
             status: 201
         );

@@ -10,6 +10,7 @@ import VueCookies from 'vue-cookies'
 import PrimeVue from 'primevue/config';
 import 'primevue/resources/themes/aura-light-blue/theme.css';
 import "primeicons/primeicons.css";
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 /**
  * Next, we will create a fresh Vue application instance. You may thlayouten begin
@@ -56,9 +57,14 @@ app.component('participant-view', ParticipantView);
 import HistoryView from './views/Events/HistoryView.vue';
 app.component('history-view', HistoryView);
 
-import ListView from './views/Events/ListView.vue';
-app.component('event-view', ListView);
+import EventListView from './views/Events/ListView.vue';
+app.component('event-view', EventListView);
 
+import CreateOfUpdateView from './views/Events/CreateOfUpdateView.vue';
+app.component('event-create-of-update-view', CreateOfUpdateView);
+
+import EventDetailsView from './views/Events/DetailsView.vue';
+app.component('event-detail-view', EventDetailsView);
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

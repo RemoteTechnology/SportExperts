@@ -18,7 +18,10 @@ const PROCEDURES = {
         ownerEventsList: 'EventOwnerFilterProcedure',
     },
     event: {
-        list: 'EventListProcedure'
+        list: 'EventListProcedure',
+        create: 'EventStoreProcedure',
+        read: 'EventReadProcedure',
+        update: 'EventUpdateProcedure',
     }
 };
 const REQUEST_METHOD_DEFAULT = 'handle';

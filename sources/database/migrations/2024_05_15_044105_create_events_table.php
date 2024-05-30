@@ -24,6 +24,7 @@ return new class extends Migration
                 ->nullable(false);
             $table->string('image', 255)
                 ->nullable(false);
+            // TODO: добавить "location"
             $table->date("start_date")
                 ->nullable(false);
             $table->time("start_time")

@@ -56,10 +56,13 @@ ul li{
     margin-bottom: 3em;
 }
 .mb-5{
-    margin-bottom: 5em;
+    margin-bottom: 5em!important;
 }
 .w-22{
     width: 22%;
+}
+.w-25{
+    width: 25%;
 }
 .w-30{
     width: 30%;
@@ -76,6 +79,9 @@ ul li{
 .w-100{
     width: 100%;
 }
+.h-22{
+    height: 22em;
+}
 .form-block{
     margin-top: 2em;
 }
@@ -88,6 +94,9 @@ ul li{
 .container{
     width: 90%;
     margin: 0 auto;
+}
+.pointer{
+    cursor: pointer;
 }
 
 /*Переопредиление MenuBar*/
@@ -110,4 +119,14 @@ ul li{
 }
 .p-menubar-root-list li.p-menuitem .p-menuitem-content a:hover{
     color: #222;
+}
+/*Переопределение стилей Quill*/
+.ql-toolbar.ql-snow{
+    background-color: #fff!important;
+    border-radius: 0.4em 0.4em 0% 0%!important;
+}
+.ql-container.ql-snow{
+    background-color: #fff!important;
+    height: 320px!important;
+    border-radius: 0 0 0.4em 0.4em!important;
 }

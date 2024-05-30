@@ -15,9 +15,11 @@
         "vue": "^3.2.37"
     },
     "dependencies": {
+        "@vueup/vue-quill": "^1.2.0",
         "pinia": "^2.1.7",
         "primeicons": "^7.0.0",
         "primevue": "^3.52.0",
+        "quill": "^2.0.2",
         "remixicon": "^4.2.0",
         "vue-cookies": "^1.8.4",
         "vue-router": "^4.3.2"

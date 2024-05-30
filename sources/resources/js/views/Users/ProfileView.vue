@@ -30,19 +30,6 @@ export default {
             token: null,
             events: null,
             first: 0,
-            myUsers: [
-                {first_name: 'Серёня', last_name: 'Лебеженский', age: 20},
-                {first_name: 'Джабраил', last_name: 'Бургамедович', age: 18},
-                {first_name: 'Оля', last_name: 'Рукавкина', age: 19},
-                {first_name: 'Вячеслав', last_name: 'Божественный', age: 20},
-                {first_name: 'Серёня', last_name: 'Лебеженский', age: 20},
-                {first_name: 'Джабраил', last_name: 'Бургамедович', age: 18},
-                {first_name: 'Оля', last_name: 'Рукавкина', age: 19},
-                {first_name: 'Вячеслав', last_name: 'Божественный', age: 20},
-                {first_name: 'Серёня', last_name: 'Лебеженский', age: 20},
-                {first_name: 'Джабраил', last_name: 'Бургамедович', age: 18},
-                {first_name: 'Оля', last_name: 'Рукавкина', age: 19},
-            ]
         };
     },
     components: {
@@ -129,6 +116,11 @@ export default {
                                     </h2>
                                 </div>
                                 <div class="mt-06">
+                                    <a :href="this.baseUrl + 'event/create'">
+                                        <Button label="Создать событие" class="w-100" severity="success" />
+                                    </a>
+                                </div>
+                                <div class="mt-06">
                                     <a :href="this.baseUrl + 'profile/settings'">
                                         <Button type="button" label="Настройки" class="w-100" severity="primary"/>
                                     </a>
@@ -210,9 +202,21 @@ export default {
                                         </section>
                                         <section>
                                             <p>Участников: 16</p>
-                                            <a :href="this.baseUrl">
-                                                <Button label="Подробнее" severity="secondary" outlined class="w-full" />
-                                            </a>
+                                            <div class="mb-1">
+                                                <a :href="this.baseUrl + 'event?id=' + event.id">
+                                                    <Button label="Подробнее" severity="secondary" outlined class="w-100" />
+                                                </a>
+                                            </div>
+                                            <div class="mb-1">
+                                                <a :href="this.baseUrl + 'event/update?id=' + event.id">
+                                                    <Button label="Редактировать" severity="primary" outlined class="w-100" />
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <a :href="this.baseUrl + 'event/delete?id=' + event.id">
+                                                    <Button label="В архив" severity="warning" outlined class="w-100" />
+                                                </a>
+                                            </div>
                                         </section>
                                     </div>
                                 </div>

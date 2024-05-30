@@ -33,5 +33,8 @@ Route::prefix('profile')->group(function (){
 
 Route::prefix('event')->group(function () {
     Route::get('/', [EventController::class, 'index']);
+    Route::get('/create', [EventController::class, 'create']);
+    Route::get('/detail', [EventController::class, 'detail']);
+    Route::get('/update', [EventController::class, 'update']);
     Route::get('/history', [EventController::class, 'history']);
 });

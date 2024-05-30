@@ -107,11 +107,11 @@ Route::prefix('v1')->group(function () {
     Route::prefix('event')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [EventListProcedure::class])->name('event.list');
         Route::rpc(ROUTE_READ, [EventReadProcedure::class])->name('event.read');
-        Route::middleware('auth:sanctum')->group(function () {
+//        Route::middleware('auth:sanctum')->group(function () {
             Route::rpc(ROUTE_STORE, [EventStoreProcedure::class])->name('event.store');
             Route::rpc(ROUTE_UPDATE, [EventUpdateProcedure::class])->name('event.update');
             Route::rpc(ROUTE_DESTROY, [EventDestroyProcedure::class])->name('event.destroy');
-        });
+//        });
         Route::prefix(ROUTE_FILTER)->group(function () {
             Route::rpc(ROUTE_DEFAULT . '/participant/to/events', [EventDateFilterProcedure::class])->name('event.to.events.filter');
             Route::rpc(ROUTE_DEFAULT . '/my/events', [EventOwnerFilterProcedure::class])->name('event.my.events.filter');

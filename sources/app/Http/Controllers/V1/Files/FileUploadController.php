@@ -26,14 +26,13 @@ class FileUploadController extends Controller
      */
     public function __invoke(Request $request): JsonResponse
     {
-        if ($this->fileService->upload($request->file('file')))
+        $fileData = $request->file('file');
+        if ($this->fileService->upload($fileData))
         {
             return new JsonResponse(
                 data: new FileResource(
                     $this->fileRepository->store(
-                        $this->fileService->get(
-                            $request->file('file')
-                        )
+                        $this->fileService->get($fileData)
                     )
                 ),
                 status: Response::HTTP_CREATED
