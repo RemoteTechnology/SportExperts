@@ -29,7 +29,7 @@ export default {
             <form>
                 <div class="form-block">
                     <label for="#">Введите E-mail</label>
-                    <InputText type="email" v-model="email" class="w-100"/>
+                    <InputText type="email" v-model="email" class="w-100" />
                 </div>
                 <div class="form-block d-flex d-between">
                     <Button type="button" label="Отправить письмо" class="w-30" severity="success" />

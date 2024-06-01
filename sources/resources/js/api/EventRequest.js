@@ -60,23 +60,40 @@ async function updateEventRequest(attributes) {
         'params': attributes
     })
 }
+// TODO: Вынести в отдельные реквесты
+async function createEventOptionRequest(attributes) {
+    return await axios.post(`${BASE_URL}api/v1/option/store`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        'jsonrpc': JSON_RPC_VERSION,
+        'id': '1',
+        'notification': false,
+        'method': `${PROCEDURES.option.create}@${REQUEST_METHOD_DEFAULT}`,
+        'params': attributes
+    })
+}
 
-// async function getEventOptionRequest() {
-//     return await axios.post(`${BASE_URL}api/v1/option/`, {
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Accept': 'application/json',
-//         },
-//         'jsonrpc': JSON_RPC_VERSION,
-//         'id': '1',
-//         'notification': false,
-//         'method': `${PROCEDURES.event.list}@${REQUEST_METHOD_DEFAULT}`,
-//     })
-// }
+async function updateEventOptionRequest(attributes) {
+    return await axios.post(`${BASE_URL}api/v1/option/update`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        'jsonrpc': JSON_RPC_VERSION,
+        'id': '1',
+        'notification': false,
+        'method': `${PROCEDURES.option.update}@${REQUEST_METHOD_DEFAULT}`,
+        'params': attributes
+    })
+}
 
 export {
     getEventListRequest,
     createEventRequest,
     getEventRequest,
-    updateEventRequest
+    updateEventRequest,
+    createEventOptionRequest,
+    updateEventOptionRequest,
 }

@@ -35,7 +35,11 @@ class EventOwnerFilterProcedure extends AbstractFilter
     {
         $data = $request->validated();
         return new JsonResponse(
-            data: $this->filterRepository->filter($this->formatDate($data), $data['limit']),
+            data: $this->filterRepository->filter(
+                $this->formatDate($data),
+                $data['limit'],
+                key_exists('start_date', $data) ? $data['start_date'] : false
+            ),
             status: 201
         );
     }

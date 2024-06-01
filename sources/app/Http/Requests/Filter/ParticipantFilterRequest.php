@@ -22,9 +22,10 @@ class ParticipantFilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'filter'    => ['required', 'string'],
-            'mode'      => ['nullable', 'string'],
-            'limit'     => ['required', 'numeric']
+            'filter'        => ['required', 'string'],
+            'mode'          => ['nullable', 'string'],
+            'limit'         => ['required', 'numeric'],
+            'start_date'    => ['nullable'],
         ];
     }
 }

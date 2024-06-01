@@ -18,6 +18,9 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';
 import Paginator from 'primevue/paginator';
 import Row from 'primevue/row';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
+import InlineMessage from 'primevue/inlinemessage';
 
 
 export default {
@@ -26,9 +29,11 @@ export default {
             baseUrl: BASE_URL,
             id: null,
             user: null,
-            participants: null,
+            participants: [],
             token: null,
-            events: null,
+            events: [],
+            eventsNoActive: [],
+            eventsArchive: [],
             first: 0,
         };
     },
@@ -45,13 +50,18 @@ export default {
         Column: Column,
         ColumnGroup: ColumnGroup,
         Row: Row,
+        TabView: TabView,
+        TabPanel: TabPanel,
+        InlineMessage: InlineMessage,
     },
     methods: {
         short: (str, maxlen) => str.length <= maxlen ? str : str.slice(0, maxlen) + '...',
         userIdentifier: function ()
         {
             getUser({id: window.$cookies.get(IDENTIFIER)})
-                .then((response) => { this.user = response.data.result.original; })
+                .then((response) => {
+                    this.user = response.data.result.original;
+                })
                 .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
         },
         tokenRead: function ()
@@ -75,11 +85,31 @@ export default {
             getEventOwnerRequest(`user_id:${window.$cookies.get(IDENTIFIER)}`)
                 .then((response) => { this.events = response.data.result.original; })
                 .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+            // if (user.role == 'admin')
+            // {
+                getEventOwnerRequest(
+                    `user_id:${window.$cookies.get(IDENTIFIER)}`,
+                    'after',
+                    9,
+                    true
+                )
+                    .then((response) => { this.eventsNoActive = response.data.result.original; })
+                    .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                getEventOwnerRequest(
+                    `user_id:${window.$cookies.get(IDENTIFIER)}`,
+                        'before',
+                        9,
+                        false
+                )
+                    .then((response) => { this.eventsArchive = response.data.result.original; })
+                    .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+
+            // }
         },
         getParticipants: function ()
         {
             getEventParticipantRequest(`invited_user_id:${window.$cookies.get(IDENTIFIER)}`)
-                .then((response) => { console.log(response);this.participants = response.data.result.original; })
+                .then((response) => { this.participants = response.data.result.original; })
                 .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
         }
     },
@@ -134,7 +164,8 @@ export default {
                 </Card>
             </section>
             <section class="w-100 mt-5">
-                <Card>
+                <!-- Виджет приглашенных спортсменов -->
+                <Card v-if="this.user.role === 'admin'">
                     <template #header>
                         <div class="d-flex d-center">
                             <h4>Ваши спортсмены:</h4>
@@ -167,22 +198,146 @@ export default {
         <div class="w-70">
             <!-- ADMIN VIEW -->
             <section v-if="this.user.role === 'admin'" class="mb-3">
-                <section class="mb-2 d-flex d-end">
-                    <div class="w-50">
-                        <section v-if="this.user.role === 'admin'">
-                            <h3 class="mb-3">Спортивные события которые вы создали</h3>
+                <Card>
+                    <template #content>
+                        <section>
+                            <h2 class="mb-3">Спортивные события которые вы создали</h2>
                         </section>
-                    </div>
-                    <div class="w-50">
-                        <Paginator :rows="10" :totalRecords="120"></Paginator>
-                    </div>
-                </section>
-                <section v-for="event in this.events['data']" class="mt-1 mb-1">
-                    <Card class="w-100">
-                        <template #content>
-                            <div class="d-flex d-between">
-                                <div class="w-30">
-                                    <div style="
+                        <TabView>
+                            <TabPanel header="Активные">
+                                <section v-if="this.events['data'].length > 0">
+                                    <section v-for="event in this.events['data']" class="mt-1 mb-1">
+                                        <Card class="w-100">
+                                            <template #content>
+                                                <div class="d-flex d-between">
+                                                    <div class="w-30">
+                                                        <div style="
+                                            background-size: cover;
+                                            background-position: center top;
+                                            background-image: url(https://shakasports.com/images/1714108924_Khabarovsk%20Open%202024.jpg);
+                                            height: 10em;
+                                            width: 80%;
+                                            background-repeat: round;
+                                    "></div>
+                                                    </div>
+                                                    <div class="w-70">
+                                                        <div class="d-flex d-between">
+                                                            <section>
+                                                                <p>
+                                                                    <strong>{{ event.name }}</strong>
+                                                                </p>
+                                                                <small>{{ event.start_date }} {{ event.start_time }}</small><br />
+                                                                <small>{{ event.expiration_date }} {{ event.expiration_time }}</small>
+                                                            </section>
+                                                            <section>
+                                                                <p>
+                                                                    <strong>Статус:</strong>
+                                                                </p>
+                                                                <InlineMessage severity="success">Активное событие</InlineMessage>
+                                                            </section>
+                                                            <section>
+                                                                <p>Участников: {{ this.participants.length > 0 ? this.participants.length : 0 }}</p>
+                                                                <div class="mb-1">
+                                                                    <a :href="this.baseUrl + 'event?id=' + event.id">
+                                                                        <Button label="Подробнее" severity="secondary" outlined class="w-100" />
+                                                                    </a>
+                                                                </div>
+                                                                <div class="mb-1">
+                                                                    <a :href="this.baseUrl + 'event/update?id=' + event.id">
+                                                                        <Button label="Редактировать" severity="primary" outlined class="w-100" />
+                                                                    </a>
+                                                                </div>
+                                                                <div>
+                                                                    <a :href="this.baseUrl + 'event/delete?id=' + event.id">
+                                                                        <Button label="В архив" severity="warning" outlined class="w-100" />
+                                                                    </a>
+                                                                </div>
+                                                            </section>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </Card>
+                                    </section>
+                                    <div class="w-100">
+                                        <Paginator :rows="10" :totalRecords="120"></Paginator>
+                                    </div>
+                                </section>
+                                <section v-else class="d-flex d-center">
+                                    <InlineMessage severity="warn" class="w-70">Данных нет</InlineMessage>
+                                </section>
+                            </TabPanel>
+                            <TabPanel header="Прошедшие">
+                                <section v-if="this.eventsNoActive['data'].length > 0">
+                                    <section v-for="event in this.eventsNoActive['data']" class="mt-1 mb-1">
+                                        <Card class="w-100">
+                                            <template #content>
+                                                <div class="d-flex d-between">
+                                                    <div class="w-30">
+                                                        <div style="
+                                            background-size: cover;
+                                            background-position: center top;
+                                            background-image: url(https://shakasports.com/images/1714108924_Khabarovsk%20Open%202024.jpg);
+                                            height: 10em;
+                                            width: 80%;
+                                            background-repeat: round;
+                                    "></div>
+                                                    </div>
+                                                    <div class="w-70">
+                                                        <div class="d-flex d-between">
+                                                            <section>
+                                                                <p>
+                                                                    <strong>{{ event.name }}</strong>
+                                                                </p>
+                                                                <small>{{ event.start_date }} {{ event.start_time }}</small><br />
+                                                                <small>{{ event.expiration_date }} {{ event.expiration_time }}</small>
+                                                            </section>
+                                                            <section>
+                                                                <p>
+                                                                    <strong>Статус:</strong>
+                                                                </p>
+                                                                <InlineMessage severity="secondary">Событие завершено</InlineMessage>
+                                                            </section>
+                                                            <section>
+                                                                <p>Участников: {{ this.participants.length > 0 ? this.participants.length : 0 }}</p>
+                                                                <div class="mb-1">
+                                                                    <a :href="this.baseUrl + 'event?id=' + event.id">
+                                                                        <Button label="Подробнее" severity="secondary" outlined class="w-100" />
+                                                                    </a>
+                                                                </div>
+                                                                <div class="mb-1">
+                                                                    <a :href="this.baseUrl + 'event/update?id=' + event.id">
+                                                                        <Button label="Редактировать" severity="primary" outlined class="w-100" />
+                                                                    </a>
+                                                                </div>
+                                                                <div>
+                                                                    <a :href="this.baseUrl + 'event/delete?id=' + event.id">
+                                                                        <Button label="В архив" severity="warning" outlined class="w-100" />
+                                                                    </a>
+                                                                </div>
+                                                            </section>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </Card>
+                                    </section>
+                                    <div class="w-100">
+                                        <Paginator :rows="10" :totalRecords="120"></Paginator>
+                                    </div>
+                                </section>
+                                <section v-else class="d-flex d-center">
+                                    <InlineMessage severity="warn" class="w-70">Данных нет</InlineMessage>
+                                </section>
+                            </TabPanel>
+                            <TabPanel header="В архиве">
+                                <section v-if="this.eventsArchive['data'].length > 0">
+                                    <section v-for="event in this.eventsArchive['data']" class="mt-1 mb-1">
+                                        <Card class="w-100">
+                                            <template #content>
+                                                <div class="d-flex d-between">
+                                                    <div class="w-30">
+                                                        <div style="
                                         background-size: cover;
                                         background-position: center top;
                                         background-image: url(https://shakasports.com/images/1714108924_Khabarovsk%20Open%202024.jpg);
@@ -190,44 +345,60 @@ export default {
                                         width: 80%;
                                         background-repeat: round;
                                 "></div>
-                                </div>
-                                <div class="w-70">
-                                    <div class="d-flex d-between">
-                                        <section>
-                                            <p>
-                                                <strong>{{ event.name }}</strong>
-                                            </p>
-                                            <small>{{ event.start_date }} {{ event.start_time }}</small><br />
-                                            <small>{{ event.expiration_date }} {{ event.expiration_time }}</small>
-                                        </section>
-                                        <section>
-                                            <p>Участников: 16</p>
-                                            <div class="mb-1">
-                                                <a :href="this.baseUrl + 'event?id=' + event.id">
-                                                    <Button label="Подробнее" severity="secondary" outlined class="w-100" />
-                                                </a>
-                                            </div>
-                                            <div class="mb-1">
-                                                <a :href="this.baseUrl + 'event/update?id=' + event.id">
-                                                    <Button label="Редактировать" severity="primary" outlined class="w-100" />
-                                                </a>
-                                            </div>
-                                            <div>
-                                                <a :href="this.baseUrl + 'event/delete?id=' + event.id">
-                                                    <Button label="В архив" severity="warning" outlined class="w-100" />
-                                                </a>
-                                            </div>
-                                        </section>
+                                                    </div>
+                                                    <div class="w-70">
+                                                        <div class="d-flex d-between">
+                                                            <section>
+                                                                <p>
+                                                                    <strong>{{ event.name }}</strong>
+                                                                </p>
+                                                                <small>{{ event.start_date }} {{ event.start_time }}</small><br />
+                                                                <small>{{ event.expiration_date }} {{ event.expiration_time }}</small>
+                                                            </section>
+                                                            <section>
+                                                                <p>
+                                                                    <strong>Статус:</strong>
+                                                                </p>
+                                                                <InlineMessage severity="warn">В архиве</InlineMessage>
+                                                            </section>
+                                                            <section>
+                                                                <p>Участников: {{ this.participants.length > 0 ? this.participants.length : 0 }}</p>
+                                                                <div class="mb-1">
+                                                                    <a :href="this.baseUrl + 'event?id=' + event.id">
+                                                                        <Button label="Подробнее" severity="secondary" outlined class="w-100" />
+                                                                    </a>
+                                                                </div>
+                                                                <div class="mb-1">
+                                                                    <a :href="this.baseUrl + 'event/update?id=' + event.id">
+                                                                        <Button label="Редактировать" severity="primary" outlined class="w-100" />
+                                                                    </a>
+                                                                </div>
+                                                                <div>
+                                                                    <a :href="this.baseUrl + 'event/delete?id=' + event.id">
+                                                                        <Button label="В архив" severity="warning" outlined class="w-100" />
+                                                                    </a>
+                                                                </div>
+                                                            </section>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </Card>
+                                    </section>
+                                    <div class="w-100">
+                                        <Paginator :rows="10" :totalRecords="120"></Paginator>
                                     </div>
-                                </div>
-                            </div>
-                        </template>
-                    </Card>
-                </section>
+                                </section>
+                                <section v-else class="d-flex d-center">
+                                    <InlineMessage severity="warn" class="w-70">Данных нет</InlineMessage>
+                                </section>
+                            </TabPanel>
+                        </TabView>
+                    </template>
+                </Card>
             </section>
             <!-- ATHLETE VIEW -->
-            <section v-if="this.user.role === 'athlete'"
-                     class="mt-5 mb-5 d-flex d-between d-flex-wrap">
+            <section v-if="this.user.role === 'athlete'" class="mb-5 d-flex d-between d-flex-wrap">
                 <Card v-for="event in this.events['data']"
                       v-key="event"
                       style="overflow: hidden"
@@ -240,11 +411,13 @@ export default {
                                 height: 14em;
                                 width: 100%;
                                 background-repeat: no-repeat;
-                        "></div>
+                        ">
+                            <InlineMessage severity="success">Активно</InlineMessage>
+                        </div>
                     </template>
                     <template #title>{{event.name }}</template>
                     <template #content>
-                        <p class="m-0"> {{ this.short(event.description, 130) }}</p>
+<!--                        <p class="m-0"> {{ this.short(event.description, 130) }}</p>-->
                     </template>
                     <template #footer>
                         <span>Даты проведения:</span>
@@ -259,6 +432,9 @@ export default {
                         </div>
                     </template>
                 </Card>
+                <div class="w-100">
+                    <Paginator :rows="10" :totalRecords="120"></Paginator>
+                </div>
             </section>
         </div>
     </section>

@@ -1,6 +1,8 @@
 <script>
-import {BASE_URL, IDENTIFIER} from "../../constant";
+import {BASE_URL, IDENTIFIER, TOKEN} from "../../constant";
+import { getUser, getInvitedOwnerRequest } from "../../api/UserRequest";
 import { getEventRequest } from '../../api/EventRequest';
+import { recordUserToEventRequest, eventRecordRequest } from '../../api/ParticipantRequest';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Image from 'primevue/image';
@@ -8,13 +10,24 @@ import Card from 'primevue/card';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';
+import Dialog from 'primevue/dialog';
+import InputText from 'primevue/inputtext';
+import Listbox from 'primevue/listbox';
 
 export default {
     data(){
         return {
             baseUrl: BASE_URL,
+            user: null,
             eventId: null,
             event: null,
+            dialog: false,
+            emailInvited: null,
+            participantEmail: null,
+            participant: null,
+            whoInvited: null,
+            invites: null,
+            invitedValue: null,
         };
     },
     components: {
@@ -22,31 +35,118 @@ export default {
         Message: Message,
         Image: Image,
         DataTable: DataTable,
+        Dialog: Dialog,
         Card: Card,
         Column: Column,
-        ColumnGroup: ColumnGroup
+        ColumnGroup: ColumnGroup,
+        InputText: InputText,
+        Listbox: Listbox,
     },
     methods: {
+        tokenRead: function ()
+        {
+            this.token = window.$cookies.get(TOKEN);
+        },
+        userIdentifier: function ()
+        {
+            getUser({id: window.$cookies.get(IDENTIFIER)})
+                .then((response) => {
+                    this.user = response.data.result.original;
+                })
+                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+        },
         getUrl: function ()
         {
             const urlParams = new URLSearchParams(window.location.search);
             this.eventId = urlParams.get('id');
+            this.invited.event_id = urlParams.get('id');
         },
         getEvent: function ()
         {
             getEventRequest({ id: this.eventId })
-                .then((response) => { console.log(response); this.event = response.data.result.original; })
+                .then((response) => { this.event = response.data.result.original; })
+                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+        },
+        addParticipant: function ()
+        {
+            let template = {event_id: null, user_id: null, invited_user_id: null, team_key: null};
+
+        },
+        search(event) {
+            this.items = [...this.participants].map((item) => event.query + '-' + item);
+        },
+        inviteToEvent: function ()
+        {
+            recordUserToEventRequest({
+                event_id: this.eventId,
+                user_id: this.invitedValue.id,
+                invited_user_id: this.user.id,
+                team_key: null,
+            })
+                .then((response) => { response.data.result.original ? alert('success add record') : alert('no add record to event'); })
+                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+        },
+        invited: function ()
+        {
+            recordUserToEventRequest({
+                event_id: this.eventId,
+                user_id: this.invitedValue.id,
+                invited_user_id: window.$cookies.get(IDENTIFIER),
+                // team_key: null,
+            })
+                .then((response) => { response.data.result.original ? alert('success add record') : alert('no add record to event'); })
+                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+        },
+        getWhoInvited: function ()
+        {
+            getInvitedOwnerRequest({ who_user_id: window.$cookies.get(IDENTIFIER) })
+                .then((response) => { this.invites = response.data.result.original; })
                 .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
         }
     },
     beforeMount() {
+        this.tokenRead();
+        this.userIdentifier();
         this.getUrl();
         this.getEvent();
+        this.getWhoInvited()
     }
 }
 </script>
 
 <template>
+    <Dialog v-if="this.user.role === 'admin'"
+            v-model:visible="this.dialog"
+            maximizable
+            modal
+            header="Пригласить участника"
+            :style="{ width: '50rem' }"
+            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <div v-if="this.invites.length > 0" class="mb-3">
+            <label class="font-semibold w-6rem">Выберите спортсмена из списка</label>
+            <Listbox v-model="this.invitedValue"
+                     :options="this.invites"
+                     class="w-100"
+                     listStyle="max-height:310px">
+                <template #option="slotProps">
+                    <div class="flex align-items-center">
+                        <div>{{ slotProps.option.user.first_name }} {{ slotProps.option.user.last_name }}</div>
+                    </div>
+                </template>
+            </Listbox>
+            <small>
+                <b>Не нашли спортсмена? Воспользуйтесь формой ниже.</b>
+            </small>
+        </div>
+        <div class="mb-3">
+            <label class="font-semibold w-6rem">Отправить приглашение по E-mail</label>
+            <InputText type="email" v-model="this.participantEmail" class="w-100" />
+        </div>
+        <div class="mb-3">
+            <Button label="Записать на событие" severity="success" class="w-100" @click="this.inviteToEvent" />
+        </div>
+    </Dialog>
+    <!-- Контентная часть -->
     <section v-if="this.event != null" class="mt-5 mb-5">
         <section class="container d-flex d-between d-flex-wrap">
             <div class="w-50">
@@ -84,9 +184,16 @@ export default {
                         </div>
                         <div class="mb-1">
                             <br>
-                            <a :href="this.baseUrl">
-                                <Button label="Записаться" severity="primary" class="w-100" />
-                            </a>
+                            <Button v-if="this.user.role === 'admin'"
+                                    label="Записать спортсмена на событие"
+                                    severity="primary"
+                                    class="w-100"
+                                    @click="this.dialog=true" />
+                            <Button v-if="this.user.role === 'athlete'"
+                                    label="Записаться"
+                                    severity="primary"
+                                    class="w-100"
+                                    @click="this.invited" />
                         </div>
                     </template>
                 </Card>

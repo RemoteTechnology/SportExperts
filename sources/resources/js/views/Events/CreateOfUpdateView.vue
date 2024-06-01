@@ -1,6 +1,12 @@
 <script>
 import {BASE_URL, IDENTIFIER, TOKEN} from "../../constant";
-import { createEventRequest, getEventRequest, updateEventRequest } from '../../api/EventRequest';
+import {
+    createEventRequest,
+    getEventRequest,
+    updateEventRequest,
+    createEventOptionRequest,
+    updateEventOptionRequest,
+} from '../../api/EventRequest';
 import { uploadFileRequest } from '../../api/FileRequest';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -64,6 +70,8 @@ export default {
                 type: 'string', //TODO: в ясный и прекрасный день вернуться к вопросу о прокидывании типа
                 value: this.optionValue
             }];
+            this.optionName = null;
+            this.optionValue = null;
         },
         removeOption: function (idx)
         {
@@ -76,25 +84,46 @@ export default {
         },
         createEvent: function ()
         {
-            let inputFile = this.onUpload()
-                .then((response) => { this.event.image = response.data; })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
-
-            if (this.event.image.key)
+            if (this.options)
             {
-                // TODO: разобраться почему событие создаётся со второго раза!!!!
-                createEventRequest({
-                    user_id: this.event.user_id,
-                    name: this.event.name,
-                    description: this.event.description,
-                    image: this.event.image.key,
-                    start_date: this.event.start_date,
-                    start_time: this.event.start_time,
-                    expiration_date: this.event.expiration_date,
-                    expiration_time: this.event.expiration_time,
-                })
-                    .then((response) => { this.event = response.data.result.original; alert('ok!'); })
-                    .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); alert('no!'); });
+                let inputFile = this.onUpload()
+                    .then((response) => { this.event.image = response.data; })
+                    .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+
+                if (this.event.image.key)
+                {
+                    // TODO: разобраться почему событие создаётся со второго раза!!!!
+                    createEventRequest({
+                        user_id: this.event.user_id,
+                        name: this.event.name,
+                        description: this.event.description,
+                        image: this.event.image.key,
+                        start_date: this.event.start_date,
+                        start_time: this.event.start_time,
+                        expiration_date: this.event.expiration_date,
+                        expiration_time: this.event.expiration_time,
+                    })
+                        .then((response) => { this.event = response.data.result.original; alert('ok!'); })
+                        .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); alert('no!'); });
+                    // Сохранение опций (параметров)
+                    // TODO: вынести в отдельный метод
+                    for (let i=0; i < this.options.length; i++)
+                    {
+                        createEventOptionRequest({
+                            event_key: this.event.key,
+                            entity: 'event',
+                            name: this.options[i].name,
+                            value: this.options[i].value,
+                            type: this.options[i].type,
+                        })
+                            .then((response) => { console.log(response); this.event = response.data.result.original; })
+                            .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); alert('error save option!'); });
+                    }
+                }
+                else
+                {
+                    alert('add options!')
+                }
             }
             else
             {
@@ -103,27 +132,56 @@ export default {
         },
         updateEvent: function ()
         {
-            let formData = new FormData();
-            console.log(this.event)
-            if (this.$refs.fileInput.files[0])
+            if (this.options.length > 0)
             {
-                let inputFile = this.onUpload()
-                    .then((response) => { this.event.image = response.data; })
-                    .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                let formData = new FormData();
+                console.log(this.event)
+                if (this.$refs.fileInput.files[0])
+                {
+                    let inputFile = this.onUpload()
+                        .then((response) => { this.event.image = response.data; })
+                        .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                }
+                updateEventRequest({
+                    id: this.event.id,
+                    user_id: this.event.owner.id,
+                    name: this.event.name,
+                    description: this.event.description,
+                    image: this.$refs.fileInput.files[0] ? this.event.image.key : this.event.image,
+                    start_date: this.event.start_date,
+                    start_time: this.event.start_time,
+                    expiration_date: this.event.expiration_date,
+                    expiration_time: this.event.expiration_time,
+                })
+                    .then((response) => { this.event = response.data.result.original; alert('ok update!'); })
+                    .catch((error) => { /*TODO: тут надо что то придумать.*/ alert('no update!'); });
+                for (let i=0; i < this.options.length; i++)
+                {
+                    let option = {
+                        event_key: this.event.key,
+                        entity: 'event',
+                        name: this.options[i].name,
+                        value: this.options[i].value,
+                        type: this.options[i].type,
+                    };
+                    if (Object.hasOwn(this.options[i], 'id'))
+                    {
+                        updateEventOptionRequest(option)
+                            .then((response) => { console.log(response); this.event = response.data.result.original; })
+                            .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); alert('error save option!'); });
+                    }
+                    else
+                    {
+                        createEventOptionRequest(option)
+                            .then((response) => { console.log(response); this.event = response.data.result.original; })
+                            .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); alert('error save option!'); });
+                    }
+                }
             }
-            updateEventRequest({
-                id: this.event.id,
-                user_id: this.event.owner.id,
-                name: this.event.name,
-                description: this.event.description,
-                image: this.$refs.fileInput.files[0] ? this.event.image.key : this.event.image,
-                start_date: this.event.start_date,
-                start_time: this.event.start_time,
-                expiration_date: this.event.expiration_date,
-                expiration_time: this.event.expiration_time,
-            })
-                .then((response) => { console.log(response); this.event = response.data.result.original; alert('ok update!'); })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); alert('no update!'); });
+            else
+            {
+                alert('no update options! please add их')
+            }
         },
         getUrl: function ()
         {
@@ -136,7 +194,10 @@ export default {
         getEvent: function ()
         {
             getEventRequest({ id: this.eventId })
-                .then((response) => { this.event = response.data.result.original; })
+                .then((response) => {
+                    this.event = response.data.result.original;
+                    this.options = this.event.options;
+                })
                 .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
         },
         editorLoad: function ({instance})
@@ -182,13 +243,14 @@ export default {
                             <label class="text-center" for="#">Добавьте баннер</label>
                             <br>
                             <section class="d-flex d-center">
-<!--                                <FileUpload ref="bannerInput"-->
+                                <!-- TODO: зафигачить эту кнопку -->
+<!--                                <FileUpload ref="fileInput"-->
 <!--                                            mode="basic"-->
-<!--                                            name="banner"-->
+<!--                                            name="file"-->
 <!--                                            accept="image/*"-->
 <!--                                            :maxFileSize="1000000"-->
-<!--                                            :auto="true"-->
 <!--                                            chooseLabel="Загрузить" />-->
+                                <!-- TODO: Выводить текущий баннер при обновлении -->
                                 <input type="file" ref="fileInput" name="file" class="form-control">
                             </section>
                         </template>
@@ -214,18 +276,20 @@ export default {
                         <InputText type="time" v-model="event.expiration_time" class="w-70" />
                     </div>
                 </div>
-                <Button v-if="this.eventId == null"
-                        type="button"
-                        label="Создать событие"
-                        class="w-100 mt-3"
-                        severity="success"
-                        @click="this.createEvent" />
-                <Button v-else
-                        type="button"
-                        label="Обновить"
-                        class="w-100 mt-3"
-                        severity="success"
-                        @click="this.updateEvent" />
+                <section class="mb-5">
+                    <Button v-if="this.eventId == null"
+                            type="button"
+                            label="Создать событие"
+                            class="w-100 mt-3"
+                            severity="success"
+                            @click="this.createEvent" />
+                    <Button v-else
+                            type="button"
+                            label="Обновить"
+                            class="w-100 mt-3"
+                            severity="success"
+                            @click="this.updateEvent" />
+                </section>
                 <br>
             </form>
             <section class="w-25" style="

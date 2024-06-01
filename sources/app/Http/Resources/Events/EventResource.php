@@ -31,7 +31,7 @@ class EventResource extends JsonResource
             'owner' => new UserResource(User::find($this->user_id)),
 //            'image' => new FileResource(File::where(['key' => $this->key])->first()),
             // TODO: Сделать нормально
-            'options' => Option::where(['event_key' => '1ca9da2f-cfb2-499d-8473-2ca58f2120ed'])->get(),
+            'options' => Option::where(['event_key' => $this->key])->get(),
             'participants' => [],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

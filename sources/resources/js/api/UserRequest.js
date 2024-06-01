@@ -71,4 +71,21 @@ async function updateUser(attributes)
     });
 }
 
-export { registrationRequest, getUser, updateUser }
+async function getInvitedOwnerRequest(attributes)
+{
+    return await axios.post(`${BASE_URL}api/v1/invite/`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            // 'Authorization': `Bearer Bearer ${window.$cookies.get(TOKEN)}`
+        },
+        validateStatus: () => true,
+        'jsonrpc': JSON_RPC_VERSION,
+        'id': '1',
+        'notification': false,
+        'method': `${PROCEDURES.invites.list}@${REQUEST_METHOD_DEFAULT}`,
+        'params': attributes
+    });
+}
+
+export { registrationRequest, getUser, updateUser, getInvitedOwnerRequest }

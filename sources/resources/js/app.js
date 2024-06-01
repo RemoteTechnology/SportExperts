@@ -51,8 +51,8 @@ app.component('profile-view', ProfileView);
 import Settings from './views/Users/SettingsView.vue';
 app.component('settings-view', Settings);
 
-import ParticipantView from './views/Participant/ParticipantView.vue';
-app.component('participant-view', ParticipantView);
+import InvitedView from './views/Participants/InvitedView.vue';
+app.component('participant-invited-view', InvitedView);
 
 import HistoryView from './views/Events/HistoryView.vue';
 app.component('history-view', HistoryView);

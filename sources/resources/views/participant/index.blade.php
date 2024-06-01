@@ -1,5 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
-    <participant-view />
+    <participant-invited-view />
 @endsection
