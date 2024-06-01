@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Domain\Interfaces\Repositories\Entities\EventRepositoryInterface;
+use App\Domain\Interfaces\Repositories\Entities\InvitedRepositoryInterface;
 use App\Domain\Interfaces\Repositories\Entities\LoggingRepositoryInterface;
 use App\Domain\Interfaces\Repositories\Entities\ParticipantRepositoryInterface;
 use App\Domain\Interfaces\Repositories\Entities\OptionRepositoryInterface;
@@ -12,6 +13,7 @@ use App\Domain\Interfaces\Repositories\Entities\TournamentValueRepositoryInterfa
 use App\Domain\Interfaces\Repositories\Entities\UserRepositoryInterface;
 use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
 use App\Repository\EventRepository;
+use App\Repository\InvitedRepository;
 use App\Repository\LoggingRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\OptionRepository;
@@ -52,6 +54,7 @@ class QueriesServiceProvider extends ServiceProvider
         TournamentRepositoryInterface::class        => TournamentRepository::class,
         TournamentValueRepositoryInterface::class   => TournamentValueRepository::class,
         LoggingRepositoryInterface::class           => LoggingRepository::class,
+        InvitedRepositoryInterface::class           => InvitedRepository::class,
     ];
 
     /**

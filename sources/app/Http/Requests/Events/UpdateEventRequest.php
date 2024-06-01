@@ -22,15 +22,15 @@ class UpdateEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'                => ['required', 'numeric', 'exists:event,id'],
+            'id'                => ['required', 'numeric', 'exists:events,id'],
             'user_id'           => ['required', 'numeric', 'exists:users,id'],
-            'name'              => ['required', 'string', 'min:5', 'max:255'],
-            'description'       => ['required', 'string'],
-            'image'             => ['required', 'string', 'max:255', 'exists:files,key'],
-            'start_date'        => ['required'],
-            'start_time'        => ['required'],
-            'expiration_date'   => ['required'],
-            'expiration_time'   => ['required'],
+            'name'              => ['nullable', 'string', 'min:5', 'max:255'],
+            'description'       => ['nullable', 'string'],
+            'image'             => ['nullable', 'string', 'max:255', 'exists:files,key'],
+            'start_date'        => ['nullable'],
+            'start_time'        => ['nullable'],
+            'expiration_date'   => ['nullable'],
+            'expiration_time'   => ['nullable'],
         ];
     }
 }

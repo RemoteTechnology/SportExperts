@@ -30,7 +30,7 @@ return new class extends Migration
                 ->nullable();
             // Связи
             $table->foreign('event_id')
-                ->on('event')
+                ->on('events')
                 ->references('id')
                 ->onDelete("CASCADE");
             $table->foreign('user_id')

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Participants;
+namespace App\Http\Requests\Inviteds;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreParticipantReqest extends FormRequest
+class InvitedListRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,7 @@ class StoreParticipantReqest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_id'          => ['required', 'numeric', 'exists:events,id'],
-            'user_id'           => ['required', 'numeric', 'exists:users,id'],
-            'invited_user_id'   => ['required', 'exists:users,id'],
-            'team_key'          => ['nullable', 'exists:teams,key'],
+            'who_user_id' => ['nullable']
         ];
     }
 }

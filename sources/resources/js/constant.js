@@ -9,6 +9,11 @@ const PROCEDURES = {
         read: 'UserReadProcedure',
         update: 'UserUpdateProcedure',
     },
+    invites: {
+        list: 'InvitedListProcedure',
+        read: 'InvitedReadProcedure',
+        // delete: 'InvitedDestroyProcedure',
+    },
     auth: {
         login: 'AuthByEmailProcedure',
     },
@@ -18,7 +23,17 @@ const PROCEDURES = {
         ownerEventsList: 'EventOwnerFilterProcedure',
     },
     event: {
-        list: 'EventListProcedure'
+        list: 'EventListProcedure',
+        create: 'EventStoreProcedure',
+        read: 'EventReadProcedure',
+        update: 'EventUpdateProcedure',
+    },
+    option: {
+        create: 'OptionStoreProcedure',
+        update: 'OptionUpdateProcedure',
+    },
+    participant: {
+        create: 'ParticipantStoreProcedure',
     }
 };
 const REQUEST_METHOD_DEFAULT = 'handle';

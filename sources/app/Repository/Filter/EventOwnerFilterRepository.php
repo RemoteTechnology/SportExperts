@@ -25,16 +25,23 @@ class EventOwnerFilterRepository
         return $query;
     }
 
-    private function builder(array $context): Builder
+    private function builder(array $context, bool $datetimeNow): Builder
     {
-        return $this->initQuery($this->table, $context);
+        $event =  $this->initQuery($this->table, $context);
+        if ($datetimeNow)
+        {
+            date_default_timezone_set('Europe/Moscow');
+            return $event->where(['start_date' => date('Y-m-d')]);
+        }
+        return $event;
     }
 
-    public function filter(array $context, int $limit=9): Collection
+    public function filter(array $context, int $limit=9, bool $datetimeNow=false): Collection
     {
-        return new Collection($this->builder($context)
-            ->orderBy('start_date', 'desc')
-            ->orderBy('start_time', 'desc')
-            ->paginate($limit));
+        $events = $this->builder($context, $datetimeNow);
+        $events->orderBy('start_date', 'desc');
+        $events->orderBy('start_time', 'desc');
+        $events->orderBy('start_time', 'desc');
+        return new Collection($events->paginate($limit));
     }
 }

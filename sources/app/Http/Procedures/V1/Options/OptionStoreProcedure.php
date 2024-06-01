@@ -25,14 +25,8 @@ class OptionStoreProcedure extends Procedure
         $this->operation = $operation;
     }
 
-    /**
-     * Execute the procedure.
-     *
-     * @param StoreOptionRequest $request
-     *
-     * @return JsonResponse
-     */
-    public function handle(StoreOptionRequest $request): JsonResponse
+
+    public function handle(StoreOptionRequest $request)
     {
         return new JsonResponse(
             data: new OptionResource(

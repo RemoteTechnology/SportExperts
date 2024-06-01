@@ -34,6 +34,11 @@ export default {
 
 <template>
     <section v-if="this.events" class="mt-5 mb-5">
+        <section class="container mb-5">
+            <a :href="this.baseUrl + 'event/create'">
+                <Button label="Создать событие" severity="success" />
+            </a>
+        </section>
         <section class="container d-flex d-between d-flex-wrap">
             <Card v-for="event in this.events['data']"
                   v-key="event"
@@ -60,7 +65,7 @@ export default {
                     </div>
                     <div class="flex gap-3 mt-2">
                         <br>
-                        <a :href="this.baseUrl + 'event/history?key=' + event.key">
+                        <a :href="this.baseUrl + 'event/detail?id=' + event.id">
                             <Button label="Записаться" severity="secondary" outlined class="w-100" />
                         </a>
                     </div>

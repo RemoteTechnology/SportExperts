@@ -24,7 +24,7 @@ async function getRecordToEventsRequest(attributes, mode='after', limit=9) {
     })
 }
 
-async function getEventOwnerRequest(attributes, mode='after', limit=9) {
+async function getEventOwnerRequest(attributes, mode='after', limit=9, startDate=false) {
     return await axios.post(`${BASE_URL}api/v1/event/filter/my/events`, {
         headers: {
             'Content-Type': 'application/json',
@@ -37,7 +37,8 @@ async function getEventOwnerRequest(attributes, mode='after', limit=9) {
         'params': {
             filter: attributes,
             mode: mode,
-            limit: limit
+            limit: limit,
+            start_date: startDate
         }
     })
 }

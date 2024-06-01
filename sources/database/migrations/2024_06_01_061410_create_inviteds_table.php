@@ -11,25 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tournaments', function (Blueprint $table) {
+        Schema::create('inviteds', function (Blueprint $table) {
             $table->id();
-            $table->uuid('key');
-            $table->uuid('event_key');
+            $table->integer('who_user_id');
+            $table->foreignId('user_id')
+                ->unique();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')
                 ->nullable();
-            // Связи
-            $table->foreign('event_key')
-                ->on('events')
-                ->references('key')
-                ->onDelete('CASCADE');
-            // Индексы
-            $table->index([
-                'id',
-                'key',
-                'event_key',
-            ]);
+
+            $table->foreign('who_user_id')
+                ->on('users')
+                ->references('id')
+                ->onDelete('cascade');
         });
     }
 
@@ -38,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tournaments');
+        Schema::dropIfExists('inviteds');
     }
 };

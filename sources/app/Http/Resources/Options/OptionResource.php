@@ -20,12 +20,12 @@ class OptionResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'event_key' => $this->event_key,
+            'participant_key' => $this->participant_key,
             'entity' => $this->entity,
             'name' => $this->name,
             'value' => $this->value,
             'type' => $this->type,
-            'event' => new EventResource(Event::where(['key' => $this->event_key])->first()),
-            'participant' => new ParticipantResource(Participant::where(['key' => $this->participant_key])->first()),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

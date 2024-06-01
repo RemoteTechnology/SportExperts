@@ -6,7 +6,21 @@ import {
     PROCEDURES
 } from '../constant';
 
-async function getUserRecordRequest(data) {
+async function recordUserToEventRequest(attributes) {
+    return await axios.post(`${BASE_URL}api/v1/participant/store/`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        'jsonrpc': JSON_RPC_VERSION,
+        'id': '1',
+        'notification': false,
+        'method': `${PROCEDURES.participant.create}@${REQUEST_METHOD_DEFAULT}`,
+        'params': attributes
+    })
+}
+
+async function eventRecordRequest(data) {
     return await axios.post(`${BASE_URL}api/v1/user/auth/`, {
         headers: {
             'Content-Type': 'application/json',
@@ -23,4 +37,4 @@ async function getUserRecordRequest(data) {
     })
 }
 
-export { getUserRecordRequest }
+export { recordUserToEventRequest, eventRecordRequest }
