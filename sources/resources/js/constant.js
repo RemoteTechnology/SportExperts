@@ -38,10 +38,51 @@ const PROCEDURES = {
 };
 const REQUEST_METHOD_DEFAULT = 'handle';
 
+const MESSAGES = {
+    NO_DATA: 'Данных нет!',
+    NO_VALID_DATA: 'Проверьте правильность введенных данных!',
+    FORM_SUCCESS: 'Данные усмешно сохранены!',
+    ERROR_ERROR: 'Ошибка сохранения данных!',
+    LOADING_ERROR: 'Ошибка загрузки данных!',
+    SEND_NOTIFICATION: 'Письмо отправлено вам на почту!',
+    LOGIN_ERROR: 'Неправильный логин или пароль!',
+    PASSWORD_DOUBLE: 'Пароли должны совпадать!',
+};
+// TODO: Выставить всё по алфавиту, импорты во всех файлах тоже только там где это уместно!!!!
+const ENDPOINTS = {
+    API: {
+        LIST: 'list',
+        STORE: 'store',
+        READ: 'read',
+        UPDATE: 'update',
+        DESTROY: 'destroy',
+        FILTER: 'filter'
+    },
+    ARCHIVE: 'archive',
+    BASE: '/',
+    CREATE: 'create',
+    DETAIL: 'detail',
+    DELETE: 'delete',
+    EVENT: 'event',
+    FILTER: 'filter',
+    LOGIN: 'login',
+    PROFILE: 'profile',
+    RECOVERY: 'recovery',
+    REGISTRATION: 'registration',
+    UPDATE: 'update',
+};
+
+const RESPONSE = {
+    data: 'data'
+};
+
 export {
     BASE_URL,
     JSON_RPC_VERSION,
     TOKEN, IDENTIFIER,
     REQUEST_METHOD_DEFAULT,
-    PROCEDURES
+    PROCEDURES,
+    MESSAGES,
+    ENDPOINTS,
+    RESPONSE
 };

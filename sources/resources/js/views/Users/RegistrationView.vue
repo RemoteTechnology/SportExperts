@@ -1,16 +1,37 @@
 <script>
-import { BASE_URL } from '../../constant';
+import {
+    BASE_URL,
+    IDENTIFIER,
+    MESSAGES,
+    ENDPOINTS,
+    RESPONSE
+} from "../../constant";
 import { registrationRequest } from '../../api/UserRequest';
+import { loggingRequest } from '../../api/LoggingRequest';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import InputMask from 'primevue/inputmask';
 import FloatLabel from 'primevue/floatlabel';
+import Message from 'primevue/message';
 
 export default {
     data() {
         return {
             baseUrl: BASE_URL,
+            messageError: null,
+            symbols: {
+                'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo', 'Ж': 'Zh', 'З': 'Z', 'И': 'I',
+                'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T',
+                'У': 'U', 'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts', 'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch', 'Ы': 'Y', 'Э': 'E',
+                'Ю': 'Yu', 'Я': 'Ya', 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
+                'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r',
+                'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ы': 'y',
+                'э': 'e', 'ю': 'yu', 'я': 'ya'
+            },
+            response: RESPONSE,
+            route: ENDPOINTS,
+            currentDate: new Date(),
             user: {
                 firstName: null,
                 firstNameEng: null,
@@ -21,15 +42,8 @@ export default {
                 email: null,
                 phone: null,
                 password: null,
+                passwordDouble: null
             }
-            // login: null,
-            // password: null,
-            // gender: null,
-            // name: "",
-            // nameLat: "",
-            // lastName: "",
-            // lastNameLat: "",
-            // numberPhone: "",
         };
     },
     components: {
@@ -38,48 +52,52 @@ export default {
         Button: Button,
         InputMask: InputMask,
         FloatLabel: FloatLabel,
+        Message: Message,
     },
     methods: {
-        onChange(event, nameField) {
-            const result = this.translit(event.target.value);
-            this[nameField] = result;
+        translation: function (argField) {
+            return argField.split('').map(char => this.symbols[char] || char).join('');
         },
-        translit(word) {
-            let answer = '';
-            let converter = {
-                'а': 'a',    'б': 'b',    'в': 'v',    'г': 'g',    'д': 'd',
-                'е': 'e',    'ё': 'e',    'ж': 'zh',   'з': 'z',    'и': 'i',
-                'й': 'y',    'к': 'k',    'л': 'l',    'м': 'm',    'н': 'n',
-                'о': 'o',    'п': 'p',    'р': 'r',    'с': 's',    'т': 't',
-                'у': 'u',    'ф': 'f',    'х': 'h',    'ц': 'c',    'ч': 'ch',
-                'ш': 'sh',   'щ': 'sch',  'ь': '',     'ы': 'y',    'ъ': '',
-                'э': 'e',    'ю': 'yu',   'я': 'ya',
-
-                'А': 'A',    'Б': 'B',    'В': 'V',    'Г': 'G',    'Д': 'D',
-                'Е': 'E',    'Ё': 'E',    'Ж': 'Zh',   'З': 'Z',    'И': 'I',
-                'Й': 'Y',    'К': 'K',    'Л': 'L',    'М': 'M',    'Н': 'N',
-                'О': 'O',    'П': 'P',    'Р': 'R',    'С': 'S',    'Т': 'T',
-                'У': 'U',    'Ф': 'F',    'Х': 'H',    'Ц': 'C',    'Ч': 'Ch',
-                'Ш': 'Sh',   'Щ': 'Sch',  'Ь': '',     'Ы': 'Y',    'Ъ': '',
-                'Э': 'E',    'Ю': 'Yu',   'Я': 'Ya'
-	        };
-            for (let i = 0; i < word.length; ++i ) {
-                if (converter[word[i]] == undefined){
-                    answer += word[i];
-                } else {
-                    answer += converter[word[i]];
+        translationFirstName: function (event) { this.user.firstNameEng = this.translation(this.user.firstName) },
+        translationLastName: function (event) { this.user.lastNameEng = this.translation(this.user.lastName) },
+        sendFormToSignUp: function () {
+            if (this.user.password && this.user.passwordDouble && this.user.password === this.user.passwordDouble) {
+                let attributes = {
+                    first_name: this.user.firstName,
+                    first_name_eng: this.user.firstNameEng,
+                    last_name: this.user.lastName,
+                    last_name_eng: this.user.lastNameEng,
+                    gender: this.user.gender,
+                    password: null,
+                };
+                if (this.user.birthDate) {
+                    attributes.birth_date = this.user.birthDate;
                 }
+                if (this.user.email) {
+                    attributes.email = this.user.email;
+                }
+                if (this.user.phone) {
+                    attributes.phone = this.user.phone;
+                }
+                registrationRequest(attributes)
+                    .then((response) => {
+                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                    })
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'registrationRequest',
+                            status: error.code,
+                            request_data: attributes.toString(),
+                            message: error.message
+                        })
+                    });
             }
-            return answer;
-        },
-        sendFormToSignUp: function() {
-            console.log(registrationRequest(this.user))
-            // registrationRequest(this.user) !== null ?
-            //     /*TODO: проверить код статуса*/
-            //     /*TODO: перенаправить на страницу авторизации*/:
-            //     /*TODO: уведомить об ошибке и подчеркнуть поля которые были зафаршмачены*/;
-
-
+            else
+            {
+                this.messageError = MESSAGES.PASSWORD_DOUBLE;
+            }
         }
     }
 }
@@ -89,9 +107,12 @@ export default {
 <template>
     <section class="d-flex d-center">
         <section class="mt-5">
+            <section class="mt-1 mb-2" v-if="this.messageError !== null">
+                <Message severity="error">{{ this.messageError }}</Message>
+            </section>
             <div class="text-center">
                 <h2>Регистрация</h2>
-                <a :href="this.baseUrl + 'login'">
+                <a :href="this.baseUrl + this.route.LOGIN">
                     <Button label="Вход" severity="info" link />
                 </a>
             </div>
@@ -99,46 +120,66 @@ export default {
                 <div class="d-flex d-between">
                     <div class="form-block w-46">
                         <label for="name">Имя</label>
-                        <InputText type="text" id="name" v-model="name" @change="onChange($event, 'nameLat')"
-                                   placeholder="Сергей" class="w-100" required />
-                        <FloatLabel class="nameLatInput">
-                            <label for="nameLat">Имя на латинице</label>
-                            <InputText type="text" id="nameLat" v-model="nameLat" placeholder="Sergey" class="w-100" required />
-                        </FloatLabel>
+                        <InputText type="text"
+                                   v-model="this.user.firstName"
+                                   @input="this.translationFirstName($event)"
+                                   class="w-100" />
+                        <label for="nameLat">Имя на латинице</label>
+                        <InputText type="text"
+                                   v-model="this.user.firstNameEng"
+                                   class="w-100" />
                     </div>
                     <div class="form-block w-46">
                         <label for="lastName">Фамилия</label>
-                        <InputText type="text" id="lastName" v-model="lastName" placeholder="Губин" @change="onChange($event, 'lastNameLat')" class="w-100" required />
-                        <FloatLabel class="nameLatInput">
-                            <label for="lastNameLat">Фамилия на латинице</label>
-                            <InputText type="text" id="lastNameLat" v-model="lastNameLat" placeholder="Gubin" class="w-100" required />
-                        </FloatLabel>
+                        <InputText type="text"
+                                   v-model="this.user.lastName"
+                                   @input="translationLastName($event)"
+                                   class="w-100" />
+                        <label for="lastNameLat">Фамилия на латинице</label>
+                        <InputText type="text"
+                                   v-model="this.user.lastNameEng"
+                                   class="w-100" />
                     </div>
                 </div>
                 <div class="form-block">
                     <label for="#">email</label>
-                    <InputText type="email" v-model="email" class="w-100" required />
+                    <InputText type="email"
+                               v-model="this.user.email"
+                               class="w-100" />
                 </div>
                 <div class="form-block">
                     <FloatLabel class="nameLatInput">
                         <label for="tel">Номер телефона</label>
-                        <InputMask id="tel" v-model="numberPhone" mask="+7 (999) 999-99-99" class="w-100" />
+                        <InputMask id="tel"
+                                   v-model="this.user.phone"
+                                   mask="+7 (999) 999-99-99"
+                                   class="w-100" />
                     </FloatLabel>
                 </div>
                 <div class="d-flex d-between">
                     <div class="form-block w-46">
                         <label for="#">Дата рождения</label>
-                        <InputText type="date" v-model="birthday" class="w-100"/>
+                        <InputText type="date"
+                                   v-model="this.user.birthDate"
+                                   class="w-100"/>
                     </div>
                     <div class="form-block w-46">
                         <label for="#">Укажите ваш пол</label>
                         <div class="flexing">
                             <label for="radioMale" class="w-auto">
-                                <input type="radio" v-model="picked" id="radioMale" name="gender" value="male" class="w-auto" />
+                                <input type="radio"
+                                       v-model="this.user.gender"
+                                       name="gender"
+                                       value="Мужской"
+                                       class="w-auto" />
                                 Мужской
                             </label>
                             <label for="radioFemale" class="w-auto">
-                                <input type="radio" v-model="picked" id="radioFemale" name="gender" value="female" class="w-auto" />
+                                <input type="radio"
+                                       v-model="this.user.gender"
+                                       name="gender"
+                                       value="Женский"
+                                       class="w-auto" />
                                 Женский
                             </label>
                         </div>
@@ -146,14 +187,21 @@ export default {
                 </div>
                 <div class="form-block">
                     <label for="#">Придумайте пароль</label>
-                    <InputText type="password" v-model="password" class="w-100" required />
+                    <InputText type="password"
+                               v-model="this.user.password"
+                               class="w-100" />
                 </div>
                 <div class="form-block">
                     <label for="#">Повторите пароль</label>
-                    <InputText type="password" v-model="secondPassword" class="w-100" required />
+                    <InputText type="password"
+                               v-model="this.user.passwordDouble"
+                               class="w-100" />
                 </div>
                 <div class="form-block d-flex d-between">
-                    <Button label="Создать аккаунт" @click="sendFormToSignUp" class="w-100" severity="success"/>
+                    <Button label="Создать аккаунт"
+                            @click="sendFormToSignUp"
+                            class="w-100"
+                            severity="success"/>
                 </div>
             </form>
         </section>
