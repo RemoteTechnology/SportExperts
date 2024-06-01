@@ -11,3 +11,5 @@ import {
 function recoveryPasswordRequest(attributes)
 {
 }
+
+export { recoveryPasswordRequest }
