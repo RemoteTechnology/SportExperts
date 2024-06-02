@@ -58,6 +58,8 @@ const ENDPOINTS = {
         DESTROY: 'destroy',
         FILTER: 'filter'
     },
+    SETTINGS: 'settings',
+    HISTORY: 'history',
     ARCHIVE: 'archive',
     BASE: '/',
     CREATE: 'create',

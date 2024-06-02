@@ -1,6 +1,7 @@
 <script>
-import { BASE_URL, TOKEN, IDENTIFIER } from '../../constant';
+import {BASE_URL, TOKEN, IDENTIFIER, MESSAGES, RESPONSE, ENDPOINTS} from '../../constant';
 import { getUser } from '../../api/UserRequest';
+import { loggingRequest } from '../../api/LoggingRequest';
 import {
     getRecordToEventsRequest,
     getEventOwnerRequest,
@@ -24,9 +25,16 @@ import InlineMessage from 'primevue/inlinemessage';
 
 
 export default {
+    computed: {
+        RESPONSE() {
+            return RESPONSE
+        }
+    },
     data() {
         return {
             baseUrl: BASE_URL,
+            currentDate: new Date(),
+            route: ENDPOINTS,
             id: null,
             user: null,
             participants: [],
@@ -35,6 +43,7 @@ export default {
             eventsNoActive: [],
             eventsArchive: [],
             first: 0,
+            messageError: null,
         };
     },
     components: {
@@ -58,11 +67,22 @@ export default {
         short: (str, maxlen) => str.length <= maxlen ? str : str.slice(0, maxlen) + '...',
         userIdentifier: function ()
         {
-            getUser({id: window.$cookies.get(IDENTIFIER)})
+            let attributes = {id: window.$cookies.get(IDENTIFIER)};
+            getUser(attributes)
                 .then((response) => {
                     this.user = response.data.result.original;
                 })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getUserRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.LOADING_ERROR;
+                });
         },
         tokenRead: function ()
         {
@@ -76,41 +96,96 @@ export default {
         },
         userReadToEvent: function ()
         {
-            getRecordToEventsRequest(`user_id:${window.$cookies.get(IDENTIFIER)}`, 'after')
+            let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
+            getRecordToEventsRequest(attributes, 'after')
                 .then((response) => { this.events = response.data.result.original; })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getRecordToEventsRequest',
+                        status: error.code,
+                        request_data: attributes.toString() + 'mode:after',
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.LOADING_ERROR;
+                });
         },
         getEventOwner: function ()
         {
-            getEventOwnerRequest(`user_id:${window.$cookies.get(IDENTIFIER)}`)
+            let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`
+            getEventOwnerRequest(attributes)
                 .then((response) => { this.events = response.data.result.original; })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getEventOwnerRequest',
+                        status: error.code,
+                        request_data: attributes.toString() + ', mode:after, limit:9, startDate:false',
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.NO_DATA;
+                });
             // if (user.role == 'admin')
             // {
+                let attributes2 = `user_id:${window.$cookies.get(IDENTIFIER)}`;
                 getEventOwnerRequest(
-                    `user_id:${window.$cookies.get(IDENTIFIER)}`,
+                    attributes2,
                     'after',
                     9,
                     true
                 )
                     .then((response) => { this.eventsNoActive = response.data.result.original; })
-                    .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'getEventOwnerRequest',
+                            status: error.code,
+                            request_data: attributes2.toString() + ', mode:after, limit:9, startDate:false',
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.NO_DATA;
+                    });
+                let attributes3 = `user_id:${window.$cookies.get(IDENTIFIER)}`;
                 getEventOwnerRequest(
-                    `user_id:${window.$cookies.get(IDENTIFIER)}`,
+                    attributes3,
                         'before',
                         9,
                         false
                 )
                     .then((response) => { this.eventsArchive = response.data.result.original; })
-                    .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'getEventOwnerRequest',
+                            status: error.code,
+                            request_data: attributes3.toString() + ', mode:before, limit:9, startDate:false',
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.NO_DATA;
+                    });
 
             // }
         },
         getParticipants: function ()
         {
-            getEventParticipantRequest(`invited_user_id:${window.$cookies.get(IDENTIFIER)}`)
+            let attributes = `invited_user_id:${window.$cookies.get(IDENTIFIER)}`;
+            getEventParticipantRequest(attributes)
                 .then((response) => { this.participants = response.data.result.original; })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getEventParticipantRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.NO_DATA;
+                });
         }
     },
     beforeMount() {
@@ -131,6 +206,9 @@ export default {
                 <span v-if="this.user.role === 'athlete'">Спортсмена</span></h2>
         </div>
     </section>
+    <section class="mt-1 mb-2" v-if="this.messageError">
+        <Message severity="error">{{ this.messageError }}</Message>
+    </section>
     <section class="d-flex d-between container">
         <div class="w-30">
             <section class="w-100">
@@ -146,12 +224,12 @@ export default {
                                     </h2>
                                 </div>
                                 <div class="mt-06">
-                                    <a :href="this.baseUrl + 'event/create'">
+                                    <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.CREATE">
                                         <Button label="Создать событие" class="w-100" severity="success" />
                                     </a>
                                 </div>
                                 <div class="mt-06">
-                                    <a :href="this.baseUrl + 'profile/settings'">
+                                    <a :href="this.baseUrl + this.route.PROFILE + this.route.BASE + this.route.SETTINGS">
                                         <Button type="button" label="Настройки" class="w-100" severity="primary"/>
                                     </a>
                                 </div>
@@ -205,8 +283,8 @@ export default {
                         </section>
                         <TabView>
                             <TabPanel header="Активные">
-                                <section v-if="this.events['data'].length > 0">
-                                    <section v-for="event in this.events['data']" class="mt-1 mb-1">
+                                <section v-if="this.events[RESPONSE.data].length > 0">
+                                    <section v-for="event in this.events[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
                                                 <div class="d-flex d-between">
@@ -238,17 +316,17 @@ export default {
                                                             <section>
                                                                 <p>Участников: {{ this.participants.length > 0 ? this.participants.length : 0 }}</p>
                                                                 <div class="mb-1">
-                                                                    <a :href="this.baseUrl + 'event?id=' + event.id">
+                                                                    <a :href="this.baseUrl + this.route.EVENT + '?id=' + event.id">
                                                                         <Button label="Подробнее" severity="secondary" outlined class="w-100" />
                                                                     </a>
                                                                 </div>
                                                                 <div class="mb-1">
-                                                                    <a :href="this.baseUrl + 'event/update?id=' + event.id">
+                                                                    <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.UPDATE + '?id=' + event.id">
                                                                         <Button label="Редактировать" severity="primary" outlined class="w-100" />
                                                                     </a>
                                                                 </div>
                                                                 <div>
-                                                                    <a :href="this.baseUrl + 'event/delete?id=' + event.id">
+                                                                    <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.DELETE + '?id=' + event.id">
                                                                         <Button label="В архив" severity="warning" outlined class="w-100" />
                                                                     </a>
                                                                 </div>
@@ -268,8 +346,8 @@ export default {
                                 </section>
                             </TabPanel>
                             <TabPanel header="Прошедшие">
-                                <section v-if="this.eventsNoActive['data'].length > 0">
-                                    <section v-for="event in this.eventsNoActive['data']" class="mt-1 mb-1">
+                                <section v-if="this.eventsNoActive[RESPONSE.data].length > 0">
+                                    <section v-for="event in this.eventsNoActive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
                                                 <div class="d-flex d-between">
@@ -301,17 +379,17 @@ export default {
                                                             <section>
                                                                 <p>Участников: {{ this.participants.length > 0 ? this.participants.length : 0 }}</p>
                                                                 <div class="mb-1">
-                                                                    <a :href="this.baseUrl + 'event?id=' + event.id">
+                                                                    <a :href="this.baseUrl + this.route.EVENT + '?id=' + event.id">
                                                                         <Button label="Подробнее" severity="secondary" outlined class="w-100" />
                                                                     </a>
                                                                 </div>
                                                                 <div class="mb-1">
-                                                                    <a :href="this.baseUrl + 'event/update?id=' + event.id">
+                                                                    <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.UPDATE + '?id=' + event.id">
                                                                         <Button label="Редактировать" severity="primary" outlined class="w-100" />
                                                                     </a>
                                                                 </div>
                                                                 <div>
-                                                                    <a :href="this.baseUrl + 'event/delete?id=' + event.id">
+                                                                    <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.UPDATE + '?id=' + event.id">
                                                                         <Button label="В архив" severity="warning" outlined class="w-100" />
                                                                     </a>
                                                                 </div>
@@ -331,8 +409,8 @@ export default {
                                 </section>
                             </TabPanel>
                             <TabPanel header="В архиве">
-                                <section v-if="this.eventsArchive['data'].length > 0">
-                                    <section v-for="event in this.eventsArchive['data']" class="mt-1 mb-1">
+                                <section v-if="this.eventsArchive[RESPONSE.data].length > 0">
+                                    <section v-for="event in this.eventsArchive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
                                                 <div class="d-flex d-between">
@@ -364,17 +442,17 @@ export default {
                                                             <section>
                                                                 <p>Участников: {{ this.participants.length > 0 ? this.participants.length : 0 }}</p>
                                                                 <div class="mb-1">
-                                                                    <a :href="this.baseUrl + 'event?id=' + event.id">
+                                                                    <a :href="this.baseUrl + this.route.EVENT + '?id=' + event.id">
                                                                         <Button label="Подробнее" severity="secondary" outlined class="w-100" />
                                                                     </a>
                                                                 </div>
                                                                 <div class="mb-1">
-                                                                    <a :href="this.baseUrl + 'event/update?id=' + event.id">
+                                                                    <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.UPDATE + '?id=' + event.id">
                                                                         <Button label="Редактировать" severity="primary" outlined class="w-100" />
                                                                     </a>
                                                                 </div>
                                                                 <div>
-                                                                    <a :href="this.baseUrl + 'event/delete?id=' + event.id">
+                                                                    <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.DELETE + '?id=' + event.id">
                                                                         <Button label="В архив" severity="warning" outlined class="w-100" />
                                                                     </a>
                                                                 </div>
@@ -399,7 +477,7 @@ export default {
             </section>
             <!-- ATHLETE VIEW -->
             <section v-if="this.user.role === 'athlete'" class="mb-5 d-flex d-between d-flex-wrap">
-                <Card v-for="event in this.events['data']"
+                <Card v-for="event in this.events[RESPONSE.data]"
                       v-key="event"
                       style="overflow: hidden"
                       class="mb-3 w-30">
@@ -426,7 +504,7 @@ export default {
                         </div>
                         <div class="flex gap-3 mt-2">
                             <br>
-                            <a :href="this.baseUrl + 'event/history?key=' + event.key">
+                            <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.HISTORY + '?key=' + event.key">
                                 <Button label="Подробнее" severity="secondary" outlined class="w-full" />
                             </a>
                         </div>

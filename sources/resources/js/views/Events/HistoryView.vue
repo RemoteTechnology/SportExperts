@@ -1,16 +1,26 @@
 <script>
-import {BASE_URL, IDENTIFIER} from "../../constant";
-import {getUser} from "../../api/UserRequest";
+import {BASE_URL, ENDPOINTS, IDENTIFIER, MESSAGES, RESPONSE} from "../../constant";
+import { getUser } from "../../api/UserRequest";
 import { getRecordToEventsRequest } from '../../api/FilterRequest';
 import OrganizationChart from 'primevue/organizationchart';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Paginator from 'primevue/paginator';
+import {loggingRequest} from "../../api/LoggingRequest";
 
 export default {
+    computed: {
+        RESPONSE() {
+            return RESPONSE
+        }
+    },
     data() {
       return {
           baseUrl: BASE_URL,
+          currentDate: new Date(),
+          route: ENDPOINTS,
+          messageError: null,
+          messageSuccess: null,
           eventKey: null,
           user: null,
           events: null,
@@ -52,24 +62,57 @@ export default {
         },
         userIdentifier: function ()
         {
-            getUser({id: window.$cookies.get(IDENTIFIER)})
+            let attributes = {id: window.$cookies.get(IDENTIFIER)};
+            getUser(attributes)
                 .then((response) => { this.user = response.data.result.original; })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getUserRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.LOADING_ERROR;
+                });
         },
         eventDate: function ()
         {
             if (this.eventKey)
             {
+                let attributes = `user_id:${this.eventKey}`;
                 //TODO: посмотреть что не так с этим запросом
-                getRecordToEventsRequest(`user_id:${this.eventKey}`, 'after')
+                getRecordToEventsRequest(attributes, 'after')
                     .then((response) => { this.events = response.data.result.original; })
-                    .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'getRecordToEventsRequest',
+                            status: error.code,
+                            request_data: attributes.toString() + ', mode:after',
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.LOADING_ERROR;
+                    });
             }
             else
             {
-                getRecordToEventsRequest(`user_id:${window.$cookies.get(IDENTIFIER)}`, 'all', 28)
+                let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
+                    getRecordToEventsRequest(attributes, 'all', 28)
                     .then((response) => { this.events = response.data.result.original; })
-                    .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'getRecordToEventsRequest',
+                            status: error.code,
+                            request_data: attributes.toString() + ', mode:all, ' + 'limit:28',
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.LOADING_ERROR;
+                    });
             }
         }
     },
@@ -88,6 +131,12 @@ export default {
 </script>
 
 <template>
+    <section class="mt-1 mb-2" v-if="this.messageError">
+        <Message severity="error">{{ this.messageError }}</Message>
+    </section>
+    <section class="mt-1 mb-2" v-if="this.messageSuccess">
+        <Message severity="error">{{ this.messageSuccess }}</Message>
+    </section>
     <section v-if="eventKey" class="mt-5 mb-5">
         <OrganizationChart :value="this.tournament">
             <template #default="slotProps">
@@ -99,7 +148,7 @@ export default {
     </section>
     <section v-else class="mt-5 mb-5">
         <section class="container d-flex d-between d-flex-wrap">
-            <Card v-for="event in this.events['data']"
+            <Card v-for="event in this.events[RESPONSE.data]"
                   v-key="event"
                   style="overflow: hidden"
                   class="mb-3 w-22">
@@ -124,7 +173,7 @@ export default {
                     </div>
                     <div class="flex gap-3 mt-2">
                         <br>
-                        <a :href="this.baseUrl + 'event/history?key=' + event.key">
+                        <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.HISTORY + '?key=' + event.key">
                             <Button label="Подробнее" severity="secondary" outlined class="w-100" />
                         </a>
                     </div>
