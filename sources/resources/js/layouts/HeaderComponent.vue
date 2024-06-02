@@ -1,9 +1,8 @@
 <script>
-import { BASE_URL, TOKEN, IDENTIFIER } from '../constant';
+import {BASE_URL, TOKEN, IDENTIFIER, ENDPOINTS} from '../constant';
 import Menubar from 'primevue/menubar';
 import Image from 'primevue/image';
 import Button from 'primevue/button';
-import { ref } from "vue";
 
 export default {
     name: 'HeaderComponent',
@@ -11,26 +10,27 @@ export default {
         return {
             baseUrl: BASE_URL,
             token: null,
+            route: ENDPOINTS,
             items: [
                 {
                     label: 'Профиль',
                     icon: 'pi pi-user',
                     command: () => {
-                        window.location = BASE_URL + 'profile'
+                        window.location = BASE_URL + ENDPOINTS.PROFILE
                     },
                 },
                 {
                     label: 'События',
                     icon: 'pi pi-calendar',
                     command: () => {
-                        window.location = BASE_URL + 'event'
+                        window.location = BASE_URL + ENDPOINTS.EVENT
                     },
                 },
                 {
                     label: 'Настройки',
                     icon: 'pi pi-cog',
                     command: () => {
-                        window.location = BASE_URL + 'profile/settings'
+                        window.location = BASE_URL + ENDPOINTS.PROFILE + ENDPOINTS.BASE + ENDPOINTS.SETTINGS
                     },
                 },
             ]
@@ -80,7 +80,7 @@ export default {
             <template #end>
                 <div class="flex align-items-center gap-2">
                     <Button v-if="this.token" label="Выход" severity="danger" @click="logout" />
-                    <a v-else :href="baseUrl + 'login'">
+                    <a v-else :href="baseUrl + this.route.LOGIN">
                         <Button label="Войти в личный кабинет" severity="success" />
                     </a>
                 </div>

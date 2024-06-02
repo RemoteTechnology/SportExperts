@@ -1,5 +1,5 @@
 <script>
-import {BASE_URL, IDENTIFIER, TOKEN} from "../../constant";
+import {BASE_URL, ENDPOINTS, IDENTIFIER, MESSAGES, TOKEN} from "../../constant";
 import { getUser, getInvitedOwnerRequest } from "../../api/UserRequest";
 import { getEventRequest } from '../../api/EventRequest';
 import { recordUserToEventRequest, eventRecordRequest } from '../../api/ParticipantRequest';
@@ -13,11 +13,16 @@ import ColumnGroup from 'primevue/columngroup';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Listbox from 'primevue/listbox';
+import {loggingRequest} from "../../api/LoggingRequest";
 
 export default {
     data(){
         return {
             baseUrl: BASE_URL,
+            currentDate: new Date(),
+            route: ENDPOINTS,
+            messageError: null,
+            messageSuccess: null,
             user: null,
             eventId: null,
             event: null,
@@ -49,11 +54,22 @@ export default {
         },
         userIdentifier: function ()
         {
-            getUser({id: window.$cookies.get(IDENTIFIER)})
+            let attributes = {id: window.$cookies.get(IDENTIFIER)};
+            getUser(attributes)
                 .then((response) => {
                     this.user = response.data.result.original;
                 })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getUserRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.LOADING_ERROR;
+                });
         },
         getUrl: function ()
         {
@@ -63,9 +79,20 @@ export default {
         },
         getEvent: function ()
         {
-            getEventRequest({ id: this.eventId })
+            let attributes = { id: this.eventId };
+            getEventRequest(attributes)
                 .then((response) => { this.event = response.data.result.original; })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getEventRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.LOADING_ERROR;
+                });
         },
         addParticipant: function ()
         {
@@ -77,31 +104,64 @@ export default {
         },
         inviteToEvent: function ()
         {
-            recordUserToEventRequest({
+            let attributes = {
                 event_id: this.eventId,
                 user_id: this.invitedValue.id,
                 invited_user_id: window.$cookies.get(IDENTIFIER),
                 // team_key: null,
-            })
-                .then((response) => { response.data.result.original ? alert('success add record') : alert('no add record to event'); })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+            };
+            recordUserToEventRequest(attributes)
+                .then((response) => { this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR; })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'recordUserToEventRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.ERROR_ERROR;
+                });
         },
         invited: function ()
         {
-            recordUserToEventRequest({
+            let attributes = {
                 event_id: this.eventId,
                 user_id: this.user.id,
                 invited_user_id: window.$cookies.get(IDENTIFIER),
                 // team_key: null,
-            })
-                .then((response) => { response.data.result.original ? alert('success add record') : alert('no add record to event'); })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+            };
+            recordUserToEventRequest(attributes)
+                .then((response) => { this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR; })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'recordUserToEventRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.ERROR_ERROR;
+                });
         },
         getWhoInvited: function ()
         {
-            getInvitedOwnerRequest({ who_user_id: window.$cookies.get(IDENTIFIER) })
+            let attributes = { who_user_id: window.$cookies.get(IDENTIFIER) };
+            getInvitedOwnerRequest(attributes)
                 .then((response) => { this.invites = response.data.result.original; })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getInvitedOwnerRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.LOADING_ERROR;
+                });
         }
     },
     beforeMount() {
@@ -148,6 +208,12 @@ export default {
     </Dialog>
     <!-- Контентная часть -->
     <section v-if="this.event != null" class="mt-5 mb-5">
+        <section class="mt-1 mb-2" v-if="this.messageError">
+            <Message severity="error">{{ this.messageError }}</Message>
+        </section>
+        <section class="mt-1 mb-2" v-if="this.messageSuccess">
+            <Message severity="error">{{ this.messageSuccess }}</Message>
+        </section>
         <section class="container d-flex d-between d-flex-wrap">
             <div class="w-50">
                 <Image src="https://shakasports.com/images/1714108924_Khabarovsk%20Open%202024.jpg" :alt="this.event.name" />

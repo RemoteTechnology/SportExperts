@@ -1,5 +1,5 @@
 <script>
-import {BASE_URL, ENDPOINTS, IDENTIFIER} from '../../constant';
+import {BASE_URL, ENDPOINTS, IDENTIFIER, MESSAGES} from '../../constant';
 import { getUser, updateUserRequest } from '../../api/UserRequest';
 import Breadcrumb from 'primevue/breadcrumb';
 import Card from 'primevue/card';
@@ -8,7 +8,7 @@ import InputMask from 'primevue/inputmask';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Calendar from 'primevue/calendar';
-import {loggingRequest} from "../../api/LoggingRequest";
+import { loggingRequest } from "../../api/LoggingRequest";
 
 export default {
     data() {
@@ -49,6 +49,7 @@ export default {
                         request_data: attributes.toString(),
                         message: error.message
                     });
+                    this.messageError = MESSAGES.LOADING_ERROR;
                 });
         },
         userGeneralUpdate: function ()
@@ -72,7 +73,7 @@ export default {
                         request_data: attributes.toString(),
                         message: error.message
                     });
-                    this.messageError = true;
+                    this.messageError = MESSAGES.ERROR_ERROR;
                 });
         },
         userEmailUpdate: function ()
@@ -89,7 +90,7 @@ export default {
                         request_data: attributes.toString(),
                         message: error.message
                     });
-                    this.messageError = true;
+                    this.messageError = MESSAGES.ERROR_ERROR;
                 });
         },
         userPhoneUpdate: function ()
@@ -106,7 +107,7 @@ export default {
                         request_data: attributes.toString(),
                         message: error.message
                     });
-                    this.messageError = true;
+                    this.messageError = MESSAGES.ERROR_ERROR;
                 });
         },
         userPasswordNew: function ()
@@ -134,7 +135,7 @@ export default {
                     <Message severity="success">Данные сохранены!</Message>
                 </section>
                 <section class="mt-1 mb-2" v-if="this.messageError">
-                    <Message severity="error">Ошибка сохранения данных!</Message>
+                    <Message severity="error">{{ this.messageError }}</Message>
                 </section>
             </div>
             <Card>

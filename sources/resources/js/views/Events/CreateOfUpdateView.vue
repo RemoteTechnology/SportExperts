@@ -1,5 +1,5 @@
 <script>
-import {BASE_URL, IDENTIFIER, TOKEN} from "../../constant";
+import {BASE_URL, ENDPOINTS, IDENTIFIER, MESSAGES, TOKEN} from "../../constant";
 import {
     createEventRequest,
     getEventRequest,
@@ -17,14 +17,17 @@ import Textarea from 'primevue/textarea';
 import Card from 'primevue/card';
 import Calendar from 'primevue/calendar';
 import FileUpload from 'primevue/fileupload';
+import {loggingRequest} from "../../api/LoggingRequest";
 
 export default {
-    data()
-    {
+    data() {
         return {
             banner: null,
             baseUrl: BASE_URL,
+            currentDate: new Date(),
+            route: ENDPOINTS,
             messageError: null,
+            messageSuccess: null,
             optionName: null,
             optionValue: null,
             eventId: null,
@@ -86,14 +89,25 @@ export default {
         {
             if (this.options)
             {
+                let attributes = '<FILE>';
                 let inputFile = this.onUpload()
                     .then((response) => { this.event.image = response.data; })
-                    .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'uploadFileRequest',
+                            status: error.code,
+                            request_data: attributes.toString(),
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.ERROR_ERROR;
+                    });
 
                 if (this.event.image.key)
                 {
                     // TODO: разобраться почему событие создаётся со второго раза!!!!
-                    createEventRequest({
+                    let attributes = {
                         user_id: this.event.user_id,
                         name: this.event.name,
                         description: this.event.description,
@@ -102,22 +116,47 @@ export default {
                         start_time: this.event.start_time,
                         expiration_date: this.event.expiration_date,
                         expiration_time: this.event.expiration_time,
-                    })
-                        .then((response) => { this.event = response.data.result.original; alert('ok!'); })
-                        .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); alert('no!'); });
+                    };
+                    createEventRequest(attributes)
+                        .then((response) => {
+                            this.event = response.data.result.original;
+                            this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                        })
+                        .catch((error) => {
+                            loggingRequest({
+                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                method: 'uploadFileRequest',
+                                status: error.code,
+                                request_data: attributes.toString(),
+                                message: error.message
+                            });
+                            this.messageError = MESSAGES.ERROR_ERROR;
+                        });
                     // Сохранение опций (параметров)
                     // TODO: вынести в отдельный метод
                     for (let i=0; i < this.options.length; i++)
                     {
-                        createEventOptionRequest({
+                        let attributes = {
                             event_key: this.event.key,
                             entity: 'event',
                             name: this.options[i].name,
                             value: this.options[i].value,
                             type: this.options[i].type,
-                        })
-                            .then((response) => { console.log(response); this.event = response.data.result.original; })
-                            .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); alert('error save option!'); });
+                        };
+                        createEventOptionRequest(attributes)
+                            .then((response) => { this.event = response.data.result.original; })
+                            .catch((error) => {
+                                loggingRequest({
+                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                    method: 'createEventOptionRequest',
+                                    status: error.code,
+                                    request_data: attributes.toString(),
+                                    message: error.message
+                                });
+                                this.messageError = MESSAGES.ERROR_ERROR;
+                            });
                     }
                 }
                 else
@@ -138,11 +177,22 @@ export default {
                 console.log(this.event)
                 if (this.$refs.fileInput.files[0])
                 {
+                    let attributes = '<FILE>';
                     let inputFile = this.onUpload()
                         .then((response) => { this.event.image = response.data; })
-                        .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                        .catch((error) => {
+                            loggingRequest({
+                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                method: 'uploadFileRequest',
+                                status: error.code,
+                                request_data: attributes.toString(),
+                                message: error.message
+                            });
+                            this.messageError = MESSAGES.ERROR_ERROR;
+                        });
                 }
-                updateEventRequest({
+                let attributes = {
                     id: this.event.id,
                     user_id: this.event.owner.id,
                     name: this.event.name,
@@ -152,9 +202,23 @@ export default {
                     start_time: this.event.start_time,
                     expiration_date: this.event.expiration_date,
                     expiration_time: this.event.expiration_time,
-                })
-                    .then((response) => { this.event = response.data.result.original; alert('ok update!'); })
-                    .catch((error) => { /*TODO: тут надо что то придумать.*/ alert('no update!'); });
+                };
+                updateEventRequest(attributes)
+                    .then((response) => {
+                        this.event = response.data.result.original;
+                        this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                    })
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'updateEventRequest',
+                            status: error.code,
+                            request_data: attributes.toString(),
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.ERROR_ERROR;
+                    });
                 for (let i=0; i < this.options.length; i++)
                 {
                     let option = {
@@ -167,14 +231,34 @@ export default {
                     if (Object.hasOwn(this.options[i], 'id'))
                     {
                         updateEventOptionRequest(option)
-                            .then((response) => { console.log(response); this.event = response.data.result.original; })
-                            .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); alert('error save option!'); });
+                            .then((response) => { this.event = response.data.result.original; })
+                            .catch((error) => {
+                                loggingRequest({
+                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                    method: 'updateEventOptionRequest',
+                                    status: error.code,
+                                    request_data: option.toString(),
+                                    message: error.message
+                                });
+                                this.messageError = MESSAGES.ERROR_ERROR;
+                            });
                     }
                     else
                     {
                         createEventOptionRequest(option)
-                            .then((response) => { console.log(response); this.event = response.data.result.original; })
-                            .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); alert('error save option!'); });
+                            .then((response) => { this.event = response.data.result.original; })
+                            .catch((error) => {
+                                loggingRequest({
+                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                    method: 'createEventOptionRequest',
+                                    status: error.code,
+                                    request_data: option.toString(),
+                                    message: error.message
+                                });
+                                this.messageError = MESSAGES.ERROR_ERROR;
+                            });
                     }
                 }
             }
@@ -193,12 +277,23 @@ export default {
         },
         getEvent: function ()
         {
-            getEventRequest({ id: this.eventId })
+            let attributes = { id: this.eventId };
+            getEventRequest(attributes)
                 .then((response) => {
                     this.event = response.data.result.original;
                     this.options = this.event.options;
                 })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getEventRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.LOADING_ERROR;
+                });
         },
         editorLoad: function ({instance})
         {
@@ -216,13 +311,16 @@ export default {
 
 <template>
     <section class="mt-5 mb-5">
+        <section class="mt-1 mb-2" v-if="this.messageError">
+            <Message severity="error">{{ this.messageError }}</Message>
+        </section>
+        <section class="mt-1 mb-2" v-if="this.messageSuccess">
+            <Message severity="error">{{ this.messageSuccess }}</Message>
+        </section>
         <div class="mt-3">
             <h2 v-if="this.eventId" class="text-center">Создать новое спортивное событие</h2>
             <h2 v-else class="text-center">Создать новое спортивное событие</h2>
         </div>
-        <section class="mt-1 mb-2" v-if="this.messageError !== null">
-            <Message severity="error">{{ this.messageError }}</Message>
-        </section>
         <section class="container d-flex d-between d-flex-wrap">
             <form class="w-50">
                 <div class="form-block">
