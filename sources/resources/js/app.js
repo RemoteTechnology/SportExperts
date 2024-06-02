@@ -14,7 +14,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 /**
  * Next, we will create a fresh Vue application instance. You may thlayouten begin
- * registering components with the application instance so they are ready
+ * registering rules with the application instance so they are ready
  * to use in your application's views. An example is included for you.
  */
 
@@ -67,10 +67,10 @@ import EventDetailsView from './views/Events/DetailsView.vue';
 app.component('event-detail-view', EventDetailsView);
 /**
  * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
+ * Vue rules. It will recursively scan this directory for the Vue
+ * rules and automatically register them with their "basename".
  *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
+ * Eg. ./rules/ExampleComponent.vue -> <example-component></example-component>
  */
 
 // Object.entries(import.meta.glob('./**/*.vue', { eager: true })).forEach(([path, definition]) => {

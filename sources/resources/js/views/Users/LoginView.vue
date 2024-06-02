@@ -31,7 +31,7 @@ export default {
         Message: Message,
     },
     methods: {
-        authorizationRequest: function() {
+        authorizationRequest: function () {
             let attributes = {email: this.email, password: this.password};
             authorizationRequest(attributes)
                 .then((response) => {
@@ -75,7 +75,9 @@ export default {
             <form>
                 <div class="form-block">
                     <label for="#">Введите логин</label>
-                    <InputText type="email" v-model="email" class="w-100"/>
+                    <InputText type="email"
+                               v-model="email"
+                               class="w-100"/>
                 </div>
                 <div class="form-block">
                     <label for="#">Введите пароль</label>

@@ -23,7 +23,7 @@ async function registrationRequest(data)
     })
 }
 
-async function getUser(data)
+async function getUser(attributes)
 {
     return await axios.post(`${BASE_URL}api/v1/user/read`, {
         headers: {
@@ -34,13 +34,11 @@ async function getUser(data)
         'id': '1',
         'notification': false,
         'method': `${PROCEDURES.users.read}@${REQUEST_METHOD_DEFAULT}`,
-        'params': {
-            id: data.id
-        }
+        'params': attributes
     });
 }
 
-async function updateUser(attributes)
+async function updateUserRequest(attributes)
 {
     return await axios.post(`${BASE_URL}api/v1/user/update`, {
         headers: {
@@ -74,4 +72,4 @@ async function getInvitedOwnerRequest(attributes)
     });
 }
 
-export { registrationRequest, getUser, updateUser, getInvitedOwnerRequest }
+export { registrationRequest, getUser, updateUserRequest, getInvitedOwnerRequest }
