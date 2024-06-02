@@ -38,8 +38,7 @@ return new class extends Migration
             // Связь
             $table->foreign('user_id')
                 ->on('users')
-                ->references('id')
-                ->onDelete("CASCADE");
+                ->references('id');
             // Индексы
             $table->index([
                 'id',

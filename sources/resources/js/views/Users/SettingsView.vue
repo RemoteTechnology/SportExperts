@@ -1,6 +1,6 @@
 <script>
-import {BASE_URL, IDENTIFIER} from '../../constant';
-import { getUser, updateUser } from '../../api/UserRequest';
+import {BASE_URL, ENDPOINTS, IDENTIFIER} from '../../constant';
+import { getUser, updateUserRequest } from '../../api/UserRequest';
 import Breadcrumb from 'primevue/breadcrumb';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
@@ -8,12 +8,15 @@ import InputMask from 'primevue/inputmask';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Calendar from 'primevue/calendar';
+import {loggingRequest} from "../../api/LoggingRequest";
 
 export default {
     data() {
       return {
-          alertSuccess: false,
-          alertError: false,
+          messageSuccess: false,
+          messageError: false,
+          route: ENDPOINTS,
+          currentDate: new Date(),
           baseUrl: BASE_URL,
           breadcrumbPages: [
               { label: 'Профиль', },
@@ -34,40 +37,77 @@ export default {
     methods: {
         userIdentifier: function ()
         {
-            getUser({id: window.$cookies.get(IDENTIFIER)})
+            let attributes = {id: window.$cookies.get(IDENTIFIER)};
+            getUser(attributes)
                 .then((response) => { this.user = response.data.result.original })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getUserRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                });
         },
         userGeneralUpdate: function ()
         {
-            updateUser({
+            let attributes = {
                 id: window.$cookies.get(IDENTIFIER),
                 first_name: this.user.first_name,
                 first_name_eng: this.user.first_name_eng,
                 last_name: this.user.last_name,
                 last_name_eng: this.user.last_name_eng,
                 birth_date: this.user.birth_date,
-            })
-                .then((response) => { console.log(response); this.alertSuccess = true; })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); this.alertError = true; });
+            };
+            updateUserRequest(attributes)
+                .then((response) => { if (response.status === 200) { this.messageSuccess = true; } })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'updateUserRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = true;
+                });
         },
         userEmailUpdate: function ()
         {
-            updateUser({
-                id: window.$cookies.get(IDENTIFIER),
-                email: this.user.email
-            })
-                .then((response) => { this.alertSuccess = true })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); this.alertError = true; });
+            let attributes = { id: window.$cookies.get(IDENTIFIER), email: this.user.email };
+            updateUserRequest(attributes)
+                .then((response) => { if (response.status === 200) { this.messageSuccess = true; } })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'updateUserRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = true;
+                });
         },
         userPhoneUpdate: function ()
         {
-            updateUser({
-                id: window.$cookies.get(IDENTIFIER),
-                phone: this.user.phone
-            })
-                .then((response) => { this.alertSuccess = true })
-                .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); this.alertError = true; });
+            let attributes = { id: window.$cookies.get(IDENTIFIER), phone: this.user.phone };
+            updateUserRequest(attributes)
+                .then((response) => { if (response.status === 200) { this.messageSuccess = true; } })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'updateUserRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = true;
+                });
         },
         userPasswordNew: function ()
         {
@@ -90,10 +130,10 @@ export default {
             </div>
             <div class="text-center mt-3 mb-3">
                 <h2>Настройки профиля</h2>
-                <section class="mt-1 mb-2" v-if="this.alertSuccess">
+                <section class="mt-1 mb-2" v-if="this.messageSuccess">
                     <Message severity="success">Данные сохранены!</Message>
                 </section>
-                <section class="mt-1 mb-2" v-if="this.alertError">
+                <section class="mt-1 mb-2" v-if="this.messageError">
                     <Message severity="error">Ошибка сохранения данных!</Message>
                 </section>
             </div>

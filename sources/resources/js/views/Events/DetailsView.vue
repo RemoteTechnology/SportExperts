@@ -80,8 +80,8 @@ export default {
             recordUserToEventRequest({
                 event_id: this.eventId,
                 user_id: this.invitedValue.id,
-                invited_user_id: this.user.id,
-                team_key: null,
+                invited_user_id: window.$cookies.get(IDENTIFIER),
+                // team_key: null,
             })
                 .then((response) => { response.data.result.original ? alert('success add record') : alert('no add record to event'); })
                 .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error); });
@@ -90,7 +90,7 @@ export default {
         {
             recordUserToEventRequest({
                 event_id: this.eventId,
-                user_id: this.invitedValue.id,
+                user_id: this.user.id,
                 invited_user_id: window.$cookies.get(IDENTIFIER),
                 // team_key: null,
             })

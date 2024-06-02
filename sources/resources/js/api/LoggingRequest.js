@@ -7,9 +7,9 @@ import {
     TOKEN
 } from '../constant';
 
-
-function recoveryPasswordRequest(attributes)
+function loggingRequest(attributes)
 {
+
 }
 
-export { recoveryPasswordRequest }
+export { loggingRequest }

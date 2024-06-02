@@ -8,10 +8,9 @@ import {
 } from '../constant';
 
 
-function registrationRequest(data)
+async function registrationRequest(data)
 {
-    var response = null;
-    axios.post(`${BASE_URL}api/v1/user/registration`, {
+    return await axios.post(`${BASE_URL}api/v1/user/registration`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept':       'application/json',
@@ -20,24 +19,11 @@ function registrationRequest(data)
         'id':               '1',
         'notification':     false,
         'method':           `${PROCEDURES.users.registration}@${REQUEST_METHOD_DEFAULT}`,
-        'params': {
-            first_name:     data.firstName,
-            first_name_eng: data.firstNameEng,
-            last_name:      data.lastName,
-            last_name_eng:  data.lastNameEng,
-            birth_date:     data.birthDate,
-            gender:         data.gender,
-            email:          data.email,
-            phone:          data.phone,
-            password:       data.password
-        }
+        'params': attributes
     })
-        .then((httpResponse) => { response = httpResponse })
-        .catch((error) => { /*TODO: тут надо что то придумать.*/ console.log(error) })
-    return response;
 }
 
-async function getUser(data)
+async function getUser(attributes)
 {
     return await axios.post(`${BASE_URL}api/v1/user/read`, {
         headers: {
@@ -48,13 +34,11 @@ async function getUser(data)
         'id': '1',
         'notification': false,
         'method': `${PROCEDURES.users.read}@${REQUEST_METHOD_DEFAULT}`,
-        'params': {
-            id: data.id
-        }
+        'params': attributes
     });
 }
 
-async function updateUser(attributes)
+async function updateUserRequest(attributes)
 {
     return await axios.post(`${BASE_URL}api/v1/user/update`, {
         headers: {
@@ -88,4 +72,4 @@ async function getInvitedOwnerRequest(attributes)
     });
 }
 
-export { registrationRequest, getUser, updateUser, getInvitedOwnerRequest }
+export { registrationRequest, getUser, updateUserRequest, getInvitedOwnerRequest }
