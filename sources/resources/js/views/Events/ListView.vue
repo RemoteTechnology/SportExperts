@@ -34,6 +34,12 @@ export default {
     },
     methods: {
         short: (str, maxlen) => str.length <= maxlen ? str : str.slice(0, maxlen) + '...',
+        stripHtmlTags: function(html)
+        {
+            let tmp = document.createElement("DIV");
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || "";
+        },
         userIdentifier: function ()
         {
             const userId = window.$cookies.get(IDENTIFIER);
@@ -57,7 +63,7 @@ export default {
         eventList: function ()
         {
             getEventListRequest()
-                .then((response) => { this.events = response.data.result.original; })
+                .then((response) => { console.log(response); this.events = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -90,18 +96,18 @@ export default {
                   style="overflow: hidden"
                   class="mb-3 w-22">
                 <template #header>
-                    <div style="
-                            background-size: cover;
-                            background-position: top;
-                            background-image: url(https://shakasports.com/images/1714108924_Khabarovsk%20Open%202024.jpg);
-                            height: 14em;
-                            width: 100%;
-                            background-repeat: no-repeat;
+                    <div :style="
+                            'background-size: cover;' +
+                            'background-position: top;' +
+                            'background-image: url(' + this.baseUrl + 'storage/uploads/' + event.image.name + ');' +
+                            'height: 14em;' +
+                            'width: 100%;' +
+                            'background-repeat: no-repeat;'
                     "></div>
                 </template>
                 <template #title>{{event.name }}</template>
                 <template #content>
-                    <p class="m-0"> {{ this.short(event.description, 130) }}</p>
+                    <p class="m-0"> {{ this.stripHtmlTags(this.short(event.description, 130)) }}</p>
                 </template>
                 <template #footer>
                     <span>Даты проведения:</span>

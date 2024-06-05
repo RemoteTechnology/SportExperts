@@ -7,7 +7,7 @@ import {
 } from '../constant';
 
 async function getRecordToEventsRequest(attributes, mode='after', limit=9) {
-    return await axios.post(`${BASE_URL}api/v1/event/filter/participants/to/events`, {
+    return await axios.post(`${BASE_URL}api/v1/event/filter/participant/to/events`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

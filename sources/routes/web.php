@@ -3,6 +3,7 @@
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ParticipantController;
+use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\UserController;
 use App\Http\Resources\Events\EventCollection;
 use Illuminate\Support\Facades\Route;
@@ -37,4 +38,9 @@ Route::prefix('event')->group(function () {
     Route::get('/detail', [EventController::class, 'detail']);
     Route::get('/update', [EventController::class, 'update']);
     Route::get('/history', [EventController::class, 'history']);
+});
+
+Route::prefix('tournament')->group(function () {
+    Route::get('/', [TournamentController::class, 'index']);
+    Route::get('/settings', [TournamentController::class, 'settings']);
 });

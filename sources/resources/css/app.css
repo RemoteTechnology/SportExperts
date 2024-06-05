@@ -73,11 +73,23 @@ ul li{
 .w-50{
     width: 50%;
 }
+.w-55{
+    width: 55%;
+}
 .w-70{
     width: 69%;
 }
+.w-90{
+    width: 90%;
+}
 .w-100{
     width: 100%;
+}
+.w-140{
+    width: 140%;
+}
+.w-160{
+    width: 160%;
 }
 .h-22{
     height: 22em;

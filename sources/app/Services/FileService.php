@@ -25,7 +25,7 @@ class FileService
     {
         return [
             'key' => Str::uuid()->toString(),
-            'name' => $file->getFilename(),
+            'name' => $file->getClientOriginalName(),
             'mime' => $file->getClientMimeType(),
             'size' => $file->getSize(),
             'extension' => $file->getExtension(),

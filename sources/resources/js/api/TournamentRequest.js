@@ -1,0 +1,6 @@
+function getTournamentTableToEvent()
+{
+
+}
+
+export { getTournamentTableToEvent };

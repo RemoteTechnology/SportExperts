@@ -60,15 +60,15 @@ export default {
         },
         translationFirstName: function (event) { this.user.firstNameEng = this.translation(this.user.firstName) },
         translationLastName: function (event) { this.user.lastNameEng = this.translation(this.user.lastName) },
-        sendFormToSignUp: function () {
-            if (this.user.password && this.user.passwordDouble && this.user.password === this.user.passwordDouble) {
+        signUp: function () {
+            // if (this.user.password && this.user.passwordDouble && this.user.password === this.user.passwordDouble) {
                 let attributes = {
                     first_name: this.user.firstName,
                     first_name_eng: this.user.firstNameEng,
                     last_name: this.user.lastName,
                     last_name_eng: this.user.lastNameEng,
                     gender: this.user.gender,
-                    password: null,
+                    password: this.user.password,
                 };
                 if (this.user.birthDate) {
                     attributes.birth_date = this.user.birthDate;
@@ -93,11 +93,11 @@ export default {
                             message: error.message
                         })
                     });
-            }
-            else
-            {
-                this.messageError = MESSAGES.PASSWORD_DOUBLE;
-            }
+            // }
+            // else
+            // {
+            //     this.messageError = MESSAGES.PASSWORD_DOUBLE;
+            // }
         }
     }
 }
@@ -148,13 +148,11 @@ export default {
                                class="w-100" />
                 </div>
                 <div class="form-block">
-                    <FloatLabel class="nameLatInput">
-                        <label for="tel">Номер телефона</label>
-                        <InputMask id="tel"
-                                   v-model="this.user.phone"
-                                   mask="+7 (999) 999-99-99"
-                                   class="w-100" />
-                    </FloatLabel>
+                    <label for="tel">Номер телефона</label>
+                    <InputMask id="tel"
+                               v-model="this.user.phone"
+                               mask="+7 (999) 999-99-99"
+                               class="w-100" />
                 </div>
                 <div class="d-flex d-between">
                     <div class="form-block w-46">
@@ -170,7 +168,7 @@ export default {
                                 <input type="radio"
                                        v-model="this.user.gender"
                                        name="gender"
-                                       value="Мужской"
+                                       value="Мужчина"
                                        class="w-auto" />
                                 Мужской
                             </label>
@@ -178,7 +176,7 @@ export default {
                                 <input type="radio"
                                        v-model="this.user.gender"
                                        name="gender"
-                                       value="Женский"
+                                       value="Женщина"
                                        class="w-auto" />
                                 Женский
                             </label>
@@ -199,7 +197,7 @@ export default {
                 </div>
                 <div class="form-block d-flex d-between">
                     <Button label="Создать аккаунт"
-                            @click="sendFormToSignUp"
+                            @click="this.signUp"
                             class="w-100"
                             severity="success"/>
                 </div>

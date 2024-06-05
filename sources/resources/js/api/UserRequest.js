@@ -8,7 +8,7 @@ import {
 } from '../constant';
 
 
-async function registrationRequest(data)
+async function registrationRequest(attributes)
 {
     return await axios.post(`${BASE_URL}api/v1/user/registration`, {
         headers: {

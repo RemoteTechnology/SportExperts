@@ -48,6 +48,12 @@ export default {
         Listbox: Listbox,
     },
     methods: {
+        stripHtmlTags: function(html)
+        {
+            let tmp = document.createElement("DIV");
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || "";
+        },
         tokenRead: function ()
         {
             this.token = window.$cookies.get(TOKEN);
@@ -216,7 +222,7 @@ export default {
         </section>
         <section class="container d-flex d-between d-flex-wrap">
             <div class="w-50">
-                <Image src="https://shakasports.com/images/1714108924_Khabarovsk%20Open%202024.jpg" :alt="this.event.name" />
+                <Image :src="this.baseUrl + 'storage/uploads/' + this.event.image.name" :alt="this.event.name" />
                 <div class="mt-3">
                     <h3>ИНФОРМАЦИЯ</h3>
                     <br>
@@ -224,7 +230,7 @@ export default {
                         white-space: break-spaces;
                         line-height: 120%;
                         color: #323232;
-                    ">{{ this.event.description }}</p>
+                    ">{{ this.stripHtmlTags(this.event.description) }}</p>
                 </div>
             </div>
             <div class="w-50">
