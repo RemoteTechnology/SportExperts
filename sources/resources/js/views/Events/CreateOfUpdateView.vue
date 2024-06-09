@@ -252,7 +252,7 @@ export default {
         },
         updateEventObject: async function()
         {
-            // await this.createFile();
+            await this.createFile();
             await this.updateEvent();
             await this.updateOrCreateOptions();
 

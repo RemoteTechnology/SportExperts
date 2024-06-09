@@ -7,12 +7,14 @@ namespace App\Http\Procedures\V1\Users;
 use App\Domain\Constants\LogLevelEnum;
 use App\Http\Requests\Users\RegistrationUserRequest;
 use App\Http\Resources\Users\UserResource;
+use App\Mail\Users\CreateUserMail;
 use App\Repository\UserRepository;
 use App\Services\LoggingService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Sajya\Server\Procedure;
 
 class UserRegistrationProcedure extends Procedure
@@ -41,14 +43,19 @@ class UserRegistrationProcedure extends Procedure
     public function handle(Request $http, RegistrationUserRequest $request): JsonResponse
     {
         $inputData = $request->validated();
-        $inputData['password'] = Hash::make($inputData['password']);
-        $inputData['role'] = 'admin';
 //        try {
-            return new JsonResponse(
-                new UserResource(
-                    $this->operation->store($inputData)
-                )
-            );
+            $inputData['password'] = Hash::make($inputData['password']);
+            $inputData['role'] = 'admin';
+
+            if ($user = new UserResource(
+                $this->operation->store($inputData)
+            )) {
+                Mail::to($user->email)->send(new CreateUserMail());
+                return new JsonResponse(
+                    data: $user,
+                    status: 201
+                );
+            }
 //        }
 //        catch (Exception $e)
 //        {
@@ -58,7 +65,7 @@ class UserRegistrationProcedure extends Procedure
 //                'input_data'    => $inputData,
 //                'slug'          => $http->url(),
 //            ]);
-//            return new JsonResponse();
 //        }
+//        return new JsonResponse();
     }
 }

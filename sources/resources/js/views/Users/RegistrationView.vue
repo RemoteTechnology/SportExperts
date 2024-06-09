@@ -80,9 +80,7 @@ export default {
                     attributes.phone = this.user.phone;
                 }
                 registrationRequest(attributes)
-                    .then((response) => {
-                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
-                    })
+                    .then((response) => { window.location = this.baseUrl + ENDPOINTS.LOGIN; })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,

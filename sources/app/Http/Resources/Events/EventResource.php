@@ -29,6 +29,7 @@ class EventResource extends JsonResource
             'expiration_date' => $this->expiration_date,
             'expiration_time' => $this->expiration_time,
             'location' => $this->location,
+            'status' => $this->status,
             'owner' => new UserResource(User::find($this->user_id)),
             'image' => new FileResource(File::where(['key' => $this->image])->first()),
             'options' => Option::where(['event_key' => $this->key])->get(),

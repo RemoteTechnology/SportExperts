@@ -8,6 +8,7 @@ const PROCEDURES = {
         registration: 'UserRegistrationProcedure',
         read: 'UserReadProcedure',
         update: 'UserUpdateProcedure',
+        reset: 'ResetProcedure',
     },
     invites: {
         list: 'InvitedListProcedure',
