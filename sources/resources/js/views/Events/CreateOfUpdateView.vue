@@ -12,6 +12,7 @@ import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
+import Image from 'primevue/image';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Card from 'primevue/card';
@@ -57,6 +58,7 @@ export default {
         Textarea: Textarea,
         // Editor: Editor,
         QuillEditor: QuillEditor,
+        Image: Image,
         Card: Card,
         Calendar: Calendar,
         FileUpload: FileUpload,
@@ -88,23 +90,25 @@ export default {
         createFile: async function ()
         {
             let attributes = '<FILE>';
-            let inputFile = await this.onUpload()
-                .then((response) => {
-                    this.event.image = response.data.key;
-                    // TODO: так не надо, но ладно
-                    this.event.image = response.data.key;
-                })
-                .catch((error) => {
-                    loggingRequest({
-                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                        method: 'uploadFileRequest',
-                        status: error.code,
-                        request_data: attributes.toString(),
-                        message: error.message
+            try {
+                let inputFile = await this.onUpload()
+                    .then((response) => {
+                        this.event.image = response.data.key;
+                    })
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'uploadFileRequest',
+                            status: error.code,
+                            request_data: attributes.toString(),
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.ERROR_ERROR;
                     });
-                    this.messageError = MESSAGES.ERROR_ERROR;
-                });
+            } catch (error) {
+
+            }
         },
         createEvent: async function ()
         {
@@ -119,7 +123,6 @@ export default {
                 expiration_time: this.event.expiration_time,
             };
 
-            // TODO: разобраться почему событие создаётся со второго раза!!!!
             await createEventRequest(attributes)
                 .then((response) => {
                     this.event = response.data.result.original;
@@ -140,7 +143,6 @@ export default {
         createOptions: async function ()
         {
             const eventKey = this.event.key;
-            // TODO: вынести в отдельный метод
             for (let i=0; i < this.options.length; i++)
             {
                 let attributes = {
@@ -151,9 +153,8 @@ export default {
                     type: this.options[i].type,
                 };
                 await createEventOptionRequest(attributes)
-                    .then((response) => { console.log(response); this.event = response.data.result.original; })
+                    .then((response) => { this.event = response.data.result.original; })
                     .catch((error) => {
-                        console.log(error);
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -172,102 +173,89 @@ export default {
             await this.createEvent();
             await this.createOptions();
         },
-        updateEvent: function ()
+        updateEvent: async function()
         {
-            if (this.options.length > 0)
+            let attributes = {
+                id: this.event.id,
+                name: this.event.name,
+                description: this.event.description,
+                start_date: this.event.start_date,
+                start_time: this.event.start_time,
+                expiration_date: this.event.expiration_date,
+                expiration_time: this.event.expiration_time,
+            };
+            if (this.$refs.fileInput.files[0])
             {
-                let formData = new FormData();
-                if (this.$refs.fileInput.files[0])
+                attributes.image = this.event.image.key;
+            }
+            updateEventRequest(attributes)
+                .then((response) => {
+                    this.event = response.data.result.original;
+                    this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'updateEventRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.ERROR_ERROR;
+                });
+        },
+        updateOrCreateOptions: function ()
+        {
+            for (let i=0; i < this.options.length; i++)
+            {
+                let option = {
+                    event_key: this.event.key,
+                    entity: 'event',
+                    name: this.options[i].name,
+                    value: this.options[i].value,
+                    type: this.options[i].type,
+                };
+                if (Object.hasOwn(this.options[i], 'id'))
                 {
-                    let attributes = '<FILE>';
-                    let inputFile = this.onUpload()
-                        .then((response) => { this.event.image = response.data; })
+                    updateEventOptionRequest(option)
+                        .then((response) => { this.options = response.data.result.original; })
                         .catch((error) => {
                             loggingRequest({
                                 current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                                 current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                                method: 'uploadFileRequest',
+                                method: 'updateEventOptionRequest',
                                 status: error.code,
-                                request_data: attributes.toString(),
+                                request_data: option.toString(),
                                 message: error.message
                             });
                             this.messageError = MESSAGES.ERROR_ERROR;
                         });
                 }
-                let attributes = {
-                    id: this.event.id,
-                    user_id: this.event.owner.id,
-                    name: this.event.name,
-                    description: this.event.description,
-                    image: this.$refs.fileInput.files[0] ? this.event.image.key : this.event.image,
-                    start_date: this.event.start_date,
-                    start_time: this.event.start_time,
-                    expiration_date: this.event.expiration_date,
-                    expiration_time: this.event.expiration_time,
-                };
-                updateEventRequest(attributes)
-                    .then((response) => {
-                        this.event = response.data.result.original;
-                        this.messageSuccess = MESSAGES.FORM_SUCCESS;
-                    })
-                    .catch((error) => {
-                        loggingRequest({
-                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'updateEventRequest',
-                            status: error.code,
-                            request_data: attributes.toString(),
-                            message: error.message
-                        });
-                        this.messageError = MESSAGES.ERROR_ERROR;
-                    });
-                for (let i=0; i < this.options.length; i++)
+                else
                 {
-                    let option = {
-                        event_key: this.event.key,
-                        entity: 'event',
-                        name: this.options[i].name,
-                        value: this.options[i].value,
-                        type: this.options[i].type,
-                    };
-                    if (Object.hasOwn(this.options[i], 'id'))
-                    {
-                        updateEventOptionRequest(option)
-                            .then((response) => { this.event = response.data.result.original; })
-                            .catch((error) => {
-                                loggingRequest({
-                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                                    method: 'updateEventOptionRequest',
-                                    status: error.code,
-                                    request_data: option.toString(),
-                                    message: error.message
-                                });
-                                this.messageError = MESSAGES.ERROR_ERROR;
+                    createEventOptionRequest(option)
+                        .then((response) => { this.options = response.data.result.original; })
+                        .catch((error) => {
+                            loggingRequest({
+                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                method: 'createEventOptionRequest',
+                                status: error.code,
+                                request_data: option.toString(),
+                                message: error.message
                             });
-                    }
-                    else
-                    {
-                        createEventOptionRequest(option)
-                            .then((response) => { this.event = response.data.result.original; })
-                            .catch((error) => {
-                                loggingRequest({
-                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                                    method: 'createEventOptionRequest',
-                                    status: error.code,
-                                    request_data: option.toString(),
-                                    message: error.message
-                                });
-                                this.messageError = MESSAGES.ERROR_ERROR;
-                            });
-                    }
+                            this.messageError = MESSAGES.ERROR_ERROR;
+                        });
                 }
             }
-            else
-            {
-                alert('no update options! please add их')
-            }
+        },
+        updateEventObject: async function()
+        {
+            // await this.createFile();
+            await this.updateEvent();
+            await this.updateOrCreateOptions();
+
         },
         getUrl: function ()
         {
@@ -334,7 +322,7 @@ export default {
                 </div>
                 <div class="form-block">
                     <label for="#">Введите описание</label>
-                    <!-- TODO: удалить html теги при сохранении в бд -->
+                    <!-- TODO: удалить или применить html теги при сохранении в бд -->
                     <QuillEditor ref="editor"
                                  v-model:content="event.description"
                                  :options="editor"
@@ -343,18 +331,25 @@ export default {
                 <div class="form-block">
                     <Card>
                         <template #content>
+                            <section v-if="this.eventId" class="mb-3">
+                                <p>Текущий баннер события:</p>
+                                <Image :src="this.baseUrl + 'storage/uploads/' + event.image.name"
+                                       :alt="event.name"
+                                       style="display:block;"
+                                       class="w-74"
+                                       preview />
+                            </section>
                             <label class="text-center" for="#">Добавьте баннер</label>
                             <br>
                             <section class="d-flex d-center">
                                 <!-- TODO: зафигачить эту кнопку -->
-<!--                                <FileUpload ref="fileInput"-->
-<!--                                            mode="basic"-->
-<!--                                            name="file"-->
-<!--                                            accept="image/*"-->
-<!--                                            :maxFileSize="1000000"-->
-<!--                                            chooseLabel="Загрузить" />-->
-                                <!-- TODO: Выводить текущий баннер при обновлении -->
-                                <input type="file" ref="fileInput" name="file" class="form-control">
+                                <FileUpload ref="fileInput"
+                                            mode="basic"
+                                            name="file"
+                                            accept="image/*"
+                                            :maxFileSize="1000000"
+                                            chooseLabel="Загрузить" />
+<!--                                <input type="file" ref="fileInput" name="file" class="form-control">-->
                             </section>
                         </template>
                     </Card>
@@ -391,7 +386,7 @@ export default {
                             label="Обновить"
                             class="w-100 mt-3"
                             severity="success"
-                            @click="this.updateEvent" />
+                            @click="this.updateEventObject" />
                 </section>
                 <br>
             </form>
@@ -449,5 +444,8 @@ export default {
 <style scoped>
 i.pi-times{
     color: red!important;
+}
+img{
+    width: 100%;
 }
 </style>

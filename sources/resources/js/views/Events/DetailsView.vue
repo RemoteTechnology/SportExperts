@@ -230,6 +230,7 @@ export default {
                         white-space: break-spaces;
                         line-height: 120%;
                         color: #323232;
+                        width: 90%;
                     ">{{ this.stripHtmlTags(this.event.description) }}</p>
                 </div>
             </div>

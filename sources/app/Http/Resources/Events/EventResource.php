@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Events;
 
 use App\Http\Resources\FileResource;
-use App\Http\Resources\Options\OptionCollection;
 use App\Http\Resources\Users\UserResource;
 use App\Models\File;
 use App\Models\Option;
@@ -29,10 +28,9 @@ class EventResource extends JsonResource
             'start_time' => $this->start_time,
             'expiration_date' => $this->expiration_date,
             'expiration_time' => $this->expiration_time,
-//            'location' => $this->location,
+            'location' => $this->location,
             'owner' => new UserResource(User::find($this->user_id)),
             'image' => new FileResource(File::where(['key' => $this->image])->first()),
-            // TODO: Сделать нормально
             'options' => Option::where(['event_key' => $this->key])->get(),
             'participants' => [],
             'created_at' => $this->created_at,

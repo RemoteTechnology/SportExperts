@@ -7,12 +7,16 @@ import {
 } from '../constant';
 
 async function uploadFileRequest(formData) {
-    return await axios.post(`${BASE_URL}api/v1/file/`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-            'Accept': 'application/json',
-        }
-    })
+    try {
+        return await axios.post(`${BASE_URL}api/v1/file/`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Accept': 'application/json',
+            }
+        })
+    } catch (error) {
+        throw error;
+    }
 }
 
 export { uploadFileRequest }
