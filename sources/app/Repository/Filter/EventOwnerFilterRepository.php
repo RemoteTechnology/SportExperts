@@ -36,12 +36,12 @@ class EventOwnerFilterRepository
         return $event;
     }
 
-    public function filter(array $context, int $limit=9, bool $datetimeNow=false): Collection
+    public function filter(array $context, int $limit=9, bool $datetimeNow=false)
     {
         $events = $this->builder($context, $datetimeNow);
         $events->orderBy('start_date', 'desc');
         $events->orderBy('start_time', 'desc');
         $events->orderBy('start_time', 'desc');
-        return new Collection($events->paginate($limit));
+        return $events->paginate($limit);
     }
 }

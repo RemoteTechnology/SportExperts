@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/EventStatusesConst.php';
+
 return new class extends Migration
 {
     /**
@@ -24,7 +26,11 @@ return new class extends Migration
                 ->nullable(false);
             $table->string('image', 255)
                 ->nullable(false);
-            // TODO: добавить "location"
+            $table->string('location', 255)
+                ->nullable(false);
+            $table->enum('status', [EVENT_ACTIVE, EVENT_NO_ACTIVE, EVENT_ARCHIVE])
+                ->default(EVENT_ACTIVE)
+                ->nullable(false);
             $table->date("start_date")
                 ->nullable(false);
             $table->time("start_time")

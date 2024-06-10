@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Users;
+namespace App\Http\Requests\Archives;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ReadUserRequest extends FormRequest
+class ArchiveRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,8 @@ class ReadUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'exists:users,id']
+            'key'       => ['required'],
+            'status'    => ['required', 'string'],
         ];
     }
 }

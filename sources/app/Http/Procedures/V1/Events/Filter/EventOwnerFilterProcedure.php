@@ -6,6 +6,7 @@ namespace App\Http\Procedures\V1\Events\Filter;
 
 use App\Domain\Abstracts\AbstractFilter;
 use App\Http\Requests\Filter\ParticipantFilterRequest;
+use App\Http\Resources\Events\EventCollection;
 use App\Repository\Filter\EventOwnerFilterRepository;
 use Illuminate\Http\JsonResponse;
 
@@ -34,12 +35,19 @@ class EventOwnerFilterProcedure extends AbstractFilter
     public function handle(ParticipantFilterRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $events = new EventCollection($this->filterRepository->filter(
+            $this->formatDate($data),
+            $data['limit'],
+            key_exists('start_date', $data) ? $data['start_date'] : false
+        ));
+
         return new JsonResponse(
-            data: $this->filterRepository->filter(
-                $this->formatDate($data),
-                $data['limit'],
-                key_exists('start_date', $data) ? $data['start_date'] : false
-            ),
+            data: $events->resource,
+//            data: $this->filterRepository->filter(
+//                $this->formatDate($data),
+//                $data['limit'],
+//                key_exists('start_date', $data) ? $data['start_date'] : false
+//            ),
             status: 201
         );
     }

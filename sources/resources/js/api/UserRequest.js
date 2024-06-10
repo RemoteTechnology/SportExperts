@@ -8,7 +8,7 @@ import {
 } from '../constant';
 
 
-async function registrationRequest(data)
+async function registrationRequest(attributes)
 {
     return await axios.post(`${BASE_URL}api/v1/user/registration`, {
         headers: {
@@ -55,6 +55,23 @@ async function updateUserRequest(attributes)
     });
 }
 
+async function resetToPasswordRequest(attributes)
+{
+    return await axios.post(`${BASE_URL}api/v1/user/reset/`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            // 'Authorization': `Bearer Bearer ${window.$cookies.get(TOKEN)}`
+        },
+        validateStatus: () => true,
+        'jsonrpc': JSON_RPC_VERSION,
+        'id': '1',
+        'notification': false,
+        'method': `${PROCEDURES.users.reset}@${REQUEST_METHOD_DEFAULT}`,
+        'params': attributes
+    });
+}
+
 async function getInvitedOwnerRequest(attributes)
 {
     return await axios.post(`${BASE_URL}api/v1/invite/`, {
@@ -72,4 +89,10 @@ async function getInvitedOwnerRequest(attributes)
     });
 }
 
-export { registrationRequest, getUser, updateUserRequest, getInvitedOwnerRequest }
+export {
+    registrationRequest,
+    getUser,
+    updateUserRequest,
+    resetToPasswordRequest,
+    getInvitedOwnerRequest
+}

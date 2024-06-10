@@ -4,11 +4,12 @@ import {
     ENDPOINTS, MESSAGES,
     RESPONSE
 } from '../../constant';
-import { recoveryPasswordRequest } from '../../api/NotificationRequest';
+import { resetToPasswordRequest } from '../../api/UserRequest';
 import { loggingRequest } from '../../api/LoggingRequest';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
+import Message from 'primevue/message';
 
 export default {
     data() {
@@ -24,17 +25,19 @@ export default {
         Card: Card,
         InputText: InputText,
         Button: Button,
+        Message: Message
     },
     methods: {
-        recoveryNotification: function() {
+        resetNotification: function() {
             let attributes = { email: this.email };
-            recoveryPasswordRequest(attributes)
-                .then((response) => { this.messageSuccess = MESSAGES.SEND_NOTIFICATION; })
+            resetToPasswordRequest(attributes)
+                .then((response) => { console.log(response); this.messageSuccess = MESSAGES.SEND_NOTIFICATION; })
                 .catch((error) => {
+                    console.log(error);
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                        method: 'recoveryPasswordRequest',
+                        method: 'resetToPasswordRequest',
                         status: error.code,
                         request_data: attributes.toString(),
                         message: error.message
@@ -71,7 +74,7 @@ export default {
                             label="Отправить письмо"
                             class="w-30"
                             severity="success"
-                            @click="recoveryNotification" />
+                            @click="resetNotification" />
                 </div>
             </form>
         </section>

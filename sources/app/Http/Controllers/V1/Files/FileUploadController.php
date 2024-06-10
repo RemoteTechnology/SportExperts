@@ -8,6 +8,7 @@ use App\Repository\FileRepository;
 use App\Services\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Js;
 use Symfony\Component\HttpFoundation\Response;
 
 class FileUploadController extends Controller
@@ -24,7 +25,7 @@ class FileUploadController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $request)
     {
         $fileData = $request->file('file');
         if ($this->fileService->upload($fileData))

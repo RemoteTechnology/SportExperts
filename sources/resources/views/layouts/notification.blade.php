@@ -6,12 +6,12 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
     </head>
     <body>
-        <! -- HEADER -->
+        <!-- HEADER -->
         <div style="background-color: #610808;">
-            <img src="{{ asset('images/logo.png') }}" alt="{{ $link }}">
+            <img src="{{ asset('images/logo.png') }}" alt="SportExperts">
         </div>
         @yield('content')
-        <! -- FOOTER -->
+        <!-- FOOTER -->
         <div style="background-color: #222; color: #fff">
             <div style="text-align: center;">
                 <p>

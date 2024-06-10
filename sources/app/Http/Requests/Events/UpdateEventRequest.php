@@ -23,10 +23,11 @@ class UpdateEventRequest extends FormRequest
     {
         return [
             'id'                => ['required', 'numeric', 'exists:events,id'],
-            'user_id'           => ['required', 'numeric', 'exists:users,id'],
             'name'              => ['nullable', 'string', 'min:5', 'max:255'],
             'description'       => ['nullable', 'string'],
             'image'             => ['nullable', 'string', 'max:255', 'exists:files,key'],
+            'location'          => ['nullable', 'string', 'max:255'],
+            'status'            => ['nullable', 'string'],
             'start_date'        => ['nullable'],
             'start_time'        => ['nullable'],
             'expiration_date'   => ['nullable'],

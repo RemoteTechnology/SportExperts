@@ -12,6 +12,7 @@ import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
+import Image from 'primevue/image';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Card from 'primevue/card';
@@ -57,6 +58,7 @@ export default {
         Textarea: Textarea,
         // Editor: Editor,
         QuillEditor: QuillEditor,
+        Image: Image,
         Card: Card,
         Calendar: Calendar,
         FileUpload: FileUpload,
@@ -85,13 +87,14 @@ export default {
             formData.append("file", this.$refs.fileInput.files[0]);
             return uploadFileRequest(formData);
         },
-        createEvent: function ()
+        createFile: async function ()
         {
-            if (this.options)
-            {
-                let attributes = '<FILE>';
-                let inputFile = this.onUpload()
-                    .then((response) => { this.event.image = response.data; })
+            let attributes = '<FILE>';
+            try {
+                let inputFile = await this.onUpload()
+                    .then((response) => {
+                        this.event.image = response.data.key;
+                    })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -103,169 +106,159 @@ export default {
                         });
                         this.messageError = MESSAGES.ERROR_ERROR;
                     });
+            } catch (error) {
 
-                if (this.event.image.key)
-                {
-                    // TODO: разобраться почему событие создаётся со второго раза!!!!
-                    let attributes = {
-                        user_id: this.event.user_id,
-                        name: this.event.name,
-                        description: this.event.description,
-                        image: this.event.image.key,
-                        start_date: this.event.start_date,
-                        start_time: this.event.start_time,
-                        expiration_date: this.event.expiration_date,
-                        expiration_time: this.event.expiration_time,
-                    };
-                    createEventRequest(attributes)
-                        .then((response) => {
-                            this.event = response.data.result.original;
-                            this.messageSuccess = MESSAGES.FORM_SUCCESS;
-                        })
-                        .catch((error) => {
-                            loggingRequest({
-                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                                method: 'uploadFileRequest',
-                                status: error.code,
-                                request_data: attributes.toString(),
-                                message: error.message
-                            });
-                            this.messageError = MESSAGES.ERROR_ERROR;
-                        });
-                    // Сохранение опций (параметров)
-                    // TODO: вынести в отдельный метод
-                    for (let i=0; i < this.options.length; i++)
-                    {
-                        let attributes = {
-                            event_key: this.event.key,
-                            entity: 'event',
-                            name: this.options[i].name,
-                            value: this.options[i].value,
-                            type: this.options[i].type,
-                        };
-                        createEventOptionRequest(attributes)
-                            .then((response) => { this.event = response.data.result.original; })
-                            .catch((error) => {
-                                loggingRequest({
-                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                                    method: 'createEventOptionRequest',
-                                    status: error.code,
-                                    request_data: attributes.toString(),
-                                    message: error.message
-                                });
-                                this.messageError = MESSAGES.ERROR_ERROR;
-                            });
-                    }
-                }
-                else
-                {
-                    alert('add options!')
-                }
-            }
-            else
-            {
-                alert('no file!')
             }
         },
-        updateEvent: function ()
+        createEvent: async function ()
         {
-            if (this.options.length > 0)
+            let attributes = {
+                user_id: window.$cookies.get(IDENTIFIER),
+                name: this.event.name,
+                description: this.event.description,
+                image: this.event.image,
+                location: this.event.location,
+                start_date: this.event.start_date,
+                start_time: this.event.start_time,
+                expiration_date: this.event.expiration_date,
+                expiration_time: this.event.expiration_time,
+            };
+
+            await createEventRequest(attributes)
+                .then((response) => {
+                    console.log(response)
+                    this.event = response.data.result.original;
+                    this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'createEventRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.ERROR_ERROR;
+                });
+        },
+        createOptions: async function ()
+        {
+            const eventKey = this.event.key;
+            for (let i=0; i < this.options.length; i++)
             {
-                let formData = new FormData();
-                console.log(this.event)
-                if (this.$refs.fileInput.files[0])
-                {
-                    let attributes = '<FILE>';
-                    let inputFile = this.onUpload()
-                        .then((response) => { this.event.image = response.data; })
-                        .catch((error) => {
-                            loggingRequest({
-                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                                method: 'uploadFileRequest',
-                                status: error.code,
-                                request_data: attributes.toString(),
-                                message: error.message
-                            });
-                            this.messageError = MESSAGES.ERROR_ERROR;
-                        });
-                }
                 let attributes = {
-                    id: this.event.id,
-                    user_id: this.event.owner.id,
-                    name: this.event.name,
-                    description: this.event.description,
-                    image: this.$refs.fileInput.files[0] ? this.event.image.key : this.event.image,
-                    start_date: this.event.start_date,
-                    start_time: this.event.start_time,
-                    expiration_date: this.event.expiration_date,
-                    expiration_time: this.event.expiration_time,
+                    event_key: eventKey,
+                    entity: 'event',
+                    name: this.options[i].name,
+                    value: this.options[i].value,
+                    type: this.options[i].type,
                 };
-                updateEventRequest(attributes)
-                    .then((response) => {
-                        this.event = response.data.result.original;
-                        this.messageSuccess = MESSAGES.FORM_SUCCESS;
-                    })
+                await createEventOptionRequest(attributes)
+                    .then((response) => { this.event = response.data.result.original; })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'updateEventRequest',
+                            method: 'createEventOptionRequest',
                             status: error.code,
                             request_data: attributes.toString(),
                             message: error.message
                         });
                         this.messageError = MESSAGES.ERROR_ERROR;
                     });
-                for (let i=0; i < this.options.length; i++)
+            }
+        },
+        createEventObject: async function ()
+        {
+            await this.createFile();
+            await this.createEvent();
+            await this.createOptions();
+        },
+        updateEvent: async function()
+        {
+            let attributes = {
+                id: this.event.id,
+                name: this.event.name,
+                description: this.event.description,
+                location: this.event.location,
+                start_date: this.event.start_date,
+                start_time: this.event.start_time,
+                expiration_date: this.event.expiration_date,
+                expiration_time: this.event.expiration_time,
+            };
+            if (this.$refs.fileInput.files[0])
+            {
+                attributes.image = this.event.image.key;
+            }
+            updateEventRequest(attributes)
+                .then((response) => {
+                    this.event = response.data.result.original;
+                    this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'updateEventRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.ERROR_ERROR;
+                });
+        },
+        updateOrCreateOptions: function ()
+        {
+            for (let i=0; i < this.options.length; i++)
+            {
+                let option = {
+                    event_key: this.event.key,
+                    entity: 'event',
+                    name: this.options[i].name,
+                    value: this.options[i].value,
+                    type: this.options[i].type,
+                };
+                if (Object.hasOwn(this.options[i], 'id'))
                 {
-                    let option = {
-                        event_key: this.event.key,
-                        entity: 'event',
-                        name: this.options[i].name,
-                        value: this.options[i].value,
-                        type: this.options[i].type,
-                    };
-                    if (Object.hasOwn(this.options[i], 'id'))
-                    {
-                        updateEventOptionRequest(option)
-                            .then((response) => { this.event = response.data.result.original; })
-                            .catch((error) => {
-                                loggingRequest({
-                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                                    method: 'updateEventOptionRequest',
-                                    status: error.code,
-                                    request_data: option.toString(),
-                                    message: error.message
-                                });
-                                this.messageError = MESSAGES.ERROR_ERROR;
+                    updateEventOptionRequest(option)
+                        .then((response) => { this.options = response.data.result.original; })
+                        .catch((error) => {
+                            loggingRequest({
+                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                method: 'updateEventOptionRequest',
+                                status: error.code,
+                                request_data: option.toString(),
+                                message: error.message
                             });
-                    }
-                    else
-                    {
-                        createEventOptionRequest(option)
-                            .then((response) => { this.event = response.data.result.original; })
-                            .catch((error) => {
-                                loggingRequest({
-                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                                    method: 'createEventOptionRequest',
-                                    status: error.code,
-                                    request_data: option.toString(),
-                                    message: error.message
-                                });
-                                this.messageError = MESSAGES.ERROR_ERROR;
+                            this.messageError = MESSAGES.ERROR_ERROR;
+                        });
+                }
+                else
+                {
+                    createEventOptionRequest(option)
+                        .then((response) => { this.options = response.data.result.original; })
+                        .catch((error) => {
+                            loggingRequest({
+                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                method: 'createEventOptionRequest',
+                                status: error.code,
+                                request_data: option.toString(),
+                                message: error.message
                             });
-                    }
+                            this.messageError = MESSAGES.ERROR_ERROR;
+                        });
                 }
             }
-            else
-            {
-                alert('no update options! please add их')
-            }
+        },
+        updateEventObject: async function()
+        {
+            await this.createFile();
+            await this.updateEvent();
+            await this.updateOrCreateOptions();
+
         },
         getUrl: function ()
         {
@@ -277,23 +270,26 @@ export default {
         },
         getEvent: function ()
         {
-            let attributes = { id: this.eventId };
-            getEventRequest(attributes)
-                .then((response) => {
-                    this.event = response.data.result.original;
-                    this.options = this.event.options;
-                })
-                .catch((error) => {
-                    loggingRequest({
-                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                        method: 'getEventRequest',
-                        status: error.code,
-                        request_data: attributes.toString(),
-                        message: error.message
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('id')) {
+                let attributes = {id: this.eventId};
+                getEventRequest(attributes)
+                    .then((response) => {
+                        this.event = response.data.result.original;
+                        this.options = this.event.options;
+                    })
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'getEventRequest',
+                            status: error.code,
+                            request_data: attributes.toString(),
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.LOADING_ERROR;
                     });
-                    this.messageError = MESSAGES.LOADING_ERROR;
-                });
+            }
         },
         editorLoad: function ({instance})
         {
@@ -315,7 +311,7 @@ export default {
             <Message severity="error">{{ this.messageError }}</Message>
         </section>
         <section class="mt-1 mb-2" v-if="this.messageSuccess">
-            <Message severity="error">{{ this.messageSuccess }}</Message>
+            <Message severity="success">{{ this.messageSuccess }}</Message>
         </section>
         <div class="mt-3">
             <h2 v-if="this.eventId" class="text-center">Создать новое спортивное событие</h2>
@@ -329,7 +325,7 @@ export default {
                 </div>
                 <div class="form-block">
                     <label for="#">Введите описание</label>
-                    <!-- TODO: удалить html теги при сохранении в бд -->
+                    <!-- TODO: удалить или применить html теги при сохранении в бд -->
                     <QuillEditor ref="editor"
                                  v-model:content="event.description"
                                  :options="editor"
@@ -338,21 +334,32 @@ export default {
                 <div class="form-block">
                     <Card>
                         <template #content>
+                            <section v-if="this.eventId" class="mb-3">
+                                <p>Текущий баннер события:</p>
+                                <Image :src="this.baseUrl + 'storage/uploads/' + event.image.name"
+                                       :alt="event.name"
+                                       style="display:block;"
+                                       class="w-74"
+                                       preview />
+                            </section>
                             <label class="text-center" for="#">Добавьте баннер</label>
                             <br>
                             <section class="d-flex d-center">
-                                <!-- TODO: зафигачить эту кнопку -->
-<!--                                <FileUpload ref="fileInput"-->
-<!--                                            mode="basic"-->
-<!--                                            name="file"-->
-<!--                                            accept="image/*"-->
-<!--                                            :maxFileSize="1000000"-->
-<!--                                            chooseLabel="Загрузить" />-->
-                                <!-- TODO: Выводить текущий баннер при обновлении -->
-                                <input type="file" ref="fileInput" name="file" class="form-control">
+                                <!-- TODO: разрешать загрузку баннера размеров 600х602 -->
+                                <FileUpload ref="fileInput"
+                                            mode="basic"
+                                            name="file"
+                                            accept="image/*"
+                                            :maxFileSize="1000000"
+                                            chooseLabel="Загрузить" />
                             </section>
                         </template>
                     </Card>
+                </div>
+                <div class="form-block">
+                    <label for="#">Укажите место проведения мероприятия</label>
+                    <InputText type="text" v-model="event.location" class="w-100"/>
+                    <small id="username-help">Желательный формат: Город, улица, номер дома</small>
                 </div>
                 <div class="d-flex d-between">
                     <div class="form-block w-70">
@@ -380,13 +387,13 @@ export default {
                             label="Создать событие"
                             class="w-100 mt-3"
                             severity="success"
-                            @click="this.createEvent" />
+                            @click="this.createEventObject" />
                     <Button v-else
                             type="button"
                             label="Обновить"
                             class="w-100 mt-3"
                             severity="success"
-                            @click="this.updateEvent" />
+                            @click="this.updateEventObject" />
                 </section>
                 <br>
             </form>
@@ -444,5 +451,8 @@ export default {
 <style scoped>
 i.pi-times{
     color: red!important;
+}
+img{
+    width: 100%;
 }
 </style>

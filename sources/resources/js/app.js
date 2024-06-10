@@ -65,6 +65,12 @@ app.component('event-create-of-update-view', CreateOfUpdateView);
 
 import EventDetailsView from './views/Events/DetailsView.vue';
 app.component('event-detail-view', EventDetailsView);
+
+import TournamentView from './views/Tournaments/IndexView.vue';
+app.component('tournament-view', TournamentView);
+
+import TournamentSettingsView from './views/Tournaments/SettingsView.vue';
+app.component('tournament-settings-view', TournamentSettingsView);
 /**
  * The following block of code may be used to automatically register your
  * Vue rules. It will recursively scan this directory for the Vue

@@ -98,7 +98,7 @@ export default {
         {
             let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
             getRecordToEventsRequest(attributes, 'after')
-                .then((response) => { this.events = response.data.result.original; })
+                .then((response) => { console.log(response);this.events = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -287,16 +287,17 @@ export default {
                                     <section v-for="event in this.events[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
-                                                <div class="d-flex d-between">
+                                                <div class="d-flex d-between d-align-center">
                                                     <div class="w-30">
-                                                        <div style="
-                                            background-size: cover;
-                                            background-position: center top;
-                                            background-image: url(https://shakasports.com/images/1714108924_Khabarovsk%20Open%202024.jpg);
-                                            height: 10em;
-                                            width: 80%;
-                                            background-repeat: round;
-                                    "></div>
+                                                        <div :style="
+                                                                'background-size: cover;' +
+                                                                'background-position: center top;' +
+                                                                'background-image: url(' + this.baseUrl + 'storage/uploads/' + event.image.name + ');' +
+                                                                'height: 10em;' +
+                                                                'width: 80%;' +
+                                                                'background-repeat: round;' +
+                                                                'border-radius: 0.5em'
+                                                        "></div>
                                                     </div>
                                                     <div class="w-70">
                                                         <div class="d-flex d-between">
@@ -350,16 +351,17 @@ export default {
                                     <section v-for="event in this.eventsNoActive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
-                                                <div class="d-flex d-between">
+                                                <div class="d-flex d-between d-align-center">
                                                     <div class="w-30">
-                                                        <div style="
-                                            background-size: cover;
-                                            background-position: center top;
-                                            background-image: url(https://shakasports.com/images/1714108924_Khabarovsk%20Open%202024.jpg);
-                                            height: 10em;
-                                            width: 80%;
-                                            background-repeat: round;
-                                    "></div>
+                                                        <div :style="
+                                                                'background-size: cover;' +
+                                                                'background-position: center top;' +
+                                                                'background-image: url(' + this.baseUrl + 'storage/uploads/' + event.image.name + ');' +
+                                                                'height: 10em;' +
+                                                                'width: 80%;' +
+                                                                'background-repeat: round;' +
+                                                                'border-radius: 0.5em'
+                                                        "></div>
                                                     </div>
                                                     <div class="w-70">
                                                         <div class="d-flex d-between">
@@ -413,16 +415,17 @@ export default {
                                     <section v-for="event in this.eventsArchive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
-                                                <div class="d-flex d-between">
+                                                <div class="d-flex d-between d-align-center">
                                                     <div class="w-30">
-                                                        <div style="
-                                        background-size: cover;
-                                        background-position: center top;
-                                        background-image: url(https://shakasports.com/images/1714108924_Khabarovsk%20Open%202024.jpg);
-                                        height: 10em;
-                                        width: 80%;
-                                        background-repeat: round;
-                                "></div>
+                                                        <div :style="
+                                                                'background-size: cover;' +
+                                                                'background-position: center top;' +
+                                                                'background-image: url(' + this.baseUrl + 'storage/uploads/' + event.image.name + ');' +
+                                                                'height: 10em;' +
+                                                                'width: 80%;' +
+                                                                'background-repeat: round;' +
+                                                                'border-radius: 0.5em'
+                                                        "></div>
                                                     </div>
                                                     <div class="w-70">
                                                         <div class="d-flex d-between">

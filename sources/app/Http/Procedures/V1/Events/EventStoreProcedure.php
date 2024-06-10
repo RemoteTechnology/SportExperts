@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Sajya\Server\Procedure;
 
+require_once dirname(__DIR__, 4) . '/Domain/Constants/EventStatusesConst.php';
+
 class EventStoreProcedure extends Procedure
 {
     /**
@@ -36,6 +38,7 @@ class EventStoreProcedure extends Procedure
     public function handle(StoreEventRequest $request): JsonResponse
     {
         $event = $request->validated();
+        $event['status'] = EVENT_ACTIVE;
         $event['key'] = Str::uuid()->toString();
         return new JsonResponse(
             data: new EventResource(
