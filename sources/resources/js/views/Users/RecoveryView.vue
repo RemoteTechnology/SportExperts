@@ -9,6 +9,7 @@ import { loggingRequest } from '../../api/LoggingRequest';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
+import Message from 'primevue/message';
 
 export default {
     data() {
@@ -24,6 +25,7 @@ export default {
         Card: Card,
         InputText: InputText,
         Button: Button,
+        Message: Message
     },
     methods: {
         resetNotification: function() {

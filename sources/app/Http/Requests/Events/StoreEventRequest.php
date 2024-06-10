@@ -26,7 +26,7 @@ class StoreEventRequest extends FormRequest
             'name'              => ['required', 'string', 'min:5', 'max:255'],
             'description'       => ['required', 'string'],
             'image'             => ['required', 'string', 'max:255', 'exists:files,key'],
-            'location'          => ['nullable', 'string', 'max:255'],
+            'location'          => ['required', 'string', 'max:255'],
             'status'            => ['nullable', 'string'],
             'start_date'        => ['required'],
             'start_time'        => ['required'],

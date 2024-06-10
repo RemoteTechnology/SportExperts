@@ -1,6 +1,14 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.4.14,
+* Autoprefixer: v10.4.7
+* Browsers: last 4 version
+*/
+
 *{
     /*margin: 0;*/
     /*padding: 0;*/
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
 html, body{
@@ -15,23 +23,34 @@ ul li{
     min-height: 100%;
 }
 .d-flex{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
 }
 .d-align-center{
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 .d-center{
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     /*align-items: center;*/
 }
 .d-end{
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
     justify-content: end;
 }
 .d-between{
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
     justify-content: space-between;
     /*align-items: center;*/
 }
 .d-flex-wrap{
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
 }
 .p-1{
@@ -126,8 +145,14 @@ ul li{
 }
 .p-menubar-root-list li.p-menuitem .p-menuitem-content a{
     padding: 0.5em;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     color: #fff;
     cursor: pointer;

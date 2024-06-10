@@ -242,7 +242,7 @@ export default {
                     <template #content>
                         <div class="mb-1">
                             <h3>
-                                <i class="pi pi-map-marker" style="color: #222"></i> <span>г. Новосибирск. пр. Маркса, 21/2</span>
+                                <i class="pi pi-map-marker" style="color: #222"></i> <span>{{ this.event.location }}</span>
                             </h3>
                         </div>
                         <div class="mb-1">

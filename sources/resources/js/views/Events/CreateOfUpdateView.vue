@@ -117,6 +117,7 @@ export default {
                 name: this.event.name,
                 description: this.event.description,
                 image: this.event.image,
+                location: this.event.location,
                 start_date: this.event.start_date,
                 start_time: this.event.start_time,
                 expiration_date: this.event.expiration_date,
@@ -125,6 +126,7 @@ export default {
 
             await createEventRequest(attributes)
                 .then((response) => {
+                    console.log(response)
                     this.event = response.data.result.original;
                     this.messageSuccess = MESSAGES.FORM_SUCCESS;
                 })
@@ -179,6 +181,7 @@ export default {
                 id: this.event.id,
                 name: this.event.name,
                 description: this.event.description,
+                location: this.event.location,
                 start_date: this.event.start_date,
                 start_time: this.event.start_time,
                 expiration_date: this.event.expiration_date,
@@ -342,17 +345,21 @@ export default {
                             <label class="text-center" for="#">Добавьте баннер</label>
                             <br>
                             <section class="d-flex d-center">
-                                <!-- TODO: зафигачить эту кнопку -->
+                                <!-- TODO: разрешать загрузку баннера размеров 600х602 -->
                                 <FileUpload ref="fileInput"
                                             mode="basic"
                                             name="file"
                                             accept="image/*"
                                             :maxFileSize="1000000"
                                             chooseLabel="Загрузить" />
-<!--                                <input type="file" ref="fileInput" name="file" class="form-control">-->
                             </section>
                         </template>
                     </Card>
+                </div>
+                <div class="form-block">
+                    <label for="#">Укажите место проведения мероприятия</label>
+                    <InputText type="text" v-model="event.location" class="w-100"/>
+                    <small id="username-help">Желательный формат: Город, улица, номер дома</small>
                 </div>
                 <div class="d-flex d-between">
                     <div class="form-block w-70">
