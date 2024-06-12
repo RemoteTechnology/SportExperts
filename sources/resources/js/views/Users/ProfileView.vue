@@ -113,7 +113,13 @@ export default {
         },
         getEventOwner: function ()
         {
-            let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`
+            let attributes = {
+                filter: `user_id:${window.$cookies.get(IDENTIFIER)}`,
+                mode: 'all',
+                limit: 10,
+                startDate: true,
+                status: 'Active'
+            };
             getEventOwnerRequest(attributes)
                 .then((response) => { this.events = response.data.result.original; })
                 .catch((error) => {
@@ -129,13 +135,14 @@ export default {
                 });
             // if (user.role == 'admin')
             // {
-                let attributes2 = `user_id:${window.$cookies.get(IDENTIFIER)}`;
-                getEventOwnerRequest(
-                    attributes2,
-                    'after',
-                    9,
-                    true
-                )
+                let attributes2 = {
+                    filter: `user_id:${window.$cookies.get(IDENTIFIER)}`,
+                    mode: 'after',
+                    limit: 9,
+                    startDate: false,
+                    status: 'No active'
+                };
+                getEventOwnerRequest(attributes2)
                     .then((response) => { this.eventsNoActive = response.data.result.original; })
                     .catch((error) => {
                         loggingRequest({
@@ -143,18 +150,20 @@ export default {
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'getEventOwnerRequest',
                             status: error.code,
-                            request_data: attributes2.toString() + ', mode:after, limit:9, startDate:false',
+                            request_data: attributes2.toString(),
                             message: error.message
                         });
                         this.messageError = MESSAGES.NO_DATA;
                     });
-                let attributes3 = `user_id:${window.$cookies.get(IDENTIFIER)}`;
-                getEventOwnerRequest(
-                    attributes3,
-                        'before',
-                        9,
-                        false
-                )
+
+                let attributes3 = {
+                    filter: `user_id:${window.$cookies.get(IDENTIFIER)}`,
+                    mode: 'before',
+                    limit: 9,
+                    startDate: false,
+                    status: 'Archive'
+                };
+                getEventOwnerRequest(attributes3)
                     .then((response) => { this.eventsArchive = response.data.result.original; })
                     .catch((error) => {
                         loggingRequest({
@@ -162,12 +171,11 @@ export default {
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'getEventOwnerRequest',
                             status: error.code,
-                            request_data: attributes3.toString() + ', mode:before, limit:9, startDate:false',
+                            request_data: attributes3.toString(),
                             message: error.message
                         });
                         this.messageError = MESSAGES.NO_DATA;
                     });
-
             // }
         },
         getParticipants: function ()

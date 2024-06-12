@@ -26,6 +26,7 @@ class ParticipantFilterRequest extends FormRequest
             'mode'          => ['nullable', 'string'],
             'limit'         => ['required', 'numeric'],
             'start_date'    => ['nullable'],
+            'status'        => ['nullable']
         ];
     }
 }

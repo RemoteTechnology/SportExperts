@@ -38,16 +38,12 @@ class EventOwnerFilterProcedure extends AbstractFilter
         $events = new EventCollection($this->filterRepository->filter(
             $this->formatDate($data),
             $data['limit'],
-            key_exists('start_date', $data) ? $data['start_date'] : false
+            key_exists('start_date', $data) ? $data['start_date'] : false,
+            key_exists('status', $data) ? $data['status'] : null,
         ));
 
         return new JsonResponse(
             data: $events->resource,
-//            data: $this->filterRepository->filter(
-//                $this->formatDate($data),
-//                $data['limit'],
-//                key_exists('start_date', $data) ? $data['start_date'] : false
-//            ),
             status: 201
         );
     }

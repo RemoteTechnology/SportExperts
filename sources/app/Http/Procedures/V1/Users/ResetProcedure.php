@@ -43,7 +43,6 @@ class ResetProcedure extends Procedure
     public function handle(ResetRequest $request): JsonResponse
     {
         $request->validated();
-        //TODO: Возможно вынести в сервис
         $user = $this->filter->query([FIELD_EMAIL => $request[FIELD_EMAIL]]);
         $user->password = Hash::make($this->newPassword);
         $user->save();

@@ -24,7 +24,7 @@ async function getRecordToEventsRequest(attributes, mode='after', limit=9) {
     })
 }
 
-async function getEventOwnerRequest(attributes, mode='after', limit=9, startDate=false) {
+async function getEventOwnerRequest(attributes) {
     return await axios.post(`${BASE_URL}api/v1/event/filter/my/events`, {
         headers: {
             'Content-Type': 'application/json',
@@ -34,12 +34,7 @@ async function getEventOwnerRequest(attributes, mode='after', limit=9, startDate
         'id': '1',
         'notification': false,
         'method': `${PROCEDURES.filter.ownerEventsList}@${REQUEST_METHOD_DEFAULT}`,
-        'params': {
-            filter: attributes,
-            mode: mode,
-            limit: limit,
-            start_date: startDate
-        }
+        'params': attributes
     })
 }
 

@@ -6,6 +6,8 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+require_once dirname(__DIR__, 2) . '/Domain/Constants/EventStatusesConst.php';
+
 require_once dirname(__DIR__, 2) . '/Domain/Constants/FieldConst.php';
 
 class EventOwnerFilterRepository
@@ -36,11 +38,15 @@ class EventOwnerFilterRepository
         return $event;
     }
 
-    public function filter(array $context, int $limit=9, bool $datetimeNow=false)
+    public function filter(array $context, int $limit=9, bool $datetimeNow=false,string|null $status=null)
     {
         $events = $this->builder($context, $datetimeNow);
+        // Жестко обращаем внимание на статус
+        if ($status)
+        {
+            $events->where(['status' => $status]);
+        }
         $events->orderBy('start_date', 'desc');
-        $events->orderBy('start_time', 'desc');
         $events->orderBy('start_time', 'desc');
         return $events->paginate($limit);
     }
