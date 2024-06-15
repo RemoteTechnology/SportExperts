@@ -23,7 +23,6 @@ class ArchiveRequest extends FormRequest
     {
         return [
             'key'       => ['required'],
-            'status'    => ['required', 'string'],
         ];
     }
 }

@@ -29,7 +29,7 @@ export default {
             dialog: false,
             emailInvited: null,
             participantEmail: null,
-            participant: null,
+            participant: [],
             whoInvited: null,
             invites: null,
             invitedValue: null,
@@ -48,6 +48,10 @@ export default {
         Listbox: Listbox,
     },
     methods: {
+        formatDate: (inputDate) => {
+            const [year, month, day] = inputDate.split('-');
+            return `${day.padStart(2, '0')}.${month.padStart(2, '0')}.${year}`;
+        },
         stripHtmlTags: function(html)
         {
             let tmp = document.createElement("DIV");
@@ -108,7 +112,7 @@ export default {
         search(event) {
             this.items = [...this.participants].map((item) => event.query + '-' + item);
         },
-        inviteToEvent: function ()
+        recordToInvitedUser: function ()
         {
             let attributes = {
                 event_id: this.eventId,
@@ -117,7 +121,9 @@ export default {
                 // team_key: null,
             };
             recordUserToEventRequest(attributes)
-                .then((response) => { this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR; })
+                .then((response) => {
+                    this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
+                })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -129,6 +135,20 @@ export default {
                     });
                     this.messageError = MESSAGES.ERROR_ERROR;
                 });
+        },
+        recordAndInvitedUser: function()
+        {
+            
+        },
+        inviteToEvent: function ()
+        {
+            if (this.invitedValue) {
+                this.recordToInvitedUser();
+            }
+            else
+            {
+                this.recordAndInvitedUser();
+            }
         },
         invited: function ()
         {
@@ -247,12 +267,12 @@ export default {
                         </div>
                         <div class="mb-1">
                             <h3>
-                                <i class="pi pi-calendar-clock" style="color: #222"></i> <span>{{ this.event.start_date }}</span>
+                                <i class="pi pi-calendar-clock" style="color: #222"></i> <span>{{ this.formatDate(this.event.start_date) }}</span>
                             </h3>
                         </div>
                         <div class="mb-1">
                             <h3>
-                                <i class="pi pi-users" style="color: #222"></i> <span>12 участников</span>
+                                <i class="pi pi-users" style="color: #222"></i> <span>{{ this.participant.length }} участников</span>
                             </h3>
                         </div>
                         <div class="mb-1">

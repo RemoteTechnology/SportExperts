@@ -13,7 +13,7 @@ const PROCEDURES = {
     invites: {
         list: 'InvitedListProcedure',
         read: 'InvitedReadProcedure',
-        // delete: 'InvitedDestroyProcedure',
+        notification: 'NotificationProcedure',
     },
     auth: {
         login: 'AuthByEmailProcedure',
@@ -29,6 +29,10 @@ const PROCEDURES = {
         read: 'EventReadProcedure',
         update: 'EventUpdateProcedure',
     },
+    archive: {
+        create: 'ArchiveStoreProcedure',
+        delete: 'ArchiveDestroyProcedure',
+    },
     option: {
         create: 'OptionStoreProcedure',
         update: 'OptionUpdateProcedure',
@@ -42,12 +46,14 @@ const REQUEST_METHOD_DEFAULT = 'handle';
 const MESSAGES = {
     NO_DATA: 'Данных нет!',
     NO_VALID_DATA: 'Проверьте правильность введенных данных!',
+    ERROR_DEFAULT: 'Ошибка, пожалуйста обратитесь к администратору!',
     FORM_SUCCESS: 'Данные усмешно сохранены!',
     ERROR_ERROR: 'Ошибка сохранения данных!',
     LOADING_ERROR: 'Ошибка загрузки данных!',
     SEND_NOTIFICATION: 'Письмо отправлено вам на почту!',
     LOGIN_ERROR: 'Неправильный логин или пароль!',
     PASSWORD_DOUBLE: 'Пароли должны совпадать!',
+    ARCHIVE_SUCCESS: 'Событие добавлено в архив!',
 };
 // TODO: Выставить всё по алфавиту, импорты во всех файлах тоже только там где это уместно!!!!
 const ENDPOINTS = {
@@ -57,7 +63,7 @@ const ENDPOINTS = {
         READ: 'read',
         UPDATE: 'update',
         DESTROY: 'destroy',
-        FILTER: 'filter'
+        FILTER: 'filter',
     },
     SETTINGS: 'settings',
     HISTORY: 'history',

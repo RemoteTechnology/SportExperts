@@ -7,6 +7,8 @@ use App\Http\Procedures\V1\Authorizations\AuthByEmailProcedure;
 use App\Http\Procedures\V1\Authorizations\AuthByGoogleProcedure;
 use App\Http\Procedures\V1\Authorizations\AuthByVkontakteProcedure;
 use App\Http\Procedures\V1\Authorizations\LogoutProcedure;
+use App\Http\Procedures\V1\Events\Archive\ArchiveDestroyProcedure;
+use App\Http\Procedures\V1\Events\Archive\ArchiveStoreProcedure;
 use App\Http\Procedures\V1\Events\EventDestroyProcedure;
 use App\Http\Procedures\V1\Events\EventListProcedure;
 use App\Http\Procedures\V1\Events\EventReadProcedure;
@@ -16,6 +18,7 @@ use App\Http\Procedures\V1\Events\Filter\EventDateFilterProcedure;
 use App\Http\Procedures\V1\Events\Filter\EventOwnerFilterProcedure;
 use App\Http\Procedures\V1\Inviteds\InvitedListProcedure;
 use App\Http\Procedures\V1\Inviteds\InvitedReadProcedure;
+use App\Http\Procedures\V1\Inviteds\NotificationProcedure;
 use App\Http\Procedures\V1\Options\OptionDestroyProcedure;
 use App\Http\Procedures\V1\Options\OptionListProcedure;
 use App\Http\Procedures\V1\Options\OptionReadProcedure;
@@ -109,6 +112,10 @@ Route::prefix('v1')->group(function () {
 
     //// V1 EVENT ENDPOINTS
     Route::prefix('event')->group(function () {
+        Route::prefix('archive')->group(function () {
+            Route::rpc(ROUTE_STORE, [ArchiveStoreProcedure::class])->name('event.archive.store');
+            Route::rpc(ROUTE_DESTROY, [ArchiveDestroyProcedure::class])->name('event.archive.destroy');
+        });
         Route::rpc(ROUTE_DEFAULT, [EventListProcedure::class])->name('event.list');
         Route::rpc(ROUTE_READ, [EventReadProcedure::class])->name('event.read');
 //        Route::middleware('auth:sanctum')->group(function () {
@@ -154,6 +161,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('invite')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [InvitedListProcedure::class])->name('invite.list');
         Route::rpc(ROUTE_READ, [InvitedReadProcedure::class])->name('invite.read');
+        Route::rpc(ROUTE_DEFAULT . 'notification', [NotificationProcedure::class])->name('invite.notification');
     });
     //// END V1 Invite ENDPOINTS
 });

@@ -3,6 +3,10 @@ import {BASE_URL, TOKEN, IDENTIFIER, MESSAGES, RESPONSE, ENDPOINTS} from '../../
 import { getUser } from '../../api/UserRequest';
 import { loggingRequest } from '../../api/LoggingRequest';
 import {
+    createArchiveRequest,
+    removeArchiveRequest
+} from '../../api/ArchiveRequest';
+import {
     getRecordToEventsRequest,
     getEventOwnerRequest,
     getEventParticipantRequest
@@ -38,12 +42,14 @@ export default {
             id: null,
             user: null,
             participants: [],
+            invited: [],
             token: null,
             events: [],
             eventsNoActive: [],
             eventsArchive: [],
             first: 0,
             messageError: null,
+            messageSuccess: null,
         };
     },
     components: {
@@ -194,6 +200,46 @@ export default {
                     });
                     this.messageError = MESSAGES.NO_DATA;
                 });
+        },
+        addEventToArchive: function (eventKey)
+        {
+            let attributes = { key: eventKey };
+            createArchiveRequest(attributes)
+                .then((response) => {
+                    this.messageSuccess = MESSAGES.NO_DATA;
+                    this.getEventOwner();
+                })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getEventParticipantRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.ERROR_DEFAULT;
+                });
+        },
+        removeEventToArchive: function (eventKey)
+        {
+            let attributes = { key: eventKey };
+            removeArchiveRequest(attributes)
+                .then((response) => {
+                    this.messageSuccess = MESSAGES.NO_DATA;
+                    this.getEventOwner();
+                })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getEventParticipantRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.ERROR_DEFAULT;
+                });
         }
     },
     beforeMount() {
@@ -213,6 +259,9 @@ export default {
                 <span v-if="this.user.role === 'admin'">Администратора</span>
                 <span v-if="this.user.role === 'athlete'">Спортсмена</span></h2>
         </div>
+    </section>
+    <section class="mt-1 mb-2" v-if="this.messageSuccess">
+        <Message severity="success">{{ this.messageSuccess }}</Message>
     </section>
     <section class="mt-1 mb-2" v-if="this.messageError">
         <Message severity="error">{{ this.messageError }}</Message>
@@ -251,21 +300,26 @@ export default {
             </section>
             <section class="w-100 mt-5">
                 <!-- Виджет приглашенных спортсменов -->
-                <Card v-if="this.user.role === 'admin'">
+                <Card v-if="this.user.role === 'admin' && this.invited.length > 0">
+                    <section>
+                        <a href="#">
+                            <Button type="button" label="Полный список спортсменов" severity="primary"/>
+                        </a>
+                    </section>
                     <template #header>
                         <div class="d-flex d-center">
                             <h4>Ваши спортсмены:</h4>
                         </div>
                     </template>
                     <template #content>
-                        <DataTable :value="this.participants.data">
+                        <DataTable :value="this.invited['data']">
                             <Column header="">
                                 <template #body>
                                     <Image src="images/athlete_default_avatar.png" width="30" />
                                 </template>
                             </Column>
-                            <Column field="first_name" header="Имя"></Column>
-                            <Column field="last_name" header="Фамилия"></Column>
+                            <Column field="user.first_name" header="Имя"></Column>
+                            <Column field="user.last_name" header="Фамилия"></Column>
                             <Column header="">
                                 <template #body>
                                     <a href="#">
@@ -309,7 +363,7 @@ export default {
                                                     </div>
                                                     <div class="w-70">
                                                         <div class="d-flex d-between">
-                                                            <section>
+                                                            <section class="w-40">
                                                                 <p>
                                                                     <strong>{{ event.name }}</strong>
                                                                 </p>
@@ -335,9 +389,11 @@ export default {
                                                                     </a>
                                                                 </div>
                                                                 <div>
-                                                                    <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.DELETE + '?id=' + event.id">
-                                                                        <Button label="В архив" severity="warning" outlined class="w-100" />
-                                                                    </a>
+                                                                    <Button label="В архив"
+                                                                            severity="warning"
+                                                                            outlined
+                                                                            class="w-100"
+                                                                            @click="this.addEventToArchive(event.key)"/>
                                                                 </div>
                                                             </section>
                                                         </div>
@@ -373,7 +429,7 @@ export default {
                                                     </div>
                                                     <div class="w-70">
                                                         <div class="d-flex d-between">
-                                                            <section>
+                                                            <section class="w-40">
                                                                 <p>
                                                                     <strong>{{ event.name }}</strong>
                                                                 </p>
@@ -437,7 +493,7 @@ export default {
                                                     </div>
                                                     <div class="w-70">
                                                         <div class="d-flex d-between">
-                                                            <section>
+                                                            <section class="w-40">
                                                                 <p>
                                                                     <strong>{{ event.name }}</strong>
                                                                 </p>
@@ -463,9 +519,11 @@ export default {
                                                                     </a>
                                                                 </div>
                                                                 <div>
-                                                                    <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.DELETE + '?id=' + event.id">
-                                                                        <Button label="В архив" severity="warning" outlined class="w-100" />
-                                                                    </a>
+                                                                    <Button label="Возобновить"
+                                                                            severity="primary"
+                                                                            outlined
+                                                                            class="w-100"
+                                                                            @click="this.removeEventToArchive(event.key)" />
                                                                 </div>
                                                             </section>
                                                         </div>

@@ -25,16 +25,13 @@ return new class extends Migration
             // Связи
             $table->foreign('user_id')
                 ->on('users')
-                ->references('id')
-                ->onDelete('CASCADE');
+                ->references('id');
             $table->foreign('participants_A')
                 ->on('participants')
-                ->references('key')
-                ->onDelete('CASCADE');
+                ->references('key');
             $table->foreign('participants_B')
                 ->on('participants')
-                ->references('key')
-                ->onDelete('CASCADE');
+                ->references('key');
             // Индексы
             $table->index([
                 'id',

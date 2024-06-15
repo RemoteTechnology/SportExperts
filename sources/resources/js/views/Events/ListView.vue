@@ -33,6 +33,10 @@ export default {
         InlineMessage: InlineMessage
     },
     methods: {
+        formatDate: (inputDate) => {
+            const [year, month, day] = inputDate.split('-');
+            return `${day.padStart(2, '0')}.${month.padStart(2, '0')}.${year}`;
+        },
         short: (str, maxlen) => str.length <= maxlen ? str : str.slice(0, maxlen) + '...',
         stripHtmlTags: function(html)
         {
@@ -85,11 +89,6 @@ export default {
 
 <template>
     <section v-if="this.events && this.events[this.response.data].length > 0" class="mt-5 mb-5">
-        <section v-if="this.user && this.user.role === 'admin'" class="container mb-5">
-            <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.CREATE">
-                <Button label="Создать событие" severity="success" />
-            </a>
-        </section>
         <section class="container d-flex d-between d-flex-wrap">
             <Card v-for="event in this.events[this.response.data]"
                   v-key="event"
@@ -107,12 +106,23 @@ export default {
                 </template>
                 <template #title>{{event.name }}</template>
                 <template #content>
-                    <p class="m-0"> {{ this.stripHtmlTags(this.short(event.description, 130)) }}</p>
+<!--                    <p class="m-0"> {{ this.stripHtmlTags(this.short(event.description, 130)) }}</p>-->
                 </template>
                 <template #footer>
                     <span>Даты проведения:</span>
                     <div class="d-flex d-between">
-                        <strong><i class="pi pi-calendar-plus"></i> {{ event.start_date }} <i class="pi pi-stopwatch"></i> {{ event.start_time }}</strong>
+                        <strong>
+                            <div>
+                                <i class="pi pi-calendar-plus" style="
+                                    font-weight: bold;
+                                    color: #4aa81f;
+                                "></i> {{ this.formatDate(event.start_date) }}
+                            </div>
+                            <div><i class="pi pi-stopwatch" style="
+                                    font-weight: bold;
+                                    color: #1f41a8;
+                                "></i> {{ event.start_time.slice(0, -3) }}</div>
+                        </strong>
                     </div>
                     <div class="flex gap-3 mt-2">
                         <br>
