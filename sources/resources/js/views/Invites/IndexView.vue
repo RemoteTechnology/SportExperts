@@ -7,9 +7,6 @@ import {
     RESPONSE
 } from "../../constant";
 import { registrationRequest } from '../../api/UserRequest';
-import { createInvitedRequest } from '../../api/InvitedRequest';
-import { eventRecordRequest } from '../../api/ParticipantRequest';
-//TODO: зафигачить опции
 import { loggingRequest } from '../../api/LoggingRequest';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
@@ -18,10 +15,10 @@ import InputMask from 'primevue/inputmask';
 import FloatLabel from 'primevue/floatlabel';
 import Message from 'primevue/message';
 
+//TODO: это очень похоже на "RegistrationView", придумать что с этим сделать!
 export default {
     data() {
         return {
-            urlKey: false,
             owner: null,
             eventKey: null,
             baseUrl: BASE_URL,
@@ -49,10 +46,6 @@ export default {
                 phone: null,
                 password: null,
                 passwordDouble: null
-            },
-            option: {
-                weight: null,
-                height: null,
             }
         };
     },
@@ -68,13 +61,9 @@ export default {
         getUrl: function ()
         {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.size > 0)
-            {
-                const keyUrlInvite = urlParams.get('key');
-                this.owner = keyUrlInvite.split('_')[0];
-                this.eventKey = keyUrlInvite.split('_')[1];
-                this.urlKey = true;
-            }
+            const keyUrlInvite = urlParams.get('key');
+            this.owner = keyUrlInvite.split('_')[0];
+            this.eventKey = keyUrlInvite.split('_')[1];
         },
         translation: function (argField) {
             return argField.split('').map(char => this.symbols[char] || char).join('');
@@ -100,77 +89,18 @@ export default {
             if (this.user.phone) {
                 attributes.phone = this.user.phone;
             }
-
-            if (this.urlKey)
-            {
-                registrationRequest(attributes)
-                    .then((response) => {
-                        this.user = response.data.result.original;
+            registrationRequest(attributes)
+                .then((response) => { window.location = this.baseUrl + ENDPOINTS.LOGIN; })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'registrationRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
                     })
-                    .catch((error) => {
-                        loggingRequest({
-                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'registrationRequest',
-                            status: error.code,
-                            request_data: attributes.toString(),
-                            message: error.message
-                        })
-                    });
-                let attributesInvite = {
-                    who_user_id: this.owner,
-                    user_id: this.user.id,
-                }
-                createInvitedRequest(attributesInvite)
-                    // .then((response) => {})
-                    .catch((error) => {
-                        loggingRequest({
-                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'registrationRequest',
-                            status: error.code,
-                            request_data: attributesInvite.toString(),
-                            message: error.message
-                        })
-                    });
-                let attributesRecord = {
-                    // TODO: найти событие по ключу
-                    event_id: this.eventId,
-                    user_id: this.user.id,
-                    invited_user_id: this.owner,
-                };
-                eventRecordRequest(attributesRecord)
-                    .then((response) => {
-                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
-                    })
-                    .catch((error) => {
-                        loggingRequest({
-                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'registrationRequest',
-                            status: error.code,
-                            request_data: attributesRecord.toString(),
-                            message: error.message
-                        })
-                    });
-            }
-            else
-            {
-                registrationRequest(attributes)
-                    .then((response) => {
-                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
-                    })
-                    .catch((error) => {
-                        loggingRequest({
-                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'registrationRequest',
-                            status: error.code,
-                            request_data: attributes.toString(),
-                            message: error.message
-                        })
-                    });
-            }
+                });
             // }
             // else
             // {
@@ -182,7 +112,6 @@ export default {
         this.getUrl();
     }
 }
-
 </script>
 
 <template>
@@ -191,13 +120,7 @@ export default {
             <section class="mt-1 mb-2" v-if="this.messageError !== null">
                 <Message severity="error">{{ this.messageError }}</Message>
             </section>
-            <div v-if="!this.urlKey" class="text-center">
-                <h2>Регистрация</h2>
-                <a :href="this.baseUrl + this.route.LOGIN">
-                    <Button label="Вход" severity="info" link />
-                </a>
-            </div>
-            <div v-else class="text-center">
+            <div class="text-center">
                 <h2>Заполните анкету</h2>
             </div>
             <form>
@@ -248,22 +171,26 @@ export default {
                     <div class="form-block w-46">
                         <label for="#">Укажите ваш пол</label>
                         <div class="flexing">
-                            <label for="radioMale" class="w-auto">
-                                <input type="radio"
-                                       v-model="this.user.gender"
-                                       name="gender"
-                                       value="Мужчина"
-                                       class="w-auto" />
-                                Мужской
-                            </label>
-                            <label for="radioFemale" class="w-auto">
-                                <input type="radio"
-                                       v-model="this.user.gender"
-                                       name="gender"
-                                       value="Женщина"
-                                       class="w-auto" />
-                                Женский
-                            </label>
+                            <section>
+                                <label for="radioMale" class="w-auto">
+                                    <input type="radio"
+                                           v-model="this.user.gender"
+                                           name="gender"
+                                           value="Мужчина"
+                                           class="w-auto" />
+                                    Мужской
+                                </label>
+                            </section>
+                            <section>
+                                <label for="radioFemale" class="w-auto">
+                                    <input type="radio"
+                                           v-model="this.user.gender"
+                                           name="gender"
+                                           value="Женщина"
+                                           class="w-auto" />
+                                    Женский
+                                </label>
+                            </section>
                         </div>
                     </div>
                 </div>
@@ -279,20 +206,6 @@ export default {
                                v-model="this.user.passwordDouble"
                                class="w-100" />
                 </div>
-                <section v-if="this.urlKey">
-                    <div class="form-block">
-                        <label for="#">Укажите ваш рост</label>
-                        <InputText type="number"
-                                   v-model="this.option.height"
-                                   class="w-100" />
-                    </div>
-                    <div class="form-block">
-                        <label for="#">Укажите ваш вес</label>
-                        <InputText type="number"
-                                   v-model="this.option.weight"
-                                   class="w-100" />
-                    </div>
-                </section>
                 <div class="form-block d-flex d-between">
                     <Button label="Создать аккаунт"
                             @click="this.signUp"
@@ -304,16 +217,17 @@ export default {
     </section>
 </template>
 
-<style scoped>
-    input:invalid {
-      border: 1px solid red;
-    }
-    .flexing {
-        display: flex;
-        gap: 10px;
-    }
 
-    .nameLatInput {
-        margin-top: 30px;
-    }
+<style scoped>
+input:invalid {
+    border: 1px solid red;
+}
+.flexing {
+    display: flex;
+    gap: 10px;
+}
+
+.nameLatInput {
+    margin-top: 30px;
+}
 </style>

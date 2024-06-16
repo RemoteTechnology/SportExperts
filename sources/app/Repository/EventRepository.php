@@ -7,6 +7,7 @@ use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
 use App\Models\Event;
 use App\Repository\Traits\CreateQueryTrait;
 use App\Repository\Traits\DestroyQueryTrait;
+use App\Repository\Traits\GetByKeyTrait;
 use App\Repository\Traits\ListQueryTrait;
 use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\StatusQueryTrait;
@@ -23,6 +24,7 @@ final class EventRepository implements
     use UpdateQueryTrait;
     use DestroyQueryTrait;
     use StatusQueryTrait;
+    use GetByKeyTrait;
 
     protected Model $model;
     public function __construct(Event $model = new Event())

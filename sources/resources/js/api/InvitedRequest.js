@@ -21,4 +21,19 @@ async function addNotificationUserInviteEventRequest(attributes)
     })
 }
 
-export {  }
+async function createInvitedRequest(attributes)
+{
+    return await axios.post(`${BASE_URL}api/v1/invite/store`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        'jsonrpc': JSON_RPC_VERSION,
+        'id': '1',
+        'notification': false,
+        'method': `${PROCEDURES.invites.notification}@${REQUEST_METHOD_DEFAULT}`,
+        'params': attributes
+    })
+}
+
+export { addNotificationUserInviteEventRequest, createInvitedRequest }

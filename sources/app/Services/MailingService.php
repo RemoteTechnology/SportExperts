@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Mail\InviteNewUserMail;
 use App\Mail\Users\CreateUserMail;
 use App\Mail\Users\ResetMail;
 use Illuminate\Mail\SentMessage;
@@ -25,6 +26,6 @@ class MailingService
     }
     public function mailInvitedOrRecord(array $attributes): SentMessage
     {
-
+        return Mail::to($attributes[FIELD_EMAIL])->send(new InviteNewUserMail($attributes['personalUrl']));
     }
 }

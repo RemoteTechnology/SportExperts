@@ -2,6 +2,7 @@
 import {BASE_URL, ENDPOINTS, IDENTIFIER, MESSAGES, TOKEN} from "../../constant";
 import { getUser, getInvitedOwnerRequest } from "../../api/UserRequest";
 import { getEventRequest } from '../../api/EventRequest';
+import { addNotificationUserInviteEventRequest } from '../../api/InvitedRequest';
 import { recordUserToEventRequest, eventRecordRequest } from '../../api/ParticipantRequest';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
@@ -28,7 +29,7 @@ export default {
             event: null,
             dialog: false,
             emailInvited: null,
-            participantEmail: null,
+            invitedEmail: null,
             participant: [],
             whoInvited: null,
             invites: null,
@@ -138,7 +139,27 @@ export default {
         },
         recordAndInvitedUser: function()
         {
-            
+            let attributes = {
+                email: this.invitedEmail,
+                ownerId: this.user.id,
+                eventKey: this.event.key,
+            };
+            addNotificationUserInviteEventRequest(attributes)
+                .then((response) => {
+                    this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
+                    this.invitedEmail = null;
+                })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'recordUserToEventRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.ERROR_ERROR;
+                });
         },
         inviteToEvent: function ()
         {
@@ -226,7 +247,7 @@ export default {
         </div>
         <div class="mb-3">
             <label class="font-semibold w-6rem">Отправить приглашение по E-mail</label>
-            <InputText type="email" v-model="this.participantEmail" class="w-100" />
+            <InputText type="email" v-model="this.invitedEmail" class="w-100" />
         </div>
         <div class="mb-3">
             <Button label="Записать на событие" severity="success" class="w-100" @click="this.inviteToEvent" />
@@ -238,7 +259,7 @@ export default {
             <Message severity="error">{{ this.messageError }}</Message>
         </section>
         <section class="mt-1 mb-2" v-if="this.messageSuccess">
-            <Message severity="error">{{ this.messageSuccess }}</Message>
+            <Message severity="success">{{ this.messageSuccess }}</Message>
         </section>
         <section class="container d-flex d-between d-flex-wrap">
             <div class="w-50">

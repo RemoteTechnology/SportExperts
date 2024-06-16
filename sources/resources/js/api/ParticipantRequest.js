@@ -7,6 +7,7 @@ import {
 } from '../constant';
 
 async function recordUserToEventRequest(attributes) {
+    // Для записи из списка спортсменов
     return await axios.post(`${BASE_URL}api/v1/participant/store/`, {
         headers: {
             'Content-Type': 'application/json',
@@ -21,6 +22,7 @@ async function recordUserToEventRequest(attributes) {
 }
 
 async function eventRecordRequest(data) {
+    // TODO: Сделать запись спортсмена на событие
     return await axios.post(`${BASE_URL}api/v1/user/auth/`, {
         headers: {
             'Content-Type': 'application/json',

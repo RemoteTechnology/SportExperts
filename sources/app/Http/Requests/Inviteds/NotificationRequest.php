@@ -22,7 +22,9 @@ class NotificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string']
+            'email'     => ['required', 'string'],
+            'ownerId'   => ['required', 'numeric'],
+            'eventKey'  => ['required', 'string'],
         ];
     }
 }
