@@ -1,15 +1,11 @@
 import axios from "axios";
-import {
-    BASE_URL,
-    JSON_RPC_VERSION,
-    REQUEST_METHOD_DEFAULT,
-    PROCEDURES
-} from '../../constant';
+import { JSON_RPC_VERSION } from '../../constant';
 
-//TODO: зафигачить взде в запросах билдер
 /**
  * Класс занимается сборкой реквестов, респонсы нужно смотреть в реализациях
+ * не использовать напрямую.
  * @class
+ * @name TBuilder
  */
 class RequestBuilder {
     constructor() {
@@ -31,6 +27,7 @@ class RequestBuilder {
      * Определение урла, к которому нужно обратиться
      * @param url
      * @returns {RequestBuilder}
+     * @throws TypeError
      */
     setUrl(url) {
         this.url = url;
@@ -41,6 +38,7 @@ class RequestBuilder {
      * Определение метода, необходимо для JSON-RPC
      * @param method
      * @returns {RequestBuilder}
+     * @throws TypeError
      */
     setMethod(method) {
         this.data.method = method;
@@ -51,6 +49,7 @@ class RequestBuilder {
      * Сборка тела параметров запроса
      * @param params
      * @returns {RequestBuilder}
+     * @throws TypeError
      */
     setParams(params) {
         this.data.params = params;
@@ -61,9 +60,12 @@ class RequestBuilder {
      * Сборка заголовков
      * @param headers
      * @returns {RequestBuilder}
+     * @throws TypeError
      */
-    setHeaders(headers) {
-        this.headers = { ...this.headers, ...headers };
+    setHeaders(headers=null) {
+        if (headers !== null) {
+            this.headers = { ...this.headers, ...headers };
+        }
         return this;
     }
 
@@ -79,6 +81,7 @@ class RequestBuilder {
     /**
      * Отправляет запрос к серверу.
      * @returns {Promise<axios.AxiosResponse<any>>}
+     * @throws Error
      */
     async execute() {
         return await axios.post(this.url, this.data, {

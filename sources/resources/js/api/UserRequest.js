@@ -1,92 +1,57 @@
-import axios from "axios";
 import {
     BASE_URL,
-    JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
     PROCEDURES,
     TOKEN
 } from '../constant';
+import { UserEndpointQuery } from './query/UserEndpointQuery';
 
-
-async function registrationRequest(attributes)
+async function registrationRequest(attributes, userQuery = new UserEndpointQuery())
 {
-    return await axios.post(`${BASE_URL}api/v1/user/registration`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept':       'application/json',
-        },
-        'jsonrpc':          JSON_RPC_VERSION,
-        'id':               '1',
-        'notification':     false,
-        'method':           `${PROCEDURES.users.registration}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+    userQuery.setUrl(`${BASE_URL}api/v1/user/registration`);
+    userQuery.setHeaders();
+    userQuery.setMethod(`${PROCEDURES.users.registration}@${REQUEST_METHOD_DEFAULT}`);
+    userQuery.setParams(attributes);
+    return await userQuery.execute();
 }
 
-async function getUser(attributes)
+async function getUser(attributes, userQuery = new UserEndpointQuery())
 {
-    return await axios.post(`${BASE_URL}api/v1/user/read`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.users.read}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    });
+    userQuery.setUrl(`${BASE_URL}api/v1/user/read`);
+    userQuery.setHeaders();
+    userQuery.setMethod(`${PROCEDURES.users.read}@${REQUEST_METHOD_DEFAULT}`);
+    userQuery.setParams(attributes);
+    return await userQuery.execute();
 }
 
-async function updateUserRequest(attributes)
+async function updateUserRequest(attributes, userQuery = new UserEndpointQuery())
 {
-    return await axios.post(`${BASE_URL}api/v1/user/update`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': `Bearer Bearer ${window.$cookies.get(TOKEN)}`
-        },
-        validateStatus: () => true,
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.users.update}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    });
+    userQuery.setUrl(`${BASE_URL}api/v1/user/update`);
+    userQuery.setHeaders();
+    userQuery.isAuth(`Bearer Bearer ${window.$cookies.get(TOKEN)}`);
+    // TODO: возможно тут нужен "validateStatus: () => true,"
+    userQuery.setMethod(`${PROCEDURES.users.update}@${REQUEST_METHOD_DEFAULT}`);
+    userQuery.setParams(attributes);
+    return await userQuery.execute();
 }
 
-async function resetToPasswordRequest(attributes)
+async function resetToPasswordRequest(attributes, userQuery = new UserEndpointQuery())
 {
-    return await axios.post(`${BASE_URL}api/v1/user/reset/`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            // 'Authorization': `Bearer Bearer ${window.$cookies.get(TOKEN)}`
-        },
-        validateStatus: () => true,
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.users.reset}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    });
+    userQuery.setUrl(`${BASE_URL}api/v1/user/reset/`);
+    userQuery.setHeaders();
+    userQuery.setMethod(`${PROCEDURES.users.reset}@${REQUEST_METHOD_DEFAULT}`);
+    userQuery.setParams(attributes);
+    return await userQuery.execute();
+
 }
 
-async function getInvitedOwnerRequest(attributes)
+async function getInvitedOwnerRequest(attributes, userQuery = new UserEndpointQuery())
 {
-    return await axios.post(`${BASE_URL}api/v1/invite/`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            // 'Authorization': `Bearer Bearer ${window.$cookies.get(TOKEN)}`
-        },
-        validateStatus: () => true,
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.invites.list}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    });
+    userQuery.setUrl(`${BASE_URL}api/v1/invite/`);
+    userQuery.setHeaders();
+    userQuery.setMethod(`${PROCEDURES.invites.list}@${REQUEST_METHOD_DEFAULT}`);
+    userQuery.setParams(attributes);
+    return await userQuery.execute();
 }
 
 export {
