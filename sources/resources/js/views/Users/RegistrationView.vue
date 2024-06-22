@@ -7,6 +7,11 @@ import {
     RESPONSE
 } from "../../constant";
 import { registrationRequest } from '../../api/UserRequest';
+import { createInvitedRequest } from '../../api/InvitedRequest';
+import { eventRecordRequest } from '../../api/ParticipantRequest';
+import { createOptionRequest } from '../../api/OptionRequest';
+import {getEventRequest, getKeyEventRequest} from '../../api/EventRequest';
+//TODO: зафигачить опции
 import { loggingRequest } from '../../api/LoggingRequest';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
@@ -18,7 +23,13 @@ import Message from 'primevue/message';
 export default {
     data() {
         return {
+            urlKey: false,
+            invite_user_id: null,
+            event_id: null,
+            event: null,
+            participants: null,
             baseUrl: BASE_URL,
+            messageSuccess: null,
             messageError: null,
             symbols: {
                 'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo', 'Ж': 'Zh', 'З': 'Z', 'И': 'I',
@@ -43,6 +54,10 @@ export default {
                 phone: null,
                 password: null,
                 passwordDouble: null
+            },
+            option: {
+                weight: null,
+                height: null,
             }
         };
     },
@@ -55,32 +70,64 @@ export default {
         Message: Message,
     },
     methods: {
+        getUrl: function ()
+        {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.size > 0)
+            {
+                this.invite_user_id = urlParams.get('invite_user_id');
+                this.event_id = urlParams.get('event_id');
+                this.urlKey = true;
+            }
+        },
+        getKeyEvent: async function ()
+        {
+            let attributes = { key: this.event_id };
+            await getEventRequest(attributes)
+                .then((response) => {
+                    console.log('getKeyEventRequest')
+                    this.event = response.data.result.original;
+                })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getKeyEventRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    })
+                });
+        },
         translation: function (argField) {
             return argField.split('').map(char => this.symbols[char] || char).join('');
         },
         translationFirstName: function (event) { this.user.firstNameEng = this.translation(this.user.firstName) },
         translationLastName: function (event) { this.user.lastNameEng = this.translation(this.user.lastName) },
-        signUp: function () {
+        signUp: async function () {
             // if (this.user.password && this.user.passwordDouble && this.user.password === this.user.passwordDouble) {
-                let attributes = {
-                    first_name: this.user.firstName,
-                    first_name_eng: this.user.firstNameEng,
-                    last_name: this.user.lastName,
-                    last_name_eng: this.user.lastNameEng,
-                    gender: this.user.gender,
-                    password: this.user.password,
-                };
-                if (this.user.birthDate) {
-                    attributes.birth_date = this.user.birthDate;
-                }
-                if (this.user.email) {
-                    attributes.email = this.user.email;
-                }
-                if (this.user.phone) {
-                    attributes.phone = this.user.phone;
-                }
-                registrationRequest(attributes)
-                    .then((response) => { window.location = this.baseUrl + ENDPOINTS.LOGIN; })
+            let attributes = {
+                first_name: this.user.firstName,
+                first_name_eng: this.user.firstNameEng,
+                last_name: this.user.lastName,
+                last_name_eng: this.user.lastNameEng,
+                gender: this.user.gender,
+                password: this.user.password,
+            };
+            if (this.user.birthDate) {
+                attributes.birth_date = this.user.birthDate;
+            }
+            if (this.user.email) {
+                attributes.email = this.user.email;
+            }
+            if (this.user.phone) {
+                attributes.phone = this.user.phone;
+            }
+
+            if (this.urlKey)
+            {
+                await registrationRequest(attributes)
+                    .then((response) => { this.user = response.data.result.original; })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -91,12 +138,102 @@ export default {
                             message: error.message
                         })
                     });
+                let attributesInvite = {
+                    who_user_id: Number(this.invite_user_id),
+                    user_id: this.user.id,
+                }
+                await createInvitedRequest(attributesInvite)
+                    // .then((response) => { })
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'registrationRequest',
+                            status: error.code,
+                            request_data: attributesInvite.toString(),
+                            message: error.message
+                        })
+                    });
+                let attributesRecord = {
+                    event_id: this.event_id,
+                    user_id: this.user.id,
+                    invited_user_id: Number(this.invite_user_id),
+                };
+                await eventRecordRequest(attributesRecord)
+                    .then((response) => { this.participants = response.data.result.original; })
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'registrationRequest',
+                            status: error.code,
+                            request_data: attributesRecord.toString(),
+                            message: error.message
+                        })
+                    });
+                console.log(this.participants)
+                if (this.participants)
+                {
+                    let attributesOptions= [
+                        {
+                            participant_key: this.participants.key,
+                            entity: "event_user",
+                            name: "Вес",
+                            value: this.option.weight,
+                            type: "string",
+                        },
+                        {
+                            participant_key: this.participants.key,
+                            entity: "event_user",
+                            name: "Рост",
+                            value: this.option.height,
+                            type: "string",
+                        }
+                    ];
+                    let i = 0;
+                    while(i < attributesOptions.length)
+                    {
+                        await createOptionRequest(attributesOptions[i])
+                            // .then((response) => { })
+                            .catch((error) => {
+                                loggingRequest({
+                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                    method: 'createOptionRequest',
+                                    status: error.code,
+                                    request_data: attributesRecord.toString(),
+                                    message: error.message
+                                })
+                            });
+                        i++;
+                    }
+                    this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                }
+            }
+            else
+            {
+                await registrationRequest(attributes)
+                    .then((response) => { this.messageSuccess = MESSAGES.FORM_SUCCESS })
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'registrationRequest',
+                            status: error.code,
+                            request_data: attributes.toString(),
+                            message: error.message
+                        })
+                    });
+            }
             // }
             // else
             // {
             //     this.messageError = MESSAGES.PASSWORD_DOUBLE;
             // }
         }
+    },
+    beforeMount() {
+        this.getUrl();
     }
 }
 
@@ -105,14 +242,20 @@ export default {
 <template>
     <section class="d-flex d-center">
         <section class="mt-5">
+            <section class="mt-1 mb-2" v-if="this.messageSuccess !== null">
+                <Message severity="success">{{ this.messageSuccess }}</Message>
+            </section>
             <section class="mt-1 mb-2" v-if="this.messageError !== null">
                 <Message severity="error">{{ this.messageError }}</Message>
             </section>
-            <div class="text-center">
+            <div v-if="!this.urlKey" class="text-center">
                 <h2>Регистрация</h2>
                 <a :href="this.baseUrl + this.route.LOGIN">
                     <Button label="Вход" severity="info" link />
                 </a>
+            </div>
+            <div v-else class="text-center">
+                <h2>Заполните анкету</h2>
             </div>
             <form>
                 <div class="d-flex d-between">
@@ -193,6 +336,20 @@ export default {
                                v-model="this.user.passwordDouble"
                                class="w-100" />
                 </div>
+                <section v-if="this.urlKey">
+                    <div class="form-block">
+                        <label for="#">Укажите ваш рост</label>
+                        <InputText type="number"
+                                   v-model="this.option.height"
+                                   class="w-100" />
+                    </div>
+                    <div class="form-block">
+                        <label for="#">Укажите ваш вес</label>
+                        <InputText type="number"
+                                   v-model="this.option.weight"
+                                   class="w-100" />
+                    </div>
+                </section>
                 <div class="form-block d-flex d-between">
                     <Button label="Создать аккаунт"
                             @click="this.signUp"
@@ -203,16 +360,17 @@ export default {
         </section>
     </section>
 </template>
-<style scoped>
-input:invalid {
-  border: 1px solid red;
-}
-.flexing {
-    display: flex;
-    gap: 10px;
-}
 
-.nameLatInput {
-    margin-top: 30px;
-}
+<style scoped>
+    input:invalid {
+      border: 1px solid red;
+    }
+    .flexing {
+        display: flex;
+        gap: 10px;
+    }
+
+    .nameLatInput {
+        margin-top: 30px;
+    }
 </style>

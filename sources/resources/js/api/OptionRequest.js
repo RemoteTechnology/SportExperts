@@ -6,9 +6,8 @@ import {
     PROCEDURES
 } from '../constant';
 
-async function recordUserToEventRequest(attributes) {
-    // Для записи из списка спортсменов
-    return await axios.post(`${BASE_URL}api/v1/participant/store/`, {
+async function createOptionRequest(attributes) {
+    return await axios.post(`${BASE_URL}api/v1/option/store`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -16,14 +15,13 @@ async function recordUserToEventRequest(attributes) {
         'jsonrpc': JSON_RPC_VERSION,
         'id': '1',
         'notification': false,
-        'method': `${PROCEDURES.participant.create}@${REQUEST_METHOD_DEFAULT}`,
+        'method': `${PROCEDURES.option.create}@${REQUEST_METHOD_DEFAULT}`,
         'params': attributes
     })
 }
 
-async function eventRecordRequest(attributes) {
-    // TODO: Сделать запись спортсмена на событие
-    return await axios.post(`${BASE_URL}api/v1/participant/store/`, {
+async function updateOptionRequest(attributes) {
+    return await axios.post(`${BASE_URL}api/v1/option/update`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -31,9 +29,9 @@ async function eventRecordRequest(attributes) {
         'jsonrpc': JSON_RPC_VERSION,
         'id': '1',
         'notification': false,
-        'method': `${PROCEDURES.participant.create}@${REQUEST_METHOD_DEFAULT}`,
+        'method': `${PROCEDURES.option.update}@${REQUEST_METHOD_DEFAULT}`,
         'params': attributes
     })
 }
 
-export { recordUserToEventRequest, eventRecordRequest }
+export { createOptionRequest, updateOptionRequest };

@@ -66,6 +66,9 @@ app.component('event-create-of-update-view', CreateOfUpdateView);
 import EventDetailsView from './views/Events/DetailsView.vue';
 app.component('event-detail-view', EventDetailsView);
 
+import InviteView from './views/Invites/IndexView.vue';
+app.component('invite-view', InviteView);
+
 import TournamentView from './views/Tournaments/IndexView.vue';
 app.component('tournament-view', TournamentView);
 

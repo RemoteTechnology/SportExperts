@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Procedures\V1;
+namespace App\Http\Procedures\V1\Events\Archive;
 
 use App\Http\Requests\Archives\ArchiveRequest;
 use App\Http\Resources\Events\EventResource;
@@ -19,7 +19,7 @@ class ArchiveStoreProcedure extends Procedure
      *
      * @var string
      */
-    public static string $name = 'EventArchiveStoreProcedure';
+    public static string $name = 'ArchiveStoreProcedure';
     public EventRepository $repository;
 
     public function __construct(EventRepository $repository)
@@ -34,7 +34,7 @@ class ArchiveStoreProcedure extends Procedure
      *
      * @return JsonResponse
      */
-    public function handle(ArchiveRequest $request)
+    public function handle(ArchiveRequest $request): JsonResponse
     {
         $archive = $request->validated();
         return new JsonResponse(

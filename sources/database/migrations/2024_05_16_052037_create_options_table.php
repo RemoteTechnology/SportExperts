@@ -32,12 +32,10 @@ return new class extends Migration
             // Связи
             $table->foreign('event_key')
                 ->on('events')
-                ->references('key')
-                ->onDelete('CASCADE');
+                ->references('key');
             $table->foreign('participant_key')
                 ->on('participants')
-                ->references('key')
-                ->onDelete('CASCADE');
+                ->references('key');
             // Индексы
             $table->index([
                 'id',

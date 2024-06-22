@@ -8,7 +8,11 @@
     <body>
         <!-- HEADER -->
         <div style="background-color: #610808;">
-            <img src="{{ asset('images/logo.png') }}" alt="SportExperts">
+            <img src="{{ asset('images/logo.png') }}" alt="SportExperts" style="
+                width: 100%;
+                display: block;
+                height: 55px;
+            ">
         </div>
         @yield('content')
         <!-- FOOTER -->

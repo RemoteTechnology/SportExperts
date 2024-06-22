@@ -6,9 +6,10 @@ import {
     PROCEDURES
 } from '../constant';
 
-async function recordUserToEventRequest(attributes) {
-    // Для записи из списка спортсменов
-    return await axios.post(`${BASE_URL}api/v1/participant/store/`, {
+
+async function createArchiveRequest(attributes)
+{
+    return await axios.post(`${BASE_URL}api/v1/event/archive/store`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -16,14 +17,14 @@ async function recordUserToEventRequest(attributes) {
         'jsonrpc': JSON_RPC_VERSION,
         'id': '1',
         'notification': false,
-        'method': `${PROCEDURES.participant.create}@${REQUEST_METHOD_DEFAULT}`,
+        'method': `${PROCEDURES.archive.create}@${REQUEST_METHOD_DEFAULT}`,
         'params': attributes
     })
 }
 
-async function eventRecordRequest(attributes) {
-    // TODO: Сделать запись спортсмена на событие
-    return await axios.post(`${BASE_URL}api/v1/participant/store/`, {
+async function removeArchiveRequest(attributes)
+{
+    return await axios.post(`${BASE_URL}api/v1/event/archive/destroy`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -31,9 +32,9 @@ async function eventRecordRequest(attributes) {
         'jsonrpc': JSON_RPC_VERSION,
         'id': '1',
         'notification': false,
-        'method': `${PROCEDURES.participant.create}@${REQUEST_METHOD_DEFAULT}`,
+        'method': `${PROCEDURES.archive.delete}@${REQUEST_METHOD_DEFAULT}`,
         'params': attributes
     })
 }
 
-export { recordUserToEventRequest, eventRecordRequest }
+export { createArchiveRequest, removeArchiveRequest }

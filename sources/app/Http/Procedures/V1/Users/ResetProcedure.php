@@ -8,6 +8,7 @@ use App\Http\Requests\Users\ResetRequest;
 use App\Http\Resources\Users\UserResource;
 use App\Mail\Users\ResetMail;
 use App\Repository\Filter\Entities\Users\FindByEmailRepository;
+use App\Services\MailingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -26,10 +27,12 @@ class ResetProcedure extends Procedure
     public static string $name = 'ResetProcedure';
     public string $newPassword;
     private FindByEmailRepository $filter;
+    private MailingService $mailingService;
 
-    public function __construct(FindByEmailRepository $filter)
+    public function __construct(FindByEmailRepository $filter, MailingService $mailingService)
     {
         $this->filter = $filter;
+        $this->mailingService = $mailingService;
         $this->newPassword = Str::random(10);
     }
 
@@ -43,11 +46,13 @@ class ResetProcedure extends Procedure
     public function handle(ResetRequest $request): JsonResponse
     {
         $request->validated();
-        //TODO: Возможно вынести в сервис
         $user = $this->filter->query([FIELD_EMAIL => $request[FIELD_EMAIL]]);
         $user->password = Hash::make($this->newPassword);
         $user->save();
-        Mail::to($user->email)->send(new ResetMail($this->newPassword));
+        $this->mailingService->mailResetToPassword([
+            FIELD_EMAIL => $user->email,
+            FIELD_PASSWORD => $this->newPassword
+        ]);
         return new JsonResponse(
             data: new UserResource($user),
             status: 201

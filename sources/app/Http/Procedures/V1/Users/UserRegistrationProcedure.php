@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Users;
 
-use App\Domain\Constants\LogLevelEnum;
 use App\Http\Requests\Users\RegistrationUserRequest;
 use App\Http\Resources\Users\UserResource;
-use App\Mail\Users\CreateUserMail;
 use App\Repository\UserRepository;
 use App\Services\LoggingService;
-use Exception;
+use App\Services\MailingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Sajya\Server\Procedure;
+
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
 
 class UserRegistrationProcedure extends Procedure
 {
@@ -25,14 +24,16 @@ class UserRegistrationProcedure extends Procedure
      */
     private UserRepository $operation;
 //    private LoggingService $loggingService;
+    private MailingService $mailingService;
 
     /**
      * @param UserRepository $operation
      */
-    public function __construct(UserRepository $operation)//, LoggingService $loggingService)
+    public function __construct(UserRepository $operation, MailingService $mailingService)//, LoggingService $loggingService)
     {
         $this->operation = $operation;
 //        $this->loggingService = $loggingService;
+        $this->mailingService = $mailingService;
     }
 
     /**
@@ -50,7 +51,7 @@ class UserRegistrationProcedure extends Procedure
             if ($user = new UserResource(
                 $this->operation->store($inputData)
             )) {
-                Mail::to($user->email)->send(new CreateUserMail());
+                $this->mailingService->mailNewUser([FIELD_EMAIL => $user->email]);
                 return new JsonResponse(
                     data: $user,
                     status: 201
