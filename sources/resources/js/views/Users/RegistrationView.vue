@@ -9,6 +9,8 @@ import {
 import { registrationRequest } from '../../api/UserRequest';
 import { createInvitedRequest } from '../../api/InvitedRequest';
 import { eventRecordRequest } from '../../api/ParticipantRequest';
+import { createOptionRequest } from '../../api/OptionRequest';
+import {getEventRequest, getKeyEventRequest} from '../../api/EventRequest';
 //TODO: зафигачить опции
 import { loggingRequest } from '../../api/LoggingRequest';
 import Card from 'primevue/card';
@@ -22,9 +24,12 @@ export default {
     data() {
         return {
             urlKey: false,
-            owner: null,
-            eventKey: null,
+            invite_user_id: null,
+            event_id: null,
+            event: null,
+            participants: null,
             baseUrl: BASE_URL,
+            messageSuccess: null,
             messageError: null,
             symbols: {
                 'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo', 'Ж': 'Zh', 'З': 'Z', 'И': 'I',
@@ -70,18 +75,36 @@ export default {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.size > 0)
             {
-                const keyUrlInvite = urlParams.get('key');
-                this.owner = keyUrlInvite.split('_')[0];
-                this.eventKey = keyUrlInvite.split('_')[1];
+                this.invite_user_id = urlParams.get('invite_user_id');
+                this.event_id = urlParams.get('event_id');
                 this.urlKey = true;
             }
+        },
+        getKeyEvent: async function ()
+        {
+            let attributes = { key: this.event_id };
+            await getEventRequest(attributes)
+                .then((response) => {
+                    console.log('getKeyEventRequest')
+                    this.event = response.data.result.original;
+                })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getKeyEventRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    })
+                });
         },
         translation: function (argField) {
             return argField.split('').map(char => this.symbols[char] || char).join('');
         },
         translationFirstName: function (event) { this.user.firstNameEng = this.translation(this.user.firstName) },
         translationLastName: function (event) { this.user.lastNameEng = this.translation(this.user.lastName) },
-        signUp: function () {
+        signUp: async function () {
             // if (this.user.password && this.user.passwordDouble && this.user.password === this.user.passwordDouble) {
             let attributes = {
                 first_name: this.user.firstName,
@@ -103,10 +126,8 @@ export default {
 
             if (this.urlKey)
             {
-                registrationRequest(attributes)
-                    .then((response) => {
-                        this.user = response.data.result.original;
-                    })
+                await registrationRequest(attributes)
+                    .then((response) => { this.user = response.data.result.original; })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -118,11 +139,11 @@ export default {
                         })
                     });
                 let attributesInvite = {
-                    who_user_id: this.owner,
+                    who_user_id: Number(this.invite_user_id),
                     user_id: this.user.id,
                 }
-                createInvitedRequest(attributesInvite)
-                    // .then((response) => {})
+                await createInvitedRequest(attributesInvite)
+                    // .then((response) => { })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -134,15 +155,12 @@ export default {
                         })
                     });
                 let attributesRecord = {
-                    // TODO: найти событие по ключу
-                    event_id: this.eventId,
+                    event_id: this.event_id,
                     user_id: this.user.id,
-                    invited_user_id: this.owner,
+                    invited_user_id: Number(this.invite_user_id),
                 };
-                eventRecordRequest(attributesRecord)
-                    .then((response) => {
-                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
-                    })
+                await eventRecordRequest(attributesRecord)
+                    .then((response) => { this.participants = response.data.result.original; })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -153,13 +171,49 @@ export default {
                             message: error.message
                         })
                     });
+                console.log(this.participants)
+                if (this.participants)
+                {
+                    let attributesOptions= [
+                        {
+                            participant_key: this.participants.key,
+                            entity: "event_user",
+                            name: "Вес",
+                            value: this.option.weight,
+                            type: "string",
+                        },
+                        {
+                            participant_key: this.participants.key,
+                            entity: "event_user",
+                            name: "Рост",
+                            value: this.option.height,
+                            type: "string",
+                        }
+                    ];
+                    let i = 0;
+                    while(i < attributesOptions.length)
+                    {
+                        await createOptionRequest(attributesOptions[i])
+                            // .then((response) => { })
+                            .catch((error) => {
+                                loggingRequest({
+                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                    method: 'createOptionRequest',
+                                    status: error.code,
+                                    request_data: attributesRecord.toString(),
+                                    message: error.message
+                                })
+                            });
+                        i++;
+                    }
+                    this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                }
             }
             else
             {
-                registrationRequest(attributes)
-                    .then((response) => {
-                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
-                    })
+                await registrationRequest(attributes)
+                    .then((response) => { this.messageSuccess = MESSAGES.FORM_SUCCESS })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -188,6 +242,9 @@ export default {
 <template>
     <section class="d-flex d-center">
         <section class="mt-5">
+            <section class="mt-1 mb-2" v-if="this.messageSuccess !== null">
+                <Message severity="success">{{ this.messageSuccess }}</Message>
+            </section>
             <section class="mt-1 mb-2" v-if="this.messageError !== null">
                 <Message severity="error">{{ this.messageError }}</Message>
             </section>

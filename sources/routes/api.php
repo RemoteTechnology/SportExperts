@@ -18,6 +18,7 @@ use App\Http\Procedures\V1\Events\Filter\EventDateFilterProcedure;
 use App\Http\Procedures\V1\Events\Filter\EventOwnerFilterProcedure;
 use App\Http\Procedures\V1\Inviteds\InvitedListProcedure;
 use App\Http\Procedures\V1\Inviteds\InvitedReadProcedure;
+use App\Http\Procedures\V1\Inviteds\InvitedStoreProcedure;
 use App\Http\Procedures\V1\Inviteds\NotificationProcedure;
 use App\Http\Procedures\V1\Options\OptionDestroyProcedure;
 use App\Http\Procedures\V1\Options\OptionListProcedure;
@@ -161,7 +162,10 @@ Route::prefix('v1')->group(function () {
     Route::prefix('invite')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [InvitedListProcedure::class])->name('invite.list');
         Route::rpc(ROUTE_READ, [InvitedReadProcedure::class])->name('invite.read');
-        Route::rpc(ROUTE_DEFAULT . 'notification', [NotificationProcedure::class])->name('invite.notification');
+//        Route::middleware('auth:sanctum')->group(function () {
+            Route::rpc(ROUTE_STORE, [InvitedStoreProcedure::class])->name('invite.store');
+            Route::rpc(ROUTE_DEFAULT . 'notification', [NotificationProcedure::class])->name('invite.notification');
+//        });
     });
     //// END V1 Invite ENDPOINTS
 });

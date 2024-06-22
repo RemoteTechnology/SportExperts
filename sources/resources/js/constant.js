@@ -12,6 +12,7 @@ const PROCEDURES = {
     },
     invites: {
         list: 'InvitedListProcedure',
+        create: 'InvitedStoreProcedure',
         read: 'InvitedReadProcedure',
         notification: 'NotificationProcedure',
     },
@@ -28,6 +29,7 @@ const PROCEDURES = {
         create: 'EventStoreProcedure',
         read: 'EventReadProcedure',
         update: 'EventUpdateProcedure',
+        getKey: 'EventGetKeyProcedure',
     },
     archive: {
         create: 'ArchiveStoreProcedure',

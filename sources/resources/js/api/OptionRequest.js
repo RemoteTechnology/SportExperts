@@ -6,9 +6,8 @@ import {
     PROCEDURES
 } from '../constant';
 
-async function addNotificationUserInviteEventRequest(attributes)
-{
-    return await axios.post(`${BASE_URL}api/v1/invite/notification/`, {
+async function createOptionRequest(attributes) {
+    return await axios.post(`${BASE_URL}api/v1/option/store`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -16,14 +15,13 @@ async function addNotificationUserInviteEventRequest(attributes)
         'jsonrpc': JSON_RPC_VERSION,
         'id': '1',
         'notification': false,
-        'method': `${PROCEDURES.invites.notification}@${REQUEST_METHOD_DEFAULT}`,
+        'method': `${PROCEDURES.option.create}@${REQUEST_METHOD_DEFAULT}`,
         'params': attributes
     })
 }
 
-async function createInvitedRequest(attributes)
-{
-    return await axios.post(`${BASE_URL}api/v1/invite/store`, {
+async function updateOptionRequest(attributes) {
+    return await axios.post(`${BASE_URL}api/v1/option/update`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -31,9 +29,9 @@ async function createInvitedRequest(attributes)
         'jsonrpc': JSON_RPC_VERSION,
         'id': '1',
         'notification': false,
-        'method': `${PROCEDURES.invites.create}@${REQUEST_METHOD_DEFAULT}`,
+        'method': `${PROCEDURES.option.update}@${REQUEST_METHOD_DEFAULT}`,
         'params': attributes
     })
 }
 
-export { addNotificationUserInviteEventRequest, createInvitedRequest }
+export { createOptionRequest, updateOptionRequest };

@@ -88,6 +88,9 @@ async function updateEventOptionRequest(attributes) {
         'params': attributes
     })
 }
+async function getKeyEventRequest(attributes){
+    // TODO: сделать выборку записи по ключу
+}
 
 export {
     getEventListRequest,
@@ -96,4 +99,5 @@ export {
     updateEventRequest,
     createEventOptionRequest,
     updateEventOptionRequest,
+    getKeyEventRequest,
 }
