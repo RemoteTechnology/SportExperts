@@ -26,6 +26,6 @@ class MailingService
     }
     public function mailInvitedOrRecord(array $attributes): SentMessage
     {
-        return Mail::to($attributes[FIELD_EMAIL])->send(new InviteNewUserMail($attributes['personalUrl']));
+        return Mail::to($attributes[FIELD_EMAIL])->send(new InviteNewUserMail($attributes));
     }
 }

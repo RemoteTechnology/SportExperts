@@ -6,6 +6,8 @@ namespace App\Http\Procedures\V1\Events\Filter;
 
 use App\Domain\Abstracts\AbstractFilter;
 use App\Http\Requests\Filter\ParticipantFilterRequest;
+use App\Http\Resources\Events\EventCollection;
+use App\Http\Resources\Events\EventResource;
 use App\Repository\Filter\EventToParticipantFilterRepository;
 use Illuminate\Http\JsonResponse;
 
@@ -31,28 +33,34 @@ class EventDateFilterProcedure extends AbstractFilter
      *
      * @return JsonResponse
      */
-    public function handle(ParticipantFilterRequest $request): JsonResponse
+    public function handle(ParticipantFilterRequest $request)//: JsonResponse
     {
         $data = $request->validated();
 
         if ($data['mode'] === 'after')
         {
+            $query = $this->filterRepository->filterAfterDate($this->formatDate($data), $data['limit'])->all()['data'];
+            $events = new EventCollection($query);
             return new JsonResponse(
-                data: $this->filterRepository->filterAfterDate($this->formatDate($data), $data['limit']),
+                data: $events->resource,
                 status: 201
             );
         }
         elseif ($data['mode'] === 'before')
         {
+            $query = $this->filterRepository->filterBeforeDate($this->formatDate($data), $data['limit'])->all()['data'];
+            $events = new EventCollection($query);
             return new JsonResponse(
-                data: $this->filterRepository->filterBeforeDate($this->formatDate($data), $data['limit']),
+                data: $events->resource,
                 status: 201
             );
         }
         else
         {
+            $query = $this->filterRepository->filterDate($this->formatDate($data), $data['limit'])->all()['data'];
+            $events = new EventCollection($query);
             return new JsonResponse(
-                data: $this->filterRepository->filterDate($this->formatDate($data), $data['limit']),
+                data: $events->resource,
                 status: 201
             );
         }

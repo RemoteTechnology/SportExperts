@@ -22,19 +22,16 @@ class EventToParticipantFilterRepository
         string $tableSearch,
         string $fieldSearch,
         string $table,
-        string $tableFieldIdentifier,
-        mixed $value
+        string $tableFieldIdentifier
     ): Builder
     {
         return $query->join($tableSearch,
             "{$table}.{$fieldSearch}",
             '=',
             "{$tableSearch}.{$tableFieldIdentifier}")
-            ->select("{$tableSearch}." . FIELD_ALL)
-            ->where("{$table}.{$fieldSearch}", $value);
+            ->select("{$tableSearch}." . FIELD_ALL);
     }
-
-    private function builder(array $context): Builder
+    private function builder(array $context): Builder|string
     {
         $query = $this->table;
         foreach ($context as $key => $value)
@@ -43,16 +40,17 @@ class EventToParticipantFilterRepository
                 case FIELD_USER_ID:
                     $query = $this->initQuery($query,
                         TABLE_EVENT,
-                        FIELD_USER_ID,
+                        FIELD_EVENT_ID,
                         TABLE_PARTICIPANTS,
-                        FIELD_USER_ID, $value);
+                        FIELD_ID);
+                    $query->where([TABLE_PARTICIPANTS . '.' . FIELD_USER_ID => $value]);
                     break;
                 case FIELD_TEAM_KEY:
-                    $query = $this->initQuery($query,
-                        TABLE_TEAM,
-                        FIELD_TEAM_KEY,
-                        TABLE_PARTICIPANTS,
-                        FIELD_TEAM_KEY, $value);
+//                    $query = $this->initQuery($query,
+//                        TABLE_TEAM,
+//                        FIELD_TEAM_KEY,
+//                        TABLE_PARTICIPANTS,
+//                        FIELD_TEAM_KEY);
                     break;
                 default:
                     break;
@@ -61,7 +59,12 @@ class EventToParticipantFilterRepository
         return $query;
     }
 
-    public function filterAfterDate(array $context, int $limit=9): Collection
+    /**
+     * @param array $context
+     * @param int $limit
+     * @return Collection
+     */
+    public function filterAfterDate(array $context, int $limit=9): Collection|array
     {
         $currentDateTime = Carbon::now();
         $query = new Collection($this->builder($context)->paginate($limit));
@@ -78,6 +81,7 @@ class EventToParticipantFilterRepository
         $query->where(TABLE_EVENT . '.' . FIELD_START_TIME, '<', $currentDateTime);
         return $query;
     }
+
     public function filterDate(array $context, int $limit=9): Collection
     {
         return new Collection($this->builder($context)->paginate($limit));
