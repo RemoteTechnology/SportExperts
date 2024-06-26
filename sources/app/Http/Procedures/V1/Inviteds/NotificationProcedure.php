@@ -39,11 +39,11 @@ class NotificationProcedure extends Procedure
     public function handle(NotificationRequest $request): JsonResponse
     {
         $invite = $request->validated();
-        $link = $this->inviteLinkService->generated($invite['ownerId'], $invite['eventKey']);
         return new JsonResponse(
             data: $this->mailingService->mailInvitedOrRecord([
-                FIELD_EMAIL     => $invite[FIELD_EMAIL],
-                'personalUrl'   => $link
+                FIELD_EMAIL         => $invite[FIELD_EMAIL],
+                'invite_user_id'    => $invite['ownerId'],
+                'event_id'          => $invite['event_id'],
             ]),
             status: 201
         );

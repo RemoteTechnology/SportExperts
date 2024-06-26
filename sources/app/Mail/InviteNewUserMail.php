@@ -10,18 +10,18 @@ class InviteNewUserMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public string $personalUrl;
+    public array $attributes;
     /**
      * Create a new message instance.
      */
-    public function __construct(string $personalUrl)
+    public function __construct(array $attributes)
     {
-        $this->personalUrl = $personalUrl;
+        $this->attributes = $attributes;
     }
 
     public function build(): InviteNewUserMail
     {
         return $this->subject('Приглашение на событие!')
-            ->view('email.invite.index', ['personalUrl' => $this->personalUrl]);
+            ->view('email.invite.index', ['attributes' => $this->attributes]);
     }
 }

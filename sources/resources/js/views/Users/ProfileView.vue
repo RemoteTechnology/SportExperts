@@ -71,10 +71,10 @@ export default {
     },
     methods: {
         short: (str, maxlen) => str.length <= maxlen ? str : str.slice(0, maxlen) + '...',
-        userIdentifier: function ()
+        userIdentifier: async function ()
         {
             let attributes = {id: window.$cookies.get(IDENTIFIER)};
-            getUser(attributes)
+            await getUser(attributes)
                 .then((response) => {
                     this.user = response.data.result.original;
                 })
@@ -104,7 +104,7 @@ export default {
         {
             let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
             getRecordToEventsRequest(attributes, 'after')
-                .then((response) => { console.log(response);this.events = response.data.result.original; })
+                .then((response) => { console.log(response); this.events = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -117,30 +117,31 @@ export default {
                     this.messageError = MESSAGES.LOADING_ERROR;
                 });
         },
-        getEventOwner: function ()
+        getEventOwner: async function ()
         {
-            let attributes = {
-                filter: `user_id:${window.$cookies.get(IDENTIFIER)}`,
-                mode: 'all',
-                limit: 10,
-                startDate: true,
-                status: 'Active'
-            };
-            getEventOwnerRequest(attributes)
-                .then((response) => { this.events = response.data.result.original; })
-                .catch((error) => {
-                    loggingRequest({
-                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                        method: 'getEventOwnerRequest',
-                        status: error.code,
-                        request_data: attributes.toString() + ', mode:after, limit:9, startDate:false',
-                        message: error.message
+            if  (this.user && this.user.role === 'admin') {
+                let attributes = {
+                    filter: `user_id:${window.$cookies.get(IDENTIFIER)}`,
+                    mode: 'all',
+                    limit: 10,
+                    startDate: true,
+                    status: 'Active'
+                };
+                await getEventOwnerRequest(attributes)
+                    .then((response) => {
+                        this.events = response.data.result.original;
+                    })
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'getEventOwnerRequest',
+                            status: error.code,
+                            request_data: attributes.toString() + ', mode:after, limit:9, startDate:false',
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.NO_DATA;
                     });
-                    this.messageError = MESSAGES.NO_DATA;
-                });
-            // if (user.role == 'admin')
-            // {
                 let attributes2 = {
                     filter: `user_id:${window.$cookies.get(IDENTIFIER)}`,
                     mode: 'after',
@@ -148,8 +149,10 @@ export default {
                     startDate: false,
                     status: 'No active'
                 };
-                getEventOwnerRequest(attributes2)
-                    .then((response) => { this.eventsNoActive = response.data.result.original; })
+                await getEventOwnerRequest(attributes2)
+                    .then((response) => {
+                        this.eventsNoActive = response.data.result.original;
+                    })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -164,13 +167,16 @@ export default {
 
                 let attributes3 = {
                     filter: `user_id:${window.$cookies.get(IDENTIFIER)}`,
-                    mode: 'before',
+                    mode: 'all',
                     limit: 9,
                     startDate: false,
                     status: 'Archive'
                 };
-                getEventOwnerRequest(attributes3)
-                    .then((response) => { this.eventsArchive = response.data.result.original; })
+                await getEventOwnerRequest(attributes3)
+                    .then((response) => {
+                        console.log(response);
+                        this.eventsArchive = response.data.result.original;
+                    })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -182,7 +188,7 @@ export default {
                         });
                         this.messageError = MESSAGES.NO_DATA;
                     });
-            // }
+            }
         },
         getParticipants: function ()
         {
@@ -242,11 +248,11 @@ export default {
                 });
         }
     },
-    beforeMount() {
+    async beforeMount() {
         this.tokenRead();
-        this.userIdentifier();
+        await this.userIdentifier();
         this.userReadToEvent();
-        this.getEventOwner();
+        await this.getEventOwner();
         this.getParticipants();
     }
 }
@@ -256,8 +262,8 @@ export default {
     <section class="d-flex d-center">
         <div v-if="this.user"  class="text-center mt-3 mb-3">
             <h2>Профиль
-                <span v-if="this.user.role === 'admin'">Администратора</span>
-                <span v-if="this.user.role === 'athlete'">Спортсмена</span></h2>
+                <span v-if="this.user !== null && this.user.role === 'admin'">Администратора</span>
+                <span v-if="this.user !== null && this.user.role === 'athlete'">Спортсмена</span></h2>
         </div>
     </section>
     <section class="mt-1 mb-2" v-if="this.messageSuccess">
@@ -275,12 +281,12 @@ export default {
                             <section>
                                 <Image src="images/athlete_default_avatar.png" width="250" />
                                 <div class="mt-06 d-flex d-center">
-                                    <h2>
+                                    <h2 v-if="this.user !== null">
                                         <strong>{{ this.user.first_name }} {{ this.user.last_name }}</strong> <br>
                                         <small>{{ this.user.first_name_eng }} {{ this.user.last_name_eng }}</small>
                                     </h2>
                                 </div>
-                                <div class="mt-06">
+                                <div v-if="this.user !== null && this.user.role === 'admin'" class="mt-06">
                                     <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.CREATE">
                                         <Button label="Создать событие" class="w-100" severity="success" />
                                     </a>
@@ -300,7 +306,7 @@ export default {
             </section>
             <section class="w-100 mt-5">
                 <!-- Виджет приглашенных спортсменов -->
-                <Card v-if="this.user.role === 'admin' && this.invited.length > 0">
+                <Card v-if="this.user !== null && this.user.role === 'admin' && this.invited.length > 0">
                     <section>
                         <a href="#">
                             <Button type="button" label="Полный список спортсменов" severity="primary"/>
@@ -337,7 +343,7 @@ export default {
         </div>
         <div class="w-70">
             <!-- ADMIN VIEW -->
-            <section v-if="this.user.role === 'admin'" class="mb-3">
+            <section v-if="this.user !== null && this.user.role === 'admin'" class="mb-3">
                 <Card>
                     <template #content>
                         <section>
@@ -345,7 +351,7 @@ export default {
                         </section>
                         <TabView>
                             <TabPanel header="Активные">
-                                <section v-if="this.events[RESPONSE.data].length > 0">
+                                <section v-if="this.events.data.length > 0">
                                     <section v-for="event in this.events[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
@@ -411,7 +417,7 @@ export default {
                                 </section>
                             </TabPanel>
                             <TabPanel header="Прошедшие">
-                                <section v-if="this.eventsNoActive[RESPONSE.data].length > 0">
+                                <section v-if="this.eventsNoActive.data.length > 0">
                                     <section v-for="event in this.eventsNoActive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
@@ -475,7 +481,7 @@ export default {
                                 </section>
                             </TabPanel>
                             <TabPanel header="В архиве">
-                                <section v-if="this.eventsArchive[RESPONSE.data].length > 0">
+                                <section v-if="this.eventsArchive.data.length > 0">
                                     <section v-for="event in this.eventsArchive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
@@ -545,24 +551,26 @@ export default {
                 </Card>
             </section>
             <!-- ATHLETE VIEW -->
-            <section v-if="this.user.role === 'athlete'" class="mb-5 d-flex d-between d-flex-wrap">
-                <Card v-for="event in this.events[RESPONSE.data]"
+            <section v-if="this.user !== null && this.user.role === 'athlete'" class="mb-5 d-flex d-between d-flex-wrap">
+                <Card v-for="event in this.events"
                       v-key="event"
                       style="overflow: hidden"
                       class="mb-3 w-30">
                     <template #header>
-                        <div style="
-                                background-size: cover;
+                        <div :style="
+                                `background-size: cover;
                                 background-position: top;
-                                background-image: url(https://shakasports.com/images/1714108924_Khabarovsk%20Open%202024.jpg);
+                                background-image: url(/storage/uploads/${event.image.name});
                                 height: 14em;
                                 width: 100%;
-                                background-repeat: no-repeat;
+                                background-repeat: no-repeat;`
                         ">
-                            <InlineMessage severity="success">Активно</InlineMessage>
+                            <InlineMessage v-if="event.status === 'Active'" severity="success">Активно</InlineMessage>
+                            <InlineMessage v-if="event.status === 'No Active'" severity="info">Закончился</InlineMessage>
+                            <InlineMessage v-if="event.status === 'Archive'" severity="warn">В архиве</InlineMessage>
                         </div>
                     </template>
-                    <template #title>{{event.name }}</template>
+                    <template #title>{{ event.name }}</template>
                     <template #content>
 <!--                        <p class="m-0"> {{ this.short(event.description, 130) }}</p>-->
                     </template>
