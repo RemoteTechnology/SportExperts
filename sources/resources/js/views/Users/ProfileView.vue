@@ -11,6 +11,7 @@ import {
     getEventOwnerRequest,
     getEventParticipantRequest
 } from '../../api/FilterRequest';
+import { listInvitedRequest } from '../../api/InvitedRequest';
 import Card from 'primevue/card';
 import DataView from 'primevue/dataview';
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
@@ -43,6 +44,7 @@ export default {
             user: null,
             participants: [],
             invited: [],
+            ownerUser: null,
             token: null,
             events: [],
             eventsNoActive: [],
@@ -104,7 +106,7 @@ export default {
         {
             let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
             getRecordToEventsRequest(attributes, 'after')
-                .then((response) => { console.log(response); this.events = response.data.result.original; })
+                .then((response) => { console.log(response);this.events = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -174,7 +176,6 @@ export default {
                 };
                 await getEventOwnerRequest(attributes3)
                     .then((response) => {
-                        console.log(response);
                         this.eventsArchive = response.data.result.original;
                     })
                     .catch((error) => {
@@ -190,22 +191,44 @@ export default {
                     });
             }
         },
-        getParticipants: function ()
+        getUserInvites: async function ()
         {
-            let attributes = `invited_user_id:${window.$cookies.get(IDENTIFIER)}`;
-            getEventParticipantRequest(attributes)
-                .then((response) => { this.participants = response.data.result.original; })
+            let attributes = {
+                who_user_id: window.$cookies.get(IDENTIFIER)
+            };
+            await listInvitedRequest(attributes)
+                .then((response) => { console.log(response);this.invited = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                        method: 'getEventParticipantRequest',
+                        method: 'listInvitedRequest',
                         status: error.code,
                         request_data: attributes.toString(),
                         message: error.message
                     });
                     this.messageError = MESSAGES.NO_DATA;
                 });
+        },
+        getOwnerUser: function ()
+        {
+            if (this.user.role == 'athlete')
+            {
+                let attributes = {};
+                createArchiveRequest(attributes)
+                    .then((response) => { this.ownerUser = response.data.result.original; })
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'getEventParticipantRequest',
+                            status: error.code,
+                            request_data: attributes.toString(),
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.ERROR_DEFAULT;
+                    });
+            }
         },
         addEventToArchive: function (eventKey)
         {
@@ -253,7 +276,8 @@ export default {
         await this.userIdentifier();
         this.userReadToEvent();
         await this.getEventOwner();
-        this.getParticipants();
+        await this.getUserInvites();
+        this.getOwnerUser();
     }
 }
 </script>
@@ -304,9 +328,26 @@ export default {
                     </template>
                 </Card>
             </section>
-            <section class="w-100 mt-5">
-                <!-- Виджет приглашенных спортсменов -->
-                <Card v-if="this.user !== null && this.user.role === 'admin' && this.invited.length > 0">
+            <!-- Виджет отображающий того кто пригласил -->
+            <section v-if="this.user !== null && this.user.role === 'athlete' && this.ownerUser" class="w-100 mt-5">
+                <Card>
+                    <template #content>
+                        <div class="d-flex d-center">
+                            <h4>Вас пригласил:</h4>
+                        </div>
+                        <h4>{{ this.ownerUser.last_name }} {{ this.ownerUser.first_name }}</h4>
+                        <div v-if="this.ownerUser.email">
+                            <small>{{ this.ownerUser.email }}</small>
+                        </div>
+                        <div v-if="this.ownerUser.phone">
+                            <small>{{ this.ownerUser.phone }}</small>
+                        </div>
+                    </template>
+                </Card>
+            </section>
+            <!-- Виджет приглашенных спортсменов -->
+            <section v-if="this.user !== null && this.user.role === 'admin' && this.invited.length > 0" class="w-100 mt-5">
+                <Card>
                     <section>
                         <a href="#">
                             <Button type="button" label="Полный список спортсменов" severity="primary"/>
@@ -318,7 +359,7 @@ export default {
                         </div>
                     </template>
                     <template #content>
-                        <DataTable :value="this.invited['data']">
+                        <DataTable :value="this.invited">
                             <Column header="">
                                 <template #body>
                                     <Image src="images/athlete_default_avatar.png" width="30" />
@@ -328,16 +369,16 @@ export default {
                             <Column field="user.last_name" header="Фамилия"></Column>
                             <Column header="">
                                 <template #body>
-                                    <a href="#">
+                                    <a :href="this.baseUrl + 'invite?who_user_id=' + this.user.id">
                                         <Button type="button" label="Подробнее" severity="secondary"/>
                                     </a>
                                 </template>
                             </Column>
                         </DataTable>
                     </template>
-                    <template #footer>
-                        <Paginator :rows="10" :totalRecords="120"></Paginator>
-                    </template>
+                    <!--    <section v-if="this.events && this.events[this.response.data].length > 9" class="mt-5 mb-5">-->
+                    <!--    <Paginator :rows="9" :totalRecords="120"></Paginator>-->
+                    <!--    </section>-->
                 </Card>
             </section>
         </div>
@@ -408,9 +449,9 @@ export default {
                                             </template>
                                         </Card>
                                     </section>
-                                    <div class="w-100">
-                                        <Paginator :rows="10" :totalRecords="120"></Paginator>
-                                    </div>
+                                    <!--    <section v-if="this.events && this.events[this.response.data].length > 9" class="mt-5 mb-5">-->
+                                    <!--    <Paginator :rows="9" :totalRecords="120"></Paginator>-->
+                                    <!--    </section>-->
                                 </section>
                                 <section v-else class="d-flex d-center">
                                     <InlineMessage severity="warn" class="w-70">Данных нет</InlineMessage>
@@ -472,9 +513,9 @@ export default {
                                             </template>
                                         </Card>
                                     </section>
-                                    <div class="w-100">
-                                        <Paginator :rows="10" :totalRecords="120"></Paginator>
-                                    </div>
+                                    <!--    <section v-if="this.events && this.events[this.response.data].length > 9" class="mt-5 mb-5">-->
+                                    <!--    <Paginator :rows="9" :totalRecords="120"></Paginator>-->
+                                    <!--    </section>-->
                                 </section>
                                 <section v-else class="d-flex d-center">
                                     <InlineMessage severity="warn" class="w-70">Данных нет</InlineMessage>
@@ -538,9 +579,9 @@ export default {
                                             </template>
                                         </Card>
                                     </section>
-                                    <div class="w-100">
-                                        <Paginator :rows="10" :totalRecords="120"></Paginator>
-                                    </div>
+                                    <!--    <section v-if="this.events && this.events[this.response.data].length > 9" class="mt-5 mb-5">-->
+                                    <!--    <Paginator :rows="9" :totalRecords="120"></Paginator>-->
+                                    <!--    </section>-->
                                 </section>
                                 <section v-else class="d-flex d-center">
                                     <InlineMessage severity="warn" class="w-70">Данных нет</InlineMessage>
@@ -587,9 +628,9 @@ export default {
                         </div>
                     </template>
                 </Card>
-                <div class="w-100">
-                    <Paginator :rows="10" :totalRecords="120"></Paginator>
-                </div>
+                <!--    <section v-if="this.events && this.events[this.response.data].length > 9" class="mt-5 mb-5">-->
+                <!--    <Paginator :rows="9" :totalRecords="120"></Paginator>-->
+                <!--    </section>-->
             </section>
         </div>
     </section>
