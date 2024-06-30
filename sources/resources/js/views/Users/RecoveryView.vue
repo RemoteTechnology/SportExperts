@@ -53,7 +53,7 @@ export default {
     <section class="d-flex d-center">
         <section class="mt-5">
             <section class="mt-1 mb-2" v-if="this.messageSuccess">
-                <Message severity="error">{{ this.messageSuccess }}</Message>
+                <Message severity="success">{{ this.messageSuccess }}</Message>
             </section>
             <section class="mt-1 mb-2" v-if="this.messageError">
                 <Message severity="error">{{ this.messageError }}</Message>

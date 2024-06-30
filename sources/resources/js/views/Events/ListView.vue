@@ -13,6 +13,7 @@ import Button from 'primevue/button';
 import Paginator from 'primevue/paginator';
 import InlineMessage from 'primevue/inlinemessage';
 import {getUser} from "../../api/UserRequest";
+import {getRecordToEventsRequest} from "../../api/FilterRequest";
 
 export default {
     data() {
@@ -21,6 +22,7 @@ export default {
           route: ENDPOINTS,
           baseUrl: BASE_URL,
           events: null,
+          eventsToRead: null,
           user: null,
           noData: MESSAGES.NO_DATA,
           currentDate: new Date(),
@@ -44,13 +46,13 @@ export default {
             tmp.innerHTML = html;
             return tmp.textContent || tmp.innerText || "";
         },
-        userIdentifier: function ()
+        userIdentifier: async function ()
         {
             const userId = window.$cookies.get(IDENTIFIER);
             if (userId)
             {
                 let attributes = {id: userId};
-                getUser(attributes)
+                await getUser(attributes)
                     .then((response) => { this.user = response.data.result.original; })
                     .catch((error) => {
                         loggingRequest({
@@ -64,9 +66,29 @@ export default {
                     });
             }
         },
-        eventList: function ()
+        userReadToEvent: async function ()
         {
-            getEventListRequest()
+            if (this.user.role === 'athlete')
+            {
+                let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
+                await getRecordToEventsRequest(attributes, 'after')
+                    .then((response) => { console.log(response); this.eventsToRead = response.data.result.original; })
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'getRecordToEventsRequest',
+                            status: error.code,
+                            request_data: attributes.toString() + 'mode:after',
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.LOADING_ERROR;
+                    });
+            }
+        },
+        eventList: async function ()
+        {
+            await getEventListRequest()
                 .then((response) => { console.log(response); this.events = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
@@ -80,9 +102,10 @@ export default {
                 });
         }
     },
-    beforeMount() {
-        this.userIdentifier();
-        this.eventList();
+    async beforeMount() {
+        await this.userIdentifier();
+        await this.eventList();
+        await this.userReadToEvent();
     }
 }
 </script>
@@ -124,11 +147,21 @@ export default {
                                 "></i> {{ event.start_time.slice(0, -3) }}</div>
                         </strong>
                     </div>
-                    <div class="flex gap-3 mt-2">
-                        <br>
-                        <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.DETAIL + '?id=' + event.id">
-                            <Button label="Записаться" severity="secondary" outlined class="w-100" />
+                    <div v-for="eventParticipant in this.eventsToRead" class="flex gap-3 mt-2">
+                        <a v-if="eventParticipant.key !== event.key" :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.HISTORY + '?key=' + event.key">
+                            <Button label="Вы записаны"
+                                    icon="pi pi-check"
+                                    severity="link"
+                                    class="w-100" />
                         </a>
+                        <a v-else
+                           :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.DETAIL + '?id=' + event.id">
+                            <Button label="Записаться"
+                                    severity="secondary"
+                                    outlined
+                                    class="w-100" />
+                        </a>
+                        <br>
                     </div>
                 </template>
             </Card>
@@ -137,8 +170,8 @@ export default {
     <section v-else class="d-flex d-center">
         <InlineMessage severity="info" class="w-50 mt-5">{{ this.noData }}</InlineMessage>
     </section>
-    <section v-if="this.events && this.events[this.response.data].length > 9" class="mt-5 mb-5">
-        <Paginator :rows="10"></Paginator>
-    </section>
+<!--    <section v-if="this.events && this.events[this.response.data].length > 9" class="mt-5 mb-5">-->
+<!--    <Paginator :rows="9" :totalRecords="120"></Paginator>-->
+<!--    </section>-->
 </template>
 

@@ -8,4 +8,9 @@ class InvitedController extends Controller
     {
         return view('invites.index');
     }
+
+    public function detail()
+    {
+        return view('invites.detail');
+    }
 }
