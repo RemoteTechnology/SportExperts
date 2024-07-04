@@ -369,12 +369,23 @@ export default {
                             <Column field="user.last_name" header="Фамилия"></Column>
                             <Column header="">
                                 <template #body>
-                                    <a :href="this.baseUrl + 'invite?who_user_id=' + this.user.id">
+                                    <a :href="this.baseUrl + 'invite/detail?user_id=' + this.user.id">
                                         <Button type="button" label="Подробнее" severity="secondary"/>
                                     </a>
                                 </template>
                             </Column>
                         </DataTable>
+                    </template>
+                    <template #footer>
+                        <section>
+                            <a :href="this.baseUrl + 'invite'">
+                                <Button icon="pi pi-refresh"
+                                        class="w-100"
+                                        type="button"
+                                        label="Показать все"
+                                        severity="primary"/>
+                            </a>
+                        </section>
                     </template>
                     <!--    <section v-if="this.events && this.events[this.response.data].length > 9" class="mt-5 mb-5">-->
                     <!--    <Paginator :rows="9" :totalRecords="120"></Paginator>-->

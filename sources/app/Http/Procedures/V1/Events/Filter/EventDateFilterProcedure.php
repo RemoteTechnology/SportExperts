@@ -7,8 +7,7 @@ namespace App\Http\Procedures\V1\Events\Filter;
 use App\Domain\Abstracts\AbstractFilter;
 use App\Http\Requests\Filter\ParticipantFilterRequest;
 use App\Http\Resources\Events\EventCollection;
-use App\Http\Resources\Events\EventResource;
-use App\Repository\Filter\EventToParticipantFilterRepository;
+use App\Repository\Filter\Entities\Events\EventToParticipantFilterRepository;
 use Illuminate\Http\JsonResponse;
 
 class EventDateFilterProcedure extends AbstractFilter

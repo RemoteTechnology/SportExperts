@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
 use App\Models\Participant;
+use App\Repository\Filter\Entities\Participants\ParticipantIsUserFilter;
 use App\Repository\Traits\CreateQueryTrait;
 use App\Repository\Traits\DestroyQueryTrait;
 use App\Repository\Traits\ListQueryTrait;
@@ -11,7 +12,7 @@ use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\UpdateQueryTrait;
 use Illuminate\Database\Eloquent\Model;
 
-final class ParticipantRepository implements LCRUD_OperationInterface
+final class ParticipantRepository extends ParticipantIsUserFilter implements LCRUD_OperationInterface
 {
     use ListQueryTrait;
     use CreateQueryTrait;

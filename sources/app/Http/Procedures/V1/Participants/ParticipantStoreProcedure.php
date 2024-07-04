@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Sajya\Server\Procedure;
 
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ParticipantMessageConst.php';
+
 class ParticipantStoreProcedure extends Procedure
 {
     /**
@@ -20,10 +22,10 @@ class ParticipantStoreProcedure extends Procedure
      */
     public static string $name = 'ParticipantStoreProcedure';
 
-    private ParticipantRepository $operation;
+    private ParticipantRepository $participantRepository;
 
-    public function __construct(ParticipantRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(ParticipantRepository $participantRepository) {
+        $this->participantRepository = $participantRepository;
     }
 
     /**
@@ -37,9 +39,20 @@ class ParticipantStoreProcedure extends Procedure
     {
         $participant = $request->validated();
         $participant['key'] = Str::uuid()->toString();
+        // TODO: пока оставить так, но потом сделать как в InvitedStoreProcedure:44!
+        foreach ($this->participantRepository->filter($participant['user_id']) as $value)
+        {
+            if ($value->event_id === $participant['event_id'])
+            {
+                return new JsonResponse(
+                    data: ALREADY_PARTICIPANT,
+                    status: 201
+                );
+            }
+        }
         return new JsonResponse(
             data: new ParticipantResource(
-                $this->operation->store($participant)
+                $this->participantRepository->store($participant)
             ),
             status: 201
         );

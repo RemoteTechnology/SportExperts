@@ -7,7 +7,7 @@ namespace App\Http\Procedures\V1\Events\Filter;
 use App\Domain\Abstracts\AbstractFilter;
 use App\Http\Requests\Filter\ParticipantFilterRequest;
 use App\Http\Resources\Events\EventCollection;
-use App\Repository\Filter\EventOwnerFilterRepository;
+use App\Repository\Filter\Entities\Events\EventOwnerFilterRepository;
 use Illuminate\Http\JsonResponse;
 
 class EventOwnerFilterProcedure extends AbstractFilter

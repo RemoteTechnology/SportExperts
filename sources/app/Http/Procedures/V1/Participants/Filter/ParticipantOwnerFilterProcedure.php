@@ -6,10 +6,8 @@ namespace App\Http\Procedures\V1\Participants\Filter;
 
 use App\Domain\Abstracts\AbstractFilter;
 use App\Http\Requests\Filter\ParticipantFilterRequest;
-use App\Repository\Filter\ParticipantOwnerFilterRepository;
+use App\Repository\Filter\Entities\Participants\ParticipantOwnerFilterRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Sajya\Server\Procedure;
 
 class ParticipantOwnerFilterProcedure extends AbstractFilter
 {
