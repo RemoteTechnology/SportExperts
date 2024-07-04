@@ -17,7 +17,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
  * registering rules with the application instance so they are ready
  * to use in your application's views. An example is included for you.
  */
-
+// TODO: после создания жеребьёвки перепроверить код, респонсы будут изменены!!!!
 const app = createApp({});
 app.use(PrimeVue, { unstyled: false });
 app.use(VueCookies, {

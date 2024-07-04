@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Repository\Filter;
+namespace App\Repository\Filter\Entities\Events;
 
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 require_once dirname(__DIR__, 2) . '/Domain/Constants/EventStatusesConst.php';

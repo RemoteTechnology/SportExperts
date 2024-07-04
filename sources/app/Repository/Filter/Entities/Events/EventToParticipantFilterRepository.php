@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Filter;
+namespace App\Repository\Filter\Entities\Events;
 
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;

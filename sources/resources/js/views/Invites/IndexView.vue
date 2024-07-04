@@ -17,6 +17,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';
 import Row from 'primevue/row';
+import Tag from 'primevue/tag';
 import {listInvitedRequest} from "../../api/InvitedRequest";
 import {loggingRequest} from "../../api/LoggingRequest";
 
@@ -47,7 +48,8 @@ export default {
         DataTable: DataTable,
         Column: Column,
         ColumnGroup: ColumnGroup,
-        Row: Row
+        Row: Row,
+        Tag: Tag
     },
     methods: {
         formatDate: (inputDate) => {
@@ -55,13 +57,13 @@ export default {
             return `${day.padStart(2, '0')}.${month.padStart(2, '0')}.${year}`;
         },
         onRowExpand(event) {
-            this.$toast.add({ severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000 });
+            // this.$toast.add({ severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000 });
         },
         onRowCollapse(event) {
-            this.$toast.add({ severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000 });
+            // this.$toast.add({ severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000 });
         },
         expandAll() {
-            this.expandedRows = this.invites.reduce((acc, p) => (acc[p.id] = true) && acc, {});
+            // this.expandedRows = this.invites.reduce((acc, p) => (acc[p.id] = true) && acc, {});
         },
         collapseAll() {
             this.expandedRows = null;
@@ -69,11 +71,13 @@ export default {
         getUserInvites: async function()
         {
             let attributes = {
-                who_user_id: window.$cookies.get(IDENTIFIER)
+                who_user_id: window.$cookies.get(IDENTIFIER),
+                enable_events: true
             };
             await listInvitedRequest(attributes)
                 .then((response) => { this.invites = response.data.result.original; })
                 .catch((error) => {
+                    console.log(error);
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -88,6 +92,7 @@ export default {
     },
     async beforeMount() {
         await this.getUserInvites();
+        console.log(this.invites);
     }
 }
 </script>
@@ -130,27 +135,34 @@ export default {
                             <Column field="user.email" header="Почта"></Column>
                             <Column field="user.phone" header="Номер телефона"></Column>
                             <template #expansion="slotProps">
-                                <h5>Мероприятия на которые записан спортсмен (5 шт)</h5>
-                                <DataTable :value="this.participants">
-                                    <Column header="Баннер" sortable>
+                                <h5>Мероприятия на которые записан спортсмен ({{ slotProps.data.events.length }} шт)</h5>
+                                <DataTable stripedRows :value="slotProps.data.events">
+<!--                                    <Column header="Баннер" sortable>-->
+<!--                                        &lt;!&ndash; TODO: Придумать что нибудь с баннером&ndash;&gt;-->
+<!--                                        <template #body="slotProps">-->
+<!--                                            <div :style="-->
+<!--                                                    'background-size: cover;' +-->
+<!--                                                    'background-position: top;' +-->
+<!--                                                    'background-image: url(' + this.baseUrl + 'storage/uploads/' + slotProps.data.image.name + ');' +-->
+<!--                                                    'height: 8em;' +-->
+<!--                                                    'width: 50%;' +-->
+<!--                                                    'background-repeat: no-repeat;'-->
+<!--                                            "></div>-->
+<!--                                        </template>-->
+<!--                                    </Column>-->
+                                    <Column header="Название" sortable>
                                         <template #body="slotProps">
-                                            <div :style="
-                                                    'background-size: cover;' +
-                                                    'background-position: top;' +
-                                                    'background-image: url(' + this.baseUrl + 'storage/uploads/' + slotProps.data.event.image.name + ');' +
-                                                    'height: 8em;' +
-                                                    'width: 50%;' +
-                                                    'background-repeat: no-repeat;'
-                                            "></div>
+                                            <a :href="this.baseUrl + 'event/detail?id=' + slotProps.data.id">
+                                                <Button :label="slotProps.data.name" severity="info" link />
+                                            </a>
                                         </template>
                                     </Column>
-                                    <Column field="event.name" header="Название" sortable></Column>
                                     <Column header="Статус" sortable>
                                         <template #body="slotProps">
-                                            <section v-if="slotProps.data.event.status === 'Active'">
+                                            <section v-if="slotProps.data.status === 'Active'">
                                                 <Tag severity="success" value="Активен"></Tag>
                                             </section>
-                                            <section v-else-if="slotProps.data.event.status === 'No active'">
+                                            <section v-else-if="slotProps.data.status === 'No active'">
                                                 <Tag severity="info" value="Завершен"></Tag>
                                             </section>
                                             <section v-else>
@@ -158,8 +170,21 @@ export default {
                                             </section>
                                         </template>
                                     </Column>
-                                    <Column field="event.start_date" header="Дата старта" sortable></Column>
-                                    <Column field="event.start_time" header="Время старта" sortable></Column>
+<!--                                    <Column header="Параметры" sortable>-->
+<!--                                        <template #body="slotProps">-->
+<!--                                            {{ slotProps.index }}-->
+<!--&lt;!&ndash;                                            <DataTable :value="slotProps.data">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                <Column field="name"></Column>&ndash;&gt;-->
+<!--&lt;!&ndash;                                                <Column field="value"></Column>&ndash;&gt;-->
+<!--&lt;!&ndash;                                            </DataTable>&ndash;&gt;-->
+<!--                                        </template>-->
+<!--                                    </Column>-->
+                                    <Column header="Дата старта" sortable>
+                                        <template #body="slotProps">
+                                            {{ this.formatDate(slotProps.data.start_date) }}
+                                        </template>
+                                    </Column>
+                                    <Column field="start_time" header="Время старта" sortable></Column>
                                 </DataTable>
                             </template>
                         </DataTable>

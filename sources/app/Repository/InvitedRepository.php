@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Domain\Interfaces\Repositories\Entities\InvitedRepositoryInterface;
 use App\Models\Invited;
+use App\Repository\Filter\Entities\Invites\InviteUserFilter;
 use App\Repository\Traits\CreateQueryTrait;
 use App\Repository\Traits\DestroyQueryTrait;
 use App\Repository\Traits\ListQueryTrait;
@@ -11,7 +12,8 @@ use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\UpdateQueryTrait;
 use Illuminate\Database\Eloquent\Model;
 
-final class InvitedRepository implements InvitedRepositoryInterface
+final class InvitedRepository extends InviteUserFilter implements
+    InvitedRepositoryInterface
 {
     use ListQueryTrait;
     use CreateQueryTrait;

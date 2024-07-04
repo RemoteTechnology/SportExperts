@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Filter;
+namespace App\Repository\Filter\Entities\Participants;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
