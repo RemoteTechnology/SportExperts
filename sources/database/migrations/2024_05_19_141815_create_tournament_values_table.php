@@ -13,18 +13,16 @@ return new class extends Migration
     {
         Schema::create('tournament_values', function (Blueprint $table) {
             $table->id();
-            $table->integer('event_id');
             $table->integer('tournament_id');
-            $table->integer('user_id');
             $table->uuid('participants_A');
-            $table->uuid('participants_B');
+            $table->uuid('participants_B')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')
                 ->nullable();
             // Связи
-            $table->foreign('user_id')
-                ->on('users')
+            $table->foreign('tournament_id')
+                ->on('tournaments')
                 ->references('id');
             $table->foreign('participants_A')
                 ->on('participants')
@@ -35,8 +33,6 @@ return new class extends Migration
             // Индексы
             $table->index([
                 'id',
-                'event_id',
-                'user_id',
                 'tournament_id',
                 'participants_A',
                 'participants_B',

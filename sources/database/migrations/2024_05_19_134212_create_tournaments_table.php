@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('key');
             $table->uuid('event_key');
+            $table->integer('stage')->default(1);
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')
