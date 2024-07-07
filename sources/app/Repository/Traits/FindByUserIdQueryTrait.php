@@ -2,12 +2,12 @@
 
 namespace App\Repository\Traits;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
 trait FindByUserIdQueryTrait
 {
-    public function filter(int $user_id): Model
+    public function userList(int $event_id): Collection
     {
-        return $this->eloquentQuery()->where(['user_id' => $user_id]);
+        return $this->eloquentQuery()->where(['event_id' => $event_id])->get();
     }
 }

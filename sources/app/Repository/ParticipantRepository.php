@@ -7,6 +7,7 @@ use App\Models\Participant;
 use App\Repository\Filter\Entities\Participants\ParticipantIsUserFilter;
 use App\Repository\Traits\CreateQueryTrait;
 use App\Repository\Traits\DestroyQueryTrait;
+use App\Repository\Traits\GetByKeyTrait;
 use App\Repository\Traits\ListQueryTrait;
 use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\UpdateQueryTrait;
@@ -19,6 +20,7 @@ final class ParticipantRepository extends ParticipantIsUserFilter implements LCR
     use ReadQueryTrait;
     use UpdateQueryTrait;
     use DestroyQueryTrait;
+    use GetByKeyTrait;
 
     protected Model $model;
     public function __construct(Participant $model = new Participant())

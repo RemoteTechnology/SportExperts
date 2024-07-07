@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('tournament_id');
             $table->uuid('participants_A');
             $table->uuid('participants_B')->nullable();
+            $table->integer('participants_passes')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')
@@ -30,12 +31,16 @@ return new class extends Migration
             $table->foreign('participants_B')
                 ->on('participants')
                 ->references('key');
+            $table->foreign('participants_passes')
+                ->on('users')
+                ->references('id');
             // Индексы
             $table->index([
                 'id',
                 'tournament_id',
                 'participants_A',
                 'participants_B',
+                'participants_passes',
             ]);
         });
     }
