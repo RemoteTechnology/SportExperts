@@ -7,7 +7,7 @@ import { JSON_RPC_VERSION } from '../../constant';
  * @class
  * @name TBuilder
  */
-class RequestBuilder {
+export class RequestBuilder {
     constructor() {
         this.url = null;
         this.headers = {
@@ -89,5 +89,3 @@ class RequestBuilder {
         });
     }
 }
-
-export { RequestBuilder }

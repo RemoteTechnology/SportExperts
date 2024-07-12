@@ -34,4 +34,18 @@ async function updateOptionRequest(attributes) {
     })
 }
 
-export { createOptionRequest, updateOptionRequest };
+async function getOptionRequest(attributes) {
+    return await axios.post(`${BASE_URL}api/v1/option/read`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        'jsonrpc': JSON_RPC_VERSION,
+        'id': '1',
+        'notification': false,
+        'method': `${PROCEDURES.option.read}@${REQUEST_METHOD_DEFAULT}`,
+        'params': attributes
+    })
+}
+
+export { createOptionRequest, updateOptionRequest, getOptionRequest };
