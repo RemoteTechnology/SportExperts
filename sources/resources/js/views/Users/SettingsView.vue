@@ -1,5 +1,10 @@
 <script>
-import {BASE_URL, ENDPOINTS, IDENTIFIER, MESSAGES} from '../../constant';
+import {
+    BASE_URL,
+    ENDPOINTS,
+    IDENTIFIER,
+    MESSAGES
+} from '../../constant';
 import { getUser, updateUserRequest } from '../../api/UserRequest';
 import Breadcrumb from 'primevue/breadcrumb';
 import Card from 'primevue/card';
@@ -9,7 +14,7 @@ import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Calendar from 'primevue/calendar';
 import { loggingRequest } from "../../api/LoggingRequest";
-import {createOptionRequest} from "../../api/OptionRequest";
+import {createOptionRequest, getOptionRequest} from "../../api/OptionRequest";
 
 export default {
     data() {
@@ -135,8 +140,12 @@ export default {
             {
                 let attributes = this.options[idx];
                 await createOptionRequest(attributes)
-                    .then((response) => { this.options[idx] = response.data.result.original; })
+                    .then((response) => {
+                        this.options[idx] = response.data.result.original;
+                        this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                    })
                     .catch((error) => {
+                        this.messageError = MESSAGES.ERROR_ERROR;
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -183,7 +192,21 @@ export default {
         },
         getUserOptions: async function()
         {
-
+            let attributes = {
+                user_id: this.user.id
+            };
+            await getOptionRequest(attributes)
+                .then((response) => { this.options = response.data.result.original; })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getOptionRequest',
+                        status: error.code,
+                        request_data: '',
+                        message: error.message
+                    })
+                });
         }
     },
     beforeMount() {
@@ -194,6 +217,12 @@ export default {
 
 <template>
     <section class="d-flex d-center">
+        <section class="mt-1 mb-2" v-if="this.messageError">
+            <Message severity="error">{{ this.messageError }}</Message>
+        </section>
+        <section class="mt-1 mb-2" v-if="this.messageSuccess">
+            <Message severity="success">{{ this.messageSuccess }}</Message>
+        </section>
         <section class="mt-2 w-30 mb-5">
             <div class="d-flex d-center">
                 <div class="mt-3 mb-4">

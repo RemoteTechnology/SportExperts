@@ -35,11 +35,35 @@ class OptionReadProcedure extends Procedure
     public function handle(ReadOptionRequest $request): JsonResponse
     {
         $option = $request->validated();
-        return new JsonResponse(
-            data: new OptionResource(
-                $this->operation->findById($option['id'])
-            ),
-            status: 201
-        );
+        if (key_exists('user_id', $option))
+        {
+            return new JsonResponse(
+                data: new OptionResource(
+                    // Поиск по ID атлета
+                    $this->operation->findByUserId($option['user_id'])
+                ),
+                status: 201
+            );
+        }
+        elseif (key_exists('event_key', $option))
+        {
+            return new JsonResponse(
+                data: new OptionResource(
+                // Поиск по ключу события
+                    $this->operation->findByEventKey($option['event_key'])
+                ),
+                status: 201
+            );
+        }
+        else
+        {
+            return new JsonResponse(
+                // Поиск по ID записи
+                data: new OptionResource(
+                    $this->operation->findById($option['id'])
+                ),
+                status: 201
+            );
+        }
     }
 }

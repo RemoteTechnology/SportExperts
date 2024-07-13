@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('event_key')
                 ->nullable();
-            $table->uuid('participant_key')
+            $table->integer('user_id')
                 ->nullable();
-            $table->enum('entity', ['event', 'event_user']);
+            $table->enum('entity', ['event', 'user']);
             $table->string('name', 255)
                 ->nullable(false);
             $table->string('value', 255)
@@ -33,14 +33,14 @@ return new class extends Migration
             $table->foreign('event_key')
                 ->on('events')
                 ->references('key');
-            $table->foreign('participant_key')
-                ->on('participants')
-                ->references('key');
+            $table->foreign('user_id')
+                ->on('users')
+                ->references('id');
             // Индексы
             $table->index([
                 'id',
                 'event_key',
-                'participant_key',
+                'user_id',
             ]);
         });
     }

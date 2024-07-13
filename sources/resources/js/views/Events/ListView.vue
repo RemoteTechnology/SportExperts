@@ -21,6 +21,8 @@ import {createOptionRequest, getOptionRequest} from "../../api/OptionRequest";
 export default {
     data() {
       return {
+          messageSuccess: false,
+          messageError: false,
           response: RESPONSE,
           route: ENDPOINTS,
           baseUrl: BASE_URL,
@@ -127,8 +129,12 @@ export default {
             {
                 let attributes = this.options[idx];
                 await createOptionRequest(attributes)
-                    .then((response) => { this.options[idx] = response.data.result.original; })
+                    .then((response) => {
+                        this.options[idx] = response.data.result.original;
+                        this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                    })
                     .catch((error) => {
+                        this.messageError = MESSAGES.ERROR_ERROR;
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -146,8 +152,12 @@ export default {
             {
                 let attributes = this.options[idx];
                 await createOptionRequest(attributes)
-                    .then((response) => { this.options[idx] = response.data.result.original; })
+                    .then((response) => {
+                        this.options[idx] = response.data.result.original;
+                        this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                    })
                     .catch((error) => {
+                        this.messageError = MESSAGES.ERROR_ERROR;
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -176,8 +186,7 @@ export default {
         getUserOptions: async function()
         {
             let attributes = {
-                /*  Сделать API получения опций для юзера по его id.
-                    Возможно просто добавить опциональный параметр entityUserId: 1 */
+                user_id: this.user.id
             };
             await getOptionRequest(attributes)
                 .then((response) => { this.options = response.data.result.original; })
@@ -242,6 +251,12 @@ export default {
         </section>
     </Dialog>
     <section v-if="this.events && this.events[this.response.data].length > 0" class="mt-5 mb-5">
+        <section class="mt-1 mb-2" v-if="this.messageError">
+            <Message severity="error">{{ this.messageError }}</Message>
+        </section>
+        <section class="mt-1 mb-2" v-if="this.messageSuccess">
+            <Message severity="success">{{ this.messageSuccess }}</Message>
+        </section>
         <section class="container d-flex d-between d-flex-wrap">
             <Card v-for="event in this.events[this.response.data]"
                   v-key="event"
