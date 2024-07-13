@@ -83,7 +83,13 @@ export class RequestBuilder {
      * @returns {Promise<axios.AxiosResponse<any>>}
      * @throws Error
      */
-    async execute() {
+    async execute(formData = null) {
+        if (formData)
+        {
+            return await axios.post(this.url, formData, {
+                headers: this.headers,
+            });
+        }
         return await axios.post(this.url, this.data, {
             headers: this.headers,
         });

@@ -1,62 +1,46 @@
-import axios from "axios";
 import {
     BASE_URL,
     JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
     PROCEDURES
 } from '../constant';
+import { FilterEndpointQuery } from './query/FilterEndpointQuery';
 
-async function getRecordToEventsRequest(attributes, mode='after', limit=9) {
-    return await axios.post(`${BASE_URL}api/v1/event/filter/participant/to/events`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.filter.userRecord}@${REQUEST_METHOD_DEFAULT}`,
-        'params': {
-            filter: attributes,
-            mode: mode,
-            limit: limit
-        }
-    })
+export async function getRecordToEventsRequest(attributes,
+                                        mode='after',
+                                        limit=9,
+                                        filterQuery = new FilterEndpointQuery())
+{
+    filterQuery.setUrl(`${BASE_URL}api/v1/event/filter/participant/to/events`);
+    filterQuery.setHeaders();
+    filterQuery.setMethod(`${PROCEDURES.filter.userRecord}@${REQUEST_METHOD_DEFAULT}`);
+    filterQuery.setParams({
+        filter: attributes,
+        mode: mode,
+        limit: limit
+    });
+    return await filterQuery.execute();
 }
 
-async function getEventOwnerRequest(attributes) {
-    return await axios.post(`${BASE_URL}api/v1/event/filter/my/events`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.filter.ownerEventsList}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+export async function getEventOwnerRequest(attributes, filterQuery = new FilterEndpointQuery())
+{
+    filterQuery.setUrl(`${BASE_URL}api/v1/event/filter/my/events`);
+    filterQuery.setHeaders();
+    filterQuery.setMethod(`${PROCEDURES.filter.ownerEventsList}@${REQUEST_METHOD_DEFAULT}`);
+    filterQuery.setParams(attributes);
+    return await filterQuery.execute();
 }
 
-async function getEventParticipantRequest(attributes, limit=9) {
-    return await axios.post(`${BASE_URL}api/v1/participant/filter/events/my/participants`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.filter.ownerParticipantList}@${REQUEST_METHOD_DEFAULT}`,
-        'params': {
-            filter: attributes,
-            limit: limit
-        }
-    })
-}
-
-export {
-    getRecordToEventsRequest,
-    getEventOwnerRequest,
-    getEventParticipantRequest
+export async function getEventParticipantRequest(attributes,
+                                          limit=9,
+                                          filterQuery = new FilterEndpointQuery())
+{
+    filterQuery.setUrl(`${BASE_URL}api/v1/participant/filter/events/my/participants`);
+    filterQuery.setHeaders();
+    filterQuery.setMethod(`${PROCEDURES.filter.ownerParticipantList}@${REQUEST_METHOD_DEFAULT}`);
+    filterQuery.setParams({
+        filter: attributes,
+        limit: limit
+    });
+    return await filterQuery.execute();
 }

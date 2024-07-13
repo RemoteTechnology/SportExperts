@@ -1,58 +1,34 @@
-import axios from "axios";
 import {
     BASE_URL,
     JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
     PROCEDURES
 } from '../constant';
+import { InviteEndpointQuery } from './query/InviteEndpointQuery';
 
-async function addNotificationUserInviteEventRequest(attributes)
+export async function addNotificationUserInviteEventRequest(attributes, inviteQuery = new InviteEndpointQuery())
 {
-    return await axios.post(`${BASE_URL}api/v1/invite/notification/`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.invites.notification}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+    inviteQuery.setUrl(`${BASE_URL}api/v1/invite/notification/`);
+    inviteQuery.setHeaders();
+    inviteQuery.setMethod(`${PROCEDURES.invites.notification}@${REQUEST_METHOD_DEFAULT}`);
+    inviteQuery.setParams(attributes);
+    return await inviteQuery.execute();
 }
 
-async function createInvitedRequest(attributes)
+export async function createInvitedRequest(attributes, inviteQuery = new InviteEndpointQuery())
 {
-    return await axios.post(`${BASE_URL}api/v1/invite/store`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.invites.create}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+    inviteQuery.setUrl(`${BASE_URL}api/v1/invite/store`);
+    inviteQuery.setHeaders();
+    inviteQuery.setMethod(`${PROCEDURES.invites.create}@${REQUEST_METHOD_DEFAULT}`);
+    inviteQuery.setParams(attributes);
+    return await inviteQuery.execute();
 }
 
-async function listInvitedRequest(attributes)
+export async function listInvitedRequest(attributes, inviteQuery = new InviteEndpointQuery())
 {
-    return await axios.post(`${BASE_URL}api/v1/invite/`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.invites.list}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
-}
-
-export {
-    addNotificationUserInviteEventRequest,
-    createInvitedRequest,
-    listInvitedRequest
+    inviteQuery.setUrl(`${BASE_URL}api/v1/invite/`);
+    inviteQuery.setHeaders();
+    inviteQuery.setMethod(`${PROCEDURES.invites.list}@${REQUEST_METHOD_DEFAULT}`);
+    inviteQuery.setParams(attributes);
+    return await inviteQuery.execute();
 }

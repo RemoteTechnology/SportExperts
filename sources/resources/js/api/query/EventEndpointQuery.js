@@ -1,3 +1,8 @@
 import { RequestBuilder } from '../bin/RequestBuilder';
 
-class EventEndpointQuery extends RequestBuilder {}
+/**
+ * @inheritdoc
+ * @constructor
+ * @augments RequestBuilder
+ */
+export class EventEndpointQuery extends RequestBuilder {}

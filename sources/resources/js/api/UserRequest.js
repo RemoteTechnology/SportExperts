@@ -6,7 +6,7 @@ import {
 } from '../constant';
 import { UserEndpointQuery } from './query/UserEndpointQuery';
 
-async function registrationRequest(attributes, userQuery = new UserEndpointQuery())
+export async function registrationRequest(attributes, userQuery = new UserEndpointQuery())
 {
     userQuery.setUrl(`${BASE_URL}api/v1/user/registration`);
     userQuery.setHeaders();
@@ -15,7 +15,7 @@ async function registrationRequest(attributes, userQuery = new UserEndpointQuery
     return await userQuery.execute();
 }
 
-async function getUser(attributes, userQuery = new UserEndpointQuery())
+export async function getUser(attributes, userQuery = new UserEndpointQuery())
 {
     userQuery.setUrl(`${BASE_URL}api/v1/user/read`);
     userQuery.setHeaders();
@@ -24,7 +24,7 @@ async function getUser(attributes, userQuery = new UserEndpointQuery())
     return await userQuery.execute();
 }
 
-async function updateUserRequest(attributes, userQuery = new UserEndpointQuery())
+export async function updateUserRequest(attributes, userQuery = new UserEndpointQuery())
 {
     userQuery.setUrl(`${BASE_URL}api/v1/user/update`);
     userQuery.setHeaders();
@@ -35,7 +35,7 @@ async function updateUserRequest(attributes, userQuery = new UserEndpointQuery()
     return await userQuery.execute();
 }
 
-async function resetToPasswordRequest(attributes, userQuery = new UserEndpointQuery())
+export async function resetToPasswordRequest(attributes, userQuery = new UserEndpointQuery())
 {
     userQuery.setUrl(`${BASE_URL}api/v1/user/reset/`);
     userQuery.setHeaders();
@@ -45,19 +45,11 @@ async function resetToPasswordRequest(attributes, userQuery = new UserEndpointQu
 
 }
 
-async function getInvitedOwnerRequest(attributes, userQuery = new UserEndpointQuery())
+export async function getInvitedOwnerRequest(attributes, userQuery = new UserEndpointQuery())
 {
     userQuery.setUrl(`${BASE_URL}api/v1/invite/`);
     userQuery.setHeaders();
     userQuery.setMethod(`${PROCEDURES.invites.list}@${REQUEST_METHOD_DEFAULT}`);
     userQuery.setParams(attributes);
     return await userQuery.execute();
-}
-
-export {
-    registrationRequest,
-    getUser,
-    updateUserRequest,
-    resetToPasswordRequest,
-    getInvitedOwnerRequest
 }

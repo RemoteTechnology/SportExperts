@@ -1,103 +1,64 @@
-import axios from "axios";
 import {
     BASE_URL,
     JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
     PROCEDURES
 } from '../constant';
+import { EventEndpointQuery } from './query/EventEndpointQuery';
 
-async function getEventListRequest() {
-    return await axios.post(`${BASE_URL}api/v1/event/`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.event.list}@${REQUEST_METHOD_DEFAULT}`,
-    })
+export async function getEventListRequest(eventQuery = new EventEndpointQuery())
+{
+    eventQuery.setUrl(`${BASE_URL}api/v1/event/`);
+    eventQuery.setHeaders();
+    eventQuery.setMethod(`${PROCEDURES.event.list}@${REQUEST_METHOD_DEFAULT}`);
+    return await eventQuery.execute();
 }
 
-async function getEventRequest(attributes) {
-    return await axios.post(`${BASE_URL}api/v1/event/read`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.event.read}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+export async function getEventRequest(attributes, eventQuery = new EventEndpointQuery())
+{
+    eventQuery.setUrl(`${BASE_URL}api/v1/event/read`);
+    eventQuery.setHeaders();
+    eventQuery.setMethod(`${PROCEDURES.event.read}@${REQUEST_METHOD_DEFAULT}`);
+    eventQuery.setParams(attributes);
+    return await eventQuery.execute();
 }
 
-async function createEventRequest(attributes) {
-    return await axios.post(`${BASE_URL}api/v1/event/store`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.event.create}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+export async function createEventRequest(attributes, eventQuery = new EventEndpointQuery())
+{
+    eventQuery.setUrl(`${BASE_URL}api/v1/event/store`);
+    eventQuery.setHeaders();
+    eventQuery.setMethod(`${PROCEDURES.event.store}@${REQUEST_METHOD_DEFAULT}`);
+    eventQuery.setParams(attributes);
+    return await eventQuery.execute();
 }
 
-async function updateEventRequest(attributes) {
-    return await axios.post(`${BASE_URL}api/v1/event/update`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.event.update}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
-}
-// TODO: Вынести в отдельные реквесты
-async function createEventOptionRequest(attributes) {
-    return await axios.post(`${BASE_URL}api/v1/option/store`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.option.create}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+export async function updateEventRequest(attributes, eventQuery = new EventEndpointQuery())
+{
+    eventQuery.setUrl(`${BASE_URL}api/v1/event/update`);
+    eventQuery.setHeaders();
+    eventQuery.setMethod(`${PROCEDURES.event.update}@${REQUEST_METHOD_DEFAULT}`);
+    eventQuery.setParams(attributes);
+    return await eventQuery.execute();
 }
 
-async function updateEventOptionRequest(attributes) {
-    return await axios.post(`${BASE_URL}api/v1/option/update`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.option.update}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+export async function createEventOptionRequest(attributes, eventQuery = new EventEndpointQuery())
+{
+    eventQuery.setUrl(`${BASE_URL}api/v1/option/store`);
+    eventQuery.setHeaders();
+    eventQuery.setMethod(`${PROCEDURES.option.create}@${REQUEST_METHOD_DEFAULT}`);
+    eventQuery.setParams(attributes);
+    return await eventQuery.execute();
 }
-async function getKeyEventRequest(attributes){
+
+export async function updateEventOptionRequest(attributes, eventQuery = new EventEndpointQuery())
+{
+    eventQuery.setUrl(`${BASE_URL}api/v1/option/update`);
+    eventQuery.setHeaders();
+    eventQuery.setMethod(`${PROCEDURES.option.update}@${REQUEST_METHOD_DEFAULT}`);
+    eventQuery.setParams(attributes);
+    return await eventQuery.execute();
+}
+export async function getKeyEventRequest(attributes, eventQuery = new EventEndpointQuery())
+{
     // TODO: сделать выборку записи по ключу
-}
-
-export {
-    getEventListRequest,
-    createEventRequest,
-    getEventRequest,
-    updateEventRequest,
-    createEventOptionRequest,
-    updateEventOptionRequest,
-    getKeyEventRequest,
 }
