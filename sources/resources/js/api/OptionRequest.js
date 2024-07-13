@@ -1,49 +1,34 @@
-import axios from "axios";
 import {
     BASE_URL,
     JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
     PROCEDURES
 } from '../constant';
+import { OptionEndpointQuery } from './query/OptionEndpointQuery';
 
-export async function createOptionRequest(attributes) {
-    return await axios.post(`${BASE_URL}api/v1/option/store`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.option.create}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+export async function createOptionRequest(attributes, optionQuery = new OptionEndpointQuery())
+{
+    optionQuery.setUrl(`${BASE_URL}api/v1/option/store`);
+    optionQuery.setHeaders();
+    optionQuery.setMethod(`${PROCEDURES.option.create}@${REQUEST_METHOD_DEFAULT}`);
+    optionQuery.setParams(attributes);
+    return await optionQuery.execute();
 }
 
-export async function updateOptionRequest(attributes) {
-    return await axios.post(`${BASE_URL}api/v1/option/update`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.option.update}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+export async function updateOptionRequest(attributes, optionQuery = new OptionEndpointQuery())
+{
+    optionQuery.setUrl(`${BASE_URL}api/v1/option/update`);
+    optionQuery.setHeaders();
+    optionQuery.setMethod(`${PROCEDURES.option.update}@${REQUEST_METHOD_DEFAULT}`);
+    optionQuery.setParams(attributes);
+    return await optionQuery.execute();
 }
 
-export async function getOptionRequest(attributes) {
-    return await axios.post(`${BASE_URL}api/v1/option/read`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.option.read}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+export async function getOptionRequest(attributes, optionQuery = new OptionEndpointQuery())
+{
+    optionQuery.setUrl(`${BASE_URL}api/v1/option/read`);
+    optionQuery.setHeaders();
+    optionQuery.setMethod(`${PROCEDURES.option.read}@${REQUEST_METHOD_DEFAULT}`);
+    optionQuery.setParams(attributes);
+    return await optionQuery.execute();
 }

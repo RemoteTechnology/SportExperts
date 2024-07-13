@@ -5,4 +5,4 @@ import { RequestBuilder } from '../bin/RequestBuilder';
  * @constructor
  * @augments RequestBuilder
  */
-export class InviteEndpointQuery extends RequestBuilder {}
+export class OptionEndpointQuery extends RequestBuilder {}

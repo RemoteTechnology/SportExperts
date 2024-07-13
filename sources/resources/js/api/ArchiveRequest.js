@@ -1,40 +1,25 @@
-import axios from "axios";
 import {
     BASE_URL,
     JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
     PROCEDURES
 } from '../constant';
+import { ArchiveEndpointQuery } from './query/ArchiveEndpointQuery';
 
-
-async function createArchiveRequest(attributes)
+export async function createArchiveRequest(attributes, archiveQuery  = new ArchiveEndpointQuery())
 {
-    return await axios.post(`${BASE_URL}api/v1/event/archive/store`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.archive.create}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+    archiveQuery.setUrl(`${BASE_URL}api/v1/event/archive/store`);
+    archiveQuery.setHeaders();
+    archiveQuery.setMethod(`${PROCEDURES.archive.create}@${REQUEST_METHOD_DEFAULT}`);
+    archiveQuery.setParams(attributes);
+    return await archiveQuery.execute();
 }
 
-async function removeArchiveRequest(attributes)
+export async function removeArchiveRequest(attributes, archiveQuery  = new ArchiveEndpointQuery())
 {
-    return await axios.post(`${BASE_URL}api/v1/event/archive/destroy`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.archive.delete}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+    archiveQuery.setUrl(`${BASE_URL}api/v1/event/archive/destroy`);
+    archiveQuery.setHeaders();
+    archiveQuery.setMethod(`${PROCEDURES.archive.delete}@${REQUEST_METHOD_DEFAULT}`);
+    archiveQuery.setParams(attributes);
+    return await archiveQuery.execute();
 }
-
-export { createArchiveRequest, removeArchiveRequest }

@@ -1,39 +1,25 @@
-import axios from "axios";
 import {
     BASE_URL,
     JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
     PROCEDURES
 } from '../constant';
+import { ParticipantEndpointQuery } from './query/ParticipantEndpointQuery';
 
-async function recordUserToEventRequest(attributes) {
+export async function recordUserToEventRequest(attributes, participantQuery = new ParticipantEndpointQuery()) {
     // Для записи из списка спортсменов
-    return await axios.post(`${BASE_URL}api/v1/participant/store/`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.participant.create}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+    participantQuery.setUrl(`${BASE_URL}api/v1/participant/store/`);
+    participantQuery.setHeaders();
+    participantQuery.setMethod(`${PROCEDURES.participant.create}@${REQUEST_METHOD_DEFAULT}`);
+    participantQuery.setParams(attributes);
+    return await participantQuery.execute();
 }
 
-async function eventRecordRequest(attributes) {
+export async function eventRecordRequest(attributes,  participantQuery = new ParticipantEndpointQuery()) {
     // TODO: Сделать запись спортсмена на событие
-    return await axios.post(`${BASE_URL}api/v1/participant/store/`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        'jsonrpc': JSON_RPC_VERSION,
-        'id': '1',
-        'notification': false,
-        'method': `${PROCEDURES.participant.create}@${REQUEST_METHOD_DEFAULT}`,
-        'params': attributes
-    })
+    participantQuery.setUrl(`${BASE_URL}api/v1/participant/store/`);
+    participantQuery.setHeaders();
+    participantQuery.setMethod(`${PROCEDURES.participant.create}@${REQUEST_METHOD_DEFAULT}`);
+    participantQuery.setParams(attributes);
+    return await participantQuery.execute();
 }
-
-export { recordUserToEventRequest, eventRecordRequest }

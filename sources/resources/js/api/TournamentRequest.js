@@ -1,6 +1,0 @@
-function getTournamentTableToEvent()
-{
-
-}
-
-export { getTournamentTableToEvent };

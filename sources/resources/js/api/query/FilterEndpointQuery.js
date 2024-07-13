@@ -1,3 +1,3 @@
 import { RequestBuilder } from '../bin/RequestBuilder';
 
-class FilterEndpointQuery extends RequestBuilder {}
+export class FilterEndpointQuery extends RequestBuilder {}
