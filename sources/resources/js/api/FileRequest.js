@@ -6,7 +6,7 @@ import {
 } from '../constant';
 import { FileEndpointQuery } from './query/FileEndpointQuery';
 
-async function uploadFileRequest(formData, fileQuery = new FileEndpointQuery())
+export async function uploadFileRequest(formData, fileQuery = new FileEndpointQuery())
 {
     try {
         fileQuery.setUrl(`${BASE_URL}api/v1/file/`);
@@ -16,5 +16,3 @@ async function uploadFileRequest(formData, fileQuery = new FileEndpointQuery())
         throw error;
     }
 }
-
-export { uploadFileRequest }
