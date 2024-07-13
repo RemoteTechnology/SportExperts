@@ -16,7 +16,7 @@ class Option extends Model
      */
     protected $fillable = [
         'event_key',
-        'participant_key',
+        'user_id',
         'entity',
         'name',
         'value',

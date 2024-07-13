@@ -37,6 +37,7 @@ const PROCEDURES = {
     },
     option: {
         create: 'OptionStoreProcedure',
+        read: 'OptionReadProcedure',
         update: 'OptionUpdateProcedure',
     },
     participant: {

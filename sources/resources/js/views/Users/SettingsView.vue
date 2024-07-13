@@ -1,5 +1,10 @@
 <script>
-import {BASE_URL, ENDPOINTS, IDENTIFIER, MESSAGES} from '../../constant';
+import {
+    BASE_URL,
+    ENDPOINTS,
+    IDENTIFIER,
+    MESSAGES
+} from '../../constant';
 import { getUser, updateUserRequest } from '../../api/UserRequest';
 import Breadcrumb from 'primevue/breadcrumb';
 import Card from 'primevue/card';
@@ -9,6 +14,7 @@ import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Calendar from 'primevue/calendar';
 import { loggingRequest } from "../../api/LoggingRequest";
+import {createOptionRequest, getOptionRequest} from "../../api/OptionRequest";
 
 export default {
     data() {
@@ -22,7 +28,21 @@ export default {
               { label: 'Профиль', },
               { label: 'Настройки', },
           ],
-          user: null
+          user: null,
+          options: [
+              {
+                  entity: 'event_user',
+                  name: 'Weight',
+                  value: null,
+                  type: 'string',
+              },
+              {
+                  entity: 'event_user',
+                  name: 'Height',
+                  value: null,
+                  type: 'string',
+              },
+          ],
       };
     },
     components: {
@@ -114,6 +134,80 @@ export default {
         {
 
         },
+        userOptionsCreate: async function (idx)
+        {
+            if (this.options[idx].value)
+            {
+                let attributes = this.options[idx];
+                await createOptionRequest(attributes)
+                    .then((response) => {
+                        this.options[idx] = response.data.result.original;
+                        this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                    })
+                    .catch((error) => {
+                        this.messageError = MESSAGES.ERROR_ERROR;
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'userOptionsCreate',
+                            status: error.code,
+                            request_data: '',
+                            message: error.message
+                        })
+                    });
+            }
+        },
+        userOptionsUpdate: async function (idx)
+        {
+            if (this.options[idx].value)
+            {
+                let attributes = this.options[idx];
+                await createOptionRequest(attributes)
+                    .then((response) => { this.options[idx] = response.data.result.original; })
+                    .catch((error) => {
+                        loggingRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'userOptionsUpdate',
+                            status: error.code,
+                            request_data: '',
+                            message: error.message
+                        })
+                    });
+            }
+        },
+        setUserOptions: async function ()
+        {
+            for (let i=0; i < this.options.length; i++)
+            {
+                if (this.options[i].value == null)
+                {
+                    await this.userOptionsCreate(i);
+                }
+                else
+                {
+                    await this.userOptionsUpdate(i);
+                }
+            }
+        },
+        getUserOptions: async function()
+        {
+            let attributes = {
+                user_id: this.user.id
+            };
+            await getOptionRequest(attributes)
+                .then((response) => { this.options = response.data.result.original; })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getOptionRequest',
+                        status: error.code,
+                        request_data: '',
+                        message: error.message
+                    })
+                });
+        }
     },
     beforeMount() {
         this.userIdentifier();
@@ -123,6 +217,12 @@ export default {
 
 <template>
     <section class="d-flex d-center">
+        <section class="mt-1 mb-2" v-if="this.messageError">
+            <Message severity="error">{{ this.messageError }}</Message>
+        </section>
+        <section class="mt-1 mb-2" v-if="this.messageSuccess">
+            <Message severity="success">{{ this.messageSuccess }}</Message>
+        </section>
         <section class="mt-2 w-30 mb-5">
             <div class="d-flex d-center">
                 <div class="mt-3 mb-4">
@@ -268,6 +368,38 @@ export default {
                             class="w-100 mt-3"
                             severity="primary"
                             @click="this.userPasswordNew"/>
+                </template>
+            </Card>
+            <Card v-if="this.user && this.user.role === 'athlete'"
+                  class="mt-3">
+                <template #content>
+                    <h3>Параметры спортсмена</h3>
+                    <small>Параметры учитываются в алгоритме жеребьёвки. Их желательно заполнить.</small>
+                    <section class="d-flex d-center">
+                        <div class="form-block w-100">
+                            <label for="name">Рост</label>
+                            <InputText type="number"
+                                       v-model="this.options.height"
+                                       class="w-100"
+                                       :value="this.options.height"
+                                       required />
+                        </div>
+                    </section>
+                    <section class="d-flex d-center">
+                        <div class="form-block w-100">
+                            <label for="name">Вес</label>
+                            <InputText type="number"
+                                       v-model="this.options.weight"
+                                       class="w-100"
+                                       :value="this.options.weight"
+                                       required />
+                        </div>
+                    </section>
+                    <Button type="button"
+                            label="Обновить параметры"
+                            class="w-100 mt-3"
+                            severity="success"
+                            @click="this.setUserOptions"/>
                 </template>
             </Card>
         </section>

@@ -6,7 +6,7 @@ import {
     PROCEDURES
 } from '../constant';
 
-async function createOptionRequest(attributes) {
+export async function createOptionRequest(attributes) {
     return await axios.post(`${BASE_URL}api/v1/option/store`, {
         headers: {
             'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ async function createOptionRequest(attributes) {
     })
 }
 
-async function updateOptionRequest(attributes) {
+export async function updateOptionRequest(attributes) {
     return await axios.post(`${BASE_URL}api/v1/option/update`, {
         headers: {
             'Content-Type': 'application/json',
@@ -34,4 +34,16 @@ async function updateOptionRequest(attributes) {
     })
 }
 
-export { createOptionRequest, updateOptionRequest };
+export async function getOptionRequest(attributes) {
+    return await axios.post(`${BASE_URL}api/v1/option/read`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        'jsonrpc': JSON_RPC_VERSION,
+        'id': '1',
+        'notification': false,
+        'method': `${PROCEDURES.option.read}@${REQUEST_METHOD_DEFAULT}`,
+        'params': attributes
+    })
+}

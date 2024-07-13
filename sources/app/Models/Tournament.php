@@ -17,5 +17,6 @@ class Tournament extends Model
     protected $fillable = [
         'key',
         'event_key',
+        'stage',
     ];
 }

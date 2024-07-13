@@ -1,3 +1,3 @@
 import { RequestBuilder } from '../bin/RequestBuilder';
 
-class AuthEndpointQuery extends RequestBuilder {}
+export class AuthEndpointQuery extends RequestBuilder {}

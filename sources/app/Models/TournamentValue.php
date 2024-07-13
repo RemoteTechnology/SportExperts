@@ -14,10 +14,9 @@ class TournamentValue extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'event_id',
         'tournament_id',
-        'user_id',
         'participants_A',
         'participants_B',
+        'participants_passes',
     ];
 }

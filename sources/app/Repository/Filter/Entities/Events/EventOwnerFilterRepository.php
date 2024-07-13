@@ -5,9 +5,9 @@ namespace App\Repository\Filter\Entities\Events;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
-require_once dirname(__DIR__, 2) . '/Domain/Constants/EventStatusesConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/EventStatusesConst.php';
 
-require_once dirname(__DIR__, 2) . '/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
 
 class EventOwnerFilterRepository
 {

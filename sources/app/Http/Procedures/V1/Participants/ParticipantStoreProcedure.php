@@ -38,11 +38,14 @@ class ParticipantStoreProcedure extends Procedure
     public function handle(StoreParticipantReqest $request): JsonResponse
     {
         $participant = $request->validated();
+        $participant['event_id'] = (integer)$participant['event_id'];
+        $participant['user_id'] = (integer)$participant['user_id'];
+        $participant['invited_user_id'] = (integer)$participant['invited_user_id'];
         $participant['key'] = Str::uuid()->toString();
         // TODO: пока оставить так, но потом сделать как в InvitedStoreProcedure:44!
-        foreach ($this->participantRepository->filter($participant['user_id']) as $value)
+        foreach ($this->participantRepository->userList($participant['event_id']) as $value)
         {
-            if ($value->event_id === $participant['event_id'])
+            if ($value->user_id === $participant['user_id'])
             {
                 return new JsonResponse(
                     data: ALREADY_PARTICIPANT,
@@ -51,9 +54,7 @@ class ParticipantStoreProcedure extends Procedure
             }
         }
         return new JsonResponse(
-            data: new ParticipantResource(
-                $this->participantRepository->store($participant)
-            ),
+            data: $this->participantRepository->store($participant),
             status: 201
         );
     }

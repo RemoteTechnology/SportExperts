@@ -106,7 +106,7 @@ export default {
         {
             let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
             getRecordToEventsRequest(attributes, 'after')
-                .then((response) => { console.log(response);this.events = response.data.result.original; })
+                .then((response) => { this.events = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -197,7 +197,7 @@ export default {
                 who_user_id: window.$cookies.get(IDENTIFIER)
             };
             await listInvitedRequest(attributes)
-                .then((response) => { console.log(response);this.invited = response.data.result.original; })
+                .then((response) => { this.invited = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -212,7 +212,7 @@ export default {
         },
         getOwnerUser: function ()
         {
-            if (this.user.role == 'athlete')
+            if (this.user.role == 'admin')
             {
                 let attributes = {};
                 createArchiveRequest(attributes)

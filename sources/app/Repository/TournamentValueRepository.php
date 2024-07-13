@@ -3,13 +3,13 @@
 namespace App\Repository;
 
 use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
-use App\Models\Tournament;
 use App\Models\TournamentValue;
 use App\Repository\Traits\CreateQueryTrait;
 use App\Repository\Traits\DestroyQueryTrait;
 use App\Repository\Traits\ListQueryTrait;
 use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\UpdateQueryTrait;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 final class TournamentValueRepository implements LCRUD_OperationInterface
@@ -25,5 +25,14 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
     public function __construct(TournamentValue $model = new TournamentValue())
     {
         $this->model = $model;
+    }
+
+    /**
+     * @param string $tournamentKey
+     * @return Model
+     */
+    public function findByTournamentValueKey(string $tournamentKey): Collection
+    {
+        return $this->model::where(['event_key' => $tournamentKey]);
     }
 }

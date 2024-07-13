@@ -14,6 +14,7 @@ import ColumnGroup from 'primevue/columngroup';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Listbox from 'primevue/listbox';
+import RadioButton from 'primevue/radiobutton';
 import {loggingRequest} from "../../api/LoggingRequest";
 
 export default {
@@ -28,12 +29,15 @@ export default {
             eventId: null,
             event: null,
             dialog: false,
+            dialogAthlete: false,
             emailInvited: null,
             invitedEmail: null,
             participant: [],
             whoInvited: null,
             invites: null,
             invitedValue: null,
+            options: null,
+            inputOption: null,
         };
     },
     components: {
@@ -47,6 +51,7 @@ export default {
         ColumnGroup: ColumnGroup,
         InputText: InputText,
         Listbox: Listbox,
+        RadioButton: RadioButton,
     },
     methods: {
         formatDate: (inputDate) => {
@@ -110,7 +115,8 @@ export default {
             let template = {event_id: null, user_id: null, invited_user_id: null, team_key: null};
 
         },
-        search(event) {
+        search(event)
+        {
             this.items = [...this.participants].map((item) => event.query + '-' + item);
         },
         recordToInvitedUser: function ()
@@ -126,6 +132,7 @@ export default {
                     this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
                 })
                 .catch((error) => {
+
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -176,9 +183,11 @@ export default {
             let attributes = {
                 event_id: this.eventId,
                 user_id: this.user.id,
+                // TODO: если регаться спортсменом, то не правильный "invited_user_id" записывается
                 invited_user_id: window.$cookies.get(IDENTIFIER),
                 // team_key: null,
             };
+
             recordUserToEventRequest(attributes)
                 .then((response) => { this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR; })
                 .catch((error) => {
@@ -222,6 +231,40 @@ export default {
 </script>
 
 <template>
+<!--    <Dialog v-if="this.user.role === 'athlete'"-->
+<!--            v-model:visible="this.dialogAthlete"-->
+<!--            maximizable-->
+<!--            modal-->
+<!--            header="Выберите параметры"-->
+<!--            :style="{ width: '50rem' }"-->
+<!--            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">-->
+<!--        <div class="mb-3 d-flex d-flex-wrap d-between">-->
+<!--            <div v-for="option in this.event['options']"-->
+<!--                 v-key="option"-->
+<!--                 class="flex align-items-center w-50">-->
+<!--                <p>-->
+<!--                    <strong>{{ option.name }}</strong>-->
+<!--                </p>-->
+<!--                <section class="mb-1">-->
+<!--                    <label for="ingredient2" class="ml-2">-->
+<!--                        <RadioButton v-model="this.inputOption"-->
+<!--                                     inputId="ingredient1"-->
+<!--                                     name="1"-->
+<!--                                     :value="option.value" />-->
+<!--                        {{ option.value }}-->
+<!--                    </label>-->
+<!--                </section>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <section>-->
+<!--            <Button v-if="this.user.role === 'athlete'"-->
+<!--                    label="Записаться"-->
+<!--                    severity="primary"-->
+<!--                    class="w-100"-->
+<!--                    @click="this.invited" />-->
+<!--        </section>-->
+<!--    </Dialog>-->
     <Dialog v-if="this.user.role === 'admin'"
             v-model:visible="this.dialog"
             maximizable
@@ -303,6 +346,7 @@ export default {
                                     severity="primary"
                                     class="w-100"
                                     @click="this.dialog=true" />
+                            <!-- TODO: Сделать автоматическое определение роста, веса, возраста в логике -->
                             <Button v-if="this.user.role === 'athlete'"
                                     label="Записаться"
                                     severity="primary"
