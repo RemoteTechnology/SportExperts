@@ -24,10 +24,6 @@ export default {
           route: ENDPOINTS,
           currentDate: new Date(),
           baseUrl: BASE_URL,
-          breadcrumbPages: [
-              { label: 'Профиль', },
-              { label: 'Настройки', },
-          ],
           user: null,
           options: [
               {
@@ -224,11 +220,6 @@ export default {
             <Message severity="success">{{ this.messageSuccess }}</Message>
         </section>
         <section class="mt-2 w-30 mb-5">
-            <div class="d-flex d-center">
-                <div class="mt-3 mb-4">
-                    <Breadcrumb :model="breadcrumbPages"/>
-                </div>
-            </div>
             <div class="text-center mt-3 mb-3">
                 <h2>Настройки профиля</h2>
                 <section class="mt-1 mb-2" v-if="this.messageSuccess">

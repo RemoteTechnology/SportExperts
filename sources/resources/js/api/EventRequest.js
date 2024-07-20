@@ -8,6 +8,7 @@ import { EventEndpointQuery } from './query/EventEndpointQuery';
 
 export async function getEventListRequest(eventQuery = new EventEndpointQuery())
 {
+    console.log(`${PROCEDURES.event.list}@${REQUEST_METHOD_DEFAULT}`)
     eventQuery.setUrl(`${BASE_URL}api/v1/event/`);
     eventQuery.setHeaders();
     eventQuery.setMethod(`${PROCEDURES.event.list}@${REQUEST_METHOD_DEFAULT}`);
@@ -27,7 +28,7 @@ export async function createEventRequest(attributes, eventQuery = new EventEndpo
 {
     eventQuery.setUrl(`${BASE_URL}api/v1/event/store`);
     eventQuery.setHeaders();
-    eventQuery.setMethod(`${PROCEDURES.event.store}@${REQUEST_METHOD_DEFAULT}`);
+    eventQuery.setMethod(`${PROCEDURES.event.create}@${REQUEST_METHOD_DEFAULT}`);
     eventQuery.setParams(attributes);
     return await eventQuery.execute();
 }

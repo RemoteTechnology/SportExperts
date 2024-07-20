@@ -38,14 +38,15 @@ class InvitedListProcedure extends Procedure
     public function handle(InvitedListRequest $request): JsonResponse
     {
 //        $invites = new InvitedCollection($this->operation->list('paginate')->where(['who_user_id' => $request->validated()['who_user_id']]));
-        $invites = new InvitedCollection(
+        $invites = $request->validated();
+        $invitesList = new InvitedCollection(
             DB::table('inviteds')
                 ->select('*')
-                ->where(['who_user_id' => $request->validated()['who_user_id']])
+                ->where(['user_id' => (int)$invites['who_user_id']])
                 ->paginate(12)
         );
         return new JsonResponse(
-            data: $invites->collection,
+            data: $invitesList->collection,
             status: 201
         );
     }

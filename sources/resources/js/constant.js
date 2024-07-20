@@ -1,9 +1,9 @@
-const BASE_URL = 'http://localhost:8080/';
-const JSON_RPC_VERSION = '2.0';
-const TOKEN = 'user_personal_access_token';
-const IDENTIFIER = 'user_identifier';
+export const BASE_URL = 'http://localhost:8080/';
+export const JSON_RPC_VERSION = '2.0';
+export const TOKEN = 'user_personal_access_token';
+export const IDENTIFIER = 'user_identifier';
 // Процедуры
-const PROCEDURES = {
+export const PROCEDURES = {
     users: {
         registration: 'UserRegistrationProcedure',
         read: 'UserReadProcedure',
@@ -44,9 +44,9 @@ const PROCEDURES = {
         create: 'ParticipantStoreProcedure',
     }
 };
-const REQUEST_METHOD_DEFAULT = 'handle';
+export const REQUEST_METHOD_DEFAULT = 'handle';
 
-const MESSAGES = {
+export const MESSAGES = {
     NO_DATA: 'Данных нет!',
     NO_VALID_DATA: 'Проверьте правильность введенных данных!',
     ERROR_DEFAULT: 'Ошибка, пожалуйста обратитесь к администратору!',
@@ -59,7 +59,7 @@ const MESSAGES = {
     ARCHIVE_SUCCESS: 'Событие добавлено в архив!',
 };
 // TODO: Выставить всё по алфавиту, импорты во всех файлах тоже только там где это уместно!!!!
-const ENDPOINTS = {
+export const ENDPOINTS = {
     API: {
         LIST: 'list',
         STORE: 'store',
@@ -84,17 +84,6 @@ const ENDPOINTS = {
     UPDATE: 'update',
 };
 
-const RESPONSE = {
+export const RESPONSE = {
     data: 'data'
-};
-
-export {
-    BASE_URL,
-    JSON_RPC_VERSION,
-    TOKEN, IDENTIFIER,
-    REQUEST_METHOD_DEFAULT,
-    PROCEDURES,
-    MESSAGES,
-    ENDPOINTS,
-    RESPONSE
 };

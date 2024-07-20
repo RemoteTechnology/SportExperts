@@ -46,9 +46,9 @@ export default {
             invited: [],
             ownerUser: null,
             token: null,
-            events: [],
-            eventsNoActive: [],
-            eventsArchive: [],
+            events: null,
+            eventsNoActive: null,
+            eventsArchive: null,
             first: 0,
             messageError: null,
             messageSuccess: null,
@@ -106,7 +106,7 @@ export default {
         {
             let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
             getRecordToEventsRequest(attributes, 'after')
-                .then((response) => { this.events = response.data.result.original; })
+                .then((response) => { console.log(response);this.events = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -214,8 +214,10 @@ export default {
         {
             if (this.user.role == 'admin')
             {
-                let attributes = {};
-                createArchiveRequest(attributes)
+                // let attributes = {  };
+                // createArchiveRequest(attributes)
+                let attributes = `user_id:${this.user.id}`;
+                getEventParticipantRequest(attributes)
                     .then((response) => { this.ownerUser = response.data.result.original; })
                     .catch((error) => {
                         loggingRequest({
@@ -403,8 +405,8 @@ export default {
                         </section>
                         <TabView>
                             <TabPanel header="Активные">
-                                <section v-if="this.events.data.length > 0">
-                                    <section v-for="event in this.events[RESPONSE.data]" class="mt-1 mb-1">
+                                <section v-if="this.events && this.events.length > 0">
+                                    <section v-for="event in this.events" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
                                                 <div class="d-flex d-between d-align-center">
@@ -437,7 +439,7 @@ export default {
                                                             <section>
                                                                 <p>Участников: {{ this.participants.length > 0 ? this.participants.length : 0 }}</p>
                                                                 <div class="mb-1">
-                                                                    <a :href="this.baseUrl + this.route.EVENT + '?id=' + event.id">
+                                                                    <a :href="this.baseUrl + this.route.EVENT + '/detail?id=' + event.id">
                                                                         <Button label="Подробнее" severity="secondary" outlined class="w-100" />
                                                                     </a>
                                                                 </div>
@@ -469,7 +471,7 @@ export default {
                                 </section>
                             </TabPanel>
                             <TabPanel header="Прошедшие">
-                                <section v-if="this.eventsNoActive.data.length > 0">
+                                <section v-if="this.eventsNoActive && this.eventsNoActive.data.length > 0">
                                     <section v-for="event in this.eventsNoActive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
@@ -533,7 +535,7 @@ export default {
                                 </section>
                             </TabPanel>
                             <TabPanel header="В архиве">
-                                <section v-if="this.eventsArchive.data.length > 0">
+                                <section v-if="this.eventsArchive && this.eventsArchive.data.length > 0">
                                     <section v-for="event in this.eventsArchive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>

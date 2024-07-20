@@ -293,12 +293,29 @@ export default {
                         </strong>
                     </div>
                     <div v-for="eventParticipant in this.eventsToRead" class="flex gap-3 mt-2">
-                        <a v-if="eventParticipant.key !== event.key" :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.HISTORY + '?key=' + event.key">
-                            <Button label="Вы записаны"
-                                    icon="pi pi-check"
-                                    severity="link"
+                        <a v-if="this.user && this.user.role == 'admin'"
+                           :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.DETAIL + '?id=' + event.id">
+                            <Button label="Подробнее"
+                                    severity="secondary"
+                                    outlined
                                     class="w-100" />
                         </a>
+                        <section v-else-if="this.user && this.user.role == 'athlete'">
+                            <a v-if="eventParticipant.key !== event.key"
+                               :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.HISTORY + '?key=' + event.key">
+                                <Button label="Вы записаны"
+                                        icon="pi pi-check"
+                                        severity="link"
+                                        class="w-100" />
+                            </a>
+                            <a v-else
+                               :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.DETAIL + '?id=' + event.id">
+                                <Button label="Записаться"
+                                        severity="secondary"
+                                        outlined
+                                        class="w-100" />
+                            </a>
+                        </section>
                         <a v-else
                            :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.DETAIL + '?id=' + event.id">
                             <Button label="Записаться"

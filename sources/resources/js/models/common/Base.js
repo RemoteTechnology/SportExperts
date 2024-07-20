@@ -5,8 +5,11 @@
  */
 export class Base
 {
-    id;
-    createdAt;
-    updatedAt;
-    deletedAt;
+    constructor()
+    {
+        this.id = undefined;
+        this.created_at = undefined;
+        this.updated_at = undefined;
+        this.deleted_at = undefined;
+    }
 }

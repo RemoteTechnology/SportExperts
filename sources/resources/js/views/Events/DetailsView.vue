@@ -30,8 +30,8 @@ export default {
             event: null,
             dialog: false,
             dialogAthlete: false,
-            emailInvited: null,
-            invitedEmail: null,
+            emailInvited: '',
+            invitedEmail: '',
             participant: [],
             whoInvited: null,
             invites: null,
@@ -119,7 +119,7 @@ export default {
         {
             this.items = [...this.participants].map((item) => event.query + '-' + item);
         },
-        recordToInvitedUser: function ()
+        recordToInvitedUser: async function ()
         {
             let attributes = {
                 event_id: this.eventId,
@@ -127,12 +127,13 @@ export default {
                 invited_user_id: window.$cookies.get(IDENTIFIER),
                 // team_key: null,
             };
-            recordUserToEventRequest(attributes)
+            await recordUserToEventRequest(attributes)
                 .then((response) => {
+                    console.log(response)
                     this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
                 })
                 .catch((error) => {
-
+                    console.log(error)
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -144,19 +145,22 @@ export default {
                     this.messageError = MESSAGES.ERROR_ERROR;
                 });
         },
-        recordAndInvitedUser: function()
+        recordAndInvitedUser: async function()
         {
             let attributes = {
                 email: this.invitedEmail,
-                ownerId: this.user.id,
-                eventKey: this.event.key,
+                invite_user_id: this.user.id,
+                event_id: this.eventId,
             };
-            addNotificationUserInviteEventRequest(attributes)
+
+            await addNotificationUserInviteEventRequest(attributes)
                 .then((response) => {
+                    console.log(response)
                     this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
-                    this.invitedEmail = null;
+                    this.invitedEmail = '';
                 })
                 .catch((error) => {
+                    console.log(error)
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -168,14 +172,16 @@ export default {
                     this.messageError = MESSAGES.ERROR_ERROR;
                 });
         },
-        inviteToEvent: function ()
+        inviteToEvent: async function ()
         {
-            if (this.invitedValue) {
-                this.recordToInvitedUser();
-            }
-            else
+            if (this.invitedEmail.length > 0)
             {
-                this.recordAndInvitedUser();
+                await this.recordAndInvitedUser();
+                return;
+            }
+            if (this.invitedValue) {
+                await this.recordToInvitedUser();
+                return;
             }
         },
         invited: function ()
@@ -206,7 +212,7 @@ export default {
         {
             let attributes = { who_user_id: window.$cookies.get(IDENTIFIER) };
             getInvitedOwnerRequest(attributes)
-                .then((response) => { this.invites = response.data.result.original; })
+                .then((response) => { this.invites = response.data.result.original; console.log(this.invites) })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -231,40 +237,7 @@ export default {
 </script>
 
 <template>
-<!--    <Dialog v-if="this.user.role === 'athlete'"-->
-<!--            v-model:visible="this.dialogAthlete"-->
-<!--            maximizable-->
-<!--            modal-->
-<!--            header="Выберите параметры"-->
-<!--            :style="{ width: '50rem' }"-->
-<!--            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">-->
-<!--        <div class="mb-3 d-flex d-flex-wrap d-between">-->
-<!--            <div v-for="option in this.event['options']"-->
-<!--                 v-key="option"-->
-<!--                 class="flex align-items-center w-50">-->
-<!--                <p>-->
-<!--                    <strong>{{ option.name }}</strong>-->
-<!--                </p>-->
-<!--                <section class="mb-1">-->
-<!--                    <label for="ingredient2" class="ml-2">-->
-<!--                        <RadioButton v-model="this.inputOption"-->
-<!--                                     inputId="ingredient1"-->
-<!--                                     name="1"-->
-<!--                                     :value="option.value" />-->
-<!--                        {{ option.value }}-->
-<!--                    </label>-->
-<!--                </section>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        <section>-->
-<!--            <Button v-if="this.user.role === 'athlete'"-->
-<!--                    label="Записаться"-->
-<!--                    severity="primary"-->
-<!--                    class="w-100"-->
-<!--                    @click="this.invited" />-->
-<!--        </section>-->
-<!--    </Dialog>-->
+    <!-- TODO: При выборе спортсмена всё дропается -->
     <Dialog v-if="this.user.role === 'admin'"
             v-model:visible="this.dialog"
             maximizable
@@ -274,7 +247,7 @@ export default {
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div v-if="this.invites.length > 0" class="mb-3">
             <label class="font-semibold w-6rem">Выберите спортсмена из списка</label>
-            <Listbox v-model="this.invitedValue"
+            <Listbox v-model="this.invites"
                      :options="this.invites"
                      class="w-100"
                      listStyle="max-height:310px">
@@ -306,7 +279,9 @@ export default {
         </section>
         <section class="container d-flex d-between d-flex-wrap">
             <div class="w-50">
-                <Image :src="this.baseUrl + 'storage/uploads/' + this.event.image.name" :alt="this.event.name" />
+                <Image :src="this.baseUrl + 'storage/uploads/' + this.event.image.name"
+                       imageStyle="max-width: 95%;"
+                       :alt="this.event.name" />
                 <div class="mt-3">
                     <h3>ИНФОРМАЦИЯ</h3>
                     <br>

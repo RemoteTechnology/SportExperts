@@ -22,7 +22,8 @@ class InvitedListRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'who_user_id' => ['nullable']
+            'who_user_id'       => ['nullable'],
+            'enable_events'     => ['nullable']
         ];
     }
 }
