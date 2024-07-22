@@ -126,7 +126,6 @@ export default {
 
             await createEventRequest(attributes)
                 .then((response) => {
-                    console.log(response)
                     this.event = response.data.result.original;
                     this.messageSuccess = MESSAGES.FORM_SUCCESS;
                 })

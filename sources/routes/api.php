@@ -89,6 +89,7 @@ Route::prefix('v1')->group(function () {
             //// END V1 AUTH SOCIAL ENDPOINTS
         });
         //// END V1 AUTH ENDPOINTS
+        //TODO: передавать роль для приглашенных спортсменов
         Route::rpc(ROUTE_DEFAULT . 'registration', [UserRegistrationProcedure::class])->name('v1.user.registration');
         Route::rpc(ROUTE_READ, [UserReadProcedure::class])->name('v1.user.read');
         Route::rpc('reset', [ResetProcedure::class])->name('v1.user.reset');

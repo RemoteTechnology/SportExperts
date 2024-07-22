@@ -19,6 +19,7 @@ import Button from 'primevue/button';
 import InputMask from 'primevue/inputmask';
 import FloatLabel from 'primevue/floatlabel';
 import Message from 'primevue/message';
+import { User } from '../../models/User';
 
 export default {
     data() {
@@ -43,6 +44,7 @@ export default {
             response: RESPONSE,
             route: ENDPOINTS,
             currentDate: new Date(),
+            userObject: null,
             user: {
                 firstName: null,
                 firstNameEng: null,
@@ -85,7 +87,6 @@ export default {
             let attributes = { key: this.event_id };
             await getEventRequest(attributes)
                 .then((response) => {
-                    console.log('getKeyEventRequest')
                     this.event = response.data.result.original;
                 })
                 .catch((error) => {
@@ -127,7 +128,9 @@ export default {
             if (this.urlKey)
             {
                 await registrationRequest(attributes)
-                    .then((response) => { this.user = response.data.result.original; })
+                    .then((response) => {
+                        this.userModel = Object.assign(new User(), response.data.result.original)
+                    })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -139,7 +142,7 @@ export default {
                         })
                     });
                 let attributesInvite = {
-                    who_user_id: Number(this.invite_user_id),
+                    who_user_id: this.invite_user_id,
                     user_id: this.user.id,
                 }
                 await createInvitedRequest(attributesInvite)
@@ -156,8 +159,8 @@ export default {
                     });
                 let attributesRecord = {
                     event_id: this.event_id,
-                    user_id: this.user.id,
-                    invited_user_id: Number(this.invite_user_id),
+                    user_id: this.userModel.id,
+                    invited_user_id: this.invite_user_id,
                 };
                 await eventRecordRequest(attributesRecord)
                     .then((response) => { this.participants = response.data.result.original; })
@@ -171,7 +174,6 @@ export default {
                             message: error.message
                         })
                     });
-                console.log(this.participants)
                 if (this.participants)
                 {
                     let attributesOptions= [
@@ -213,7 +215,10 @@ export default {
             else
             {
                 await registrationRequest(attributes)
-                    .then((response) => { this.messageSuccess = MESSAGES.FORM_SUCCESS })
+                    .then((response) => {
+                        this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                        this.userModel = Object.assign(new User(), response.data.result.original);
+                    })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,

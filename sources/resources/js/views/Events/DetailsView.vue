@@ -30,8 +30,8 @@ export default {
             event: null,
             dialog: false,
             dialogAthlete: false,
-            emailInvited: null,
-            invitedEmail: null,
+            emailInvited: '',
+            invitedEmail: '',
             participant: [],
             whoInvited: null,
             invites: null,
@@ -97,7 +97,7 @@ export default {
         {
             let attributes = { id: this.eventId };
             getEventRequest(attributes)
-                .then((response) => { this.event = response.data.result.original; })
+                .then((response) => { console.log(response); this.event = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -110,16 +110,11 @@ export default {
                     this.messageError = MESSAGES.LOADING_ERROR;
                 });
         },
-        addParticipant: function ()
-        {
-            let template = {event_id: null, user_id: null, invited_user_id: null, team_key: null};
-
-        },
         search(event)
         {
             this.items = [...this.participants].map((item) => event.query + '-' + item);
         },
-        recordToInvitedUser: function ()
+        recordToInvitedUser: async function ()
         {
             let attributes = {
                 event_id: this.eventId,
@@ -127,12 +122,11 @@ export default {
                 invited_user_id: window.$cookies.get(IDENTIFIER),
                 // team_key: null,
             };
-            recordUserToEventRequest(attributes)
+            await recordUserToEventRequest(attributes)
                 .then((response) => {
                     this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
                 })
                 .catch((error) => {
-
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -144,17 +138,18 @@ export default {
                     this.messageError = MESSAGES.ERROR_ERROR;
                 });
         },
-        recordAndInvitedUser: function()
+        recordAndInvitedUser: async function()
         {
             let attributes = {
                 email: this.invitedEmail,
-                ownerId: this.user.id,
-                eventKey: this.event.key,
+                invite_user_id: this.user.id,
+                event_id: this.eventId,
             };
-            addNotificationUserInviteEventRequest(attributes)
+
+            await addNotificationUserInviteEventRequest(attributes)
                 .then((response) => {
                     this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
-                    this.invitedEmail = null;
+                    this.invitedEmail = '';
                 })
                 .catch((error) => {
                     loggingRequest({
@@ -168,14 +163,16 @@ export default {
                     this.messageError = MESSAGES.ERROR_ERROR;
                 });
         },
-        inviteToEvent: function ()
+        inviteToEvent: async function ()
         {
-            if (this.invitedValue) {
-                this.recordToInvitedUser();
-            }
-            else
+            if (this.invitedEmail.length > 0)
             {
-                this.recordAndInvitedUser();
+                await this.recordAndInvitedUser();
+                return;
+            }
+            if (this.invitedValue) {
+                await this.recordToInvitedUser();
+                return;
             }
         },
         invited: function ()
@@ -221,51 +218,21 @@ export default {
         }
     },
     beforeMount() {
-        this.tokenRead();
-        this.userIdentifier();
+        if (this.user)
+        {
+            this.tokenRead();
+            this.userIdentifier();
+            this.getWhoInvited()
+        }
         this.getUrl();
         this.getEvent();
-        this.getWhoInvited()
     }
 }
 </script>
 
 <template>
-<!--    <Dialog v-if="this.user.role === 'athlete'"-->
-<!--            v-model:visible="this.dialogAthlete"-->
-<!--            maximizable-->
-<!--            modal-->
-<!--            header="Выберите параметры"-->
-<!--            :style="{ width: '50rem' }"-->
-<!--            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">-->
-<!--        <div class="mb-3 d-flex d-flex-wrap d-between">-->
-<!--            <div v-for="option in this.event['options']"-->
-<!--                 v-key="option"-->
-<!--                 class="flex align-items-center w-50">-->
-<!--                <p>-->
-<!--                    <strong>{{ option.name }}</strong>-->
-<!--                </p>-->
-<!--                <section class="mb-1">-->
-<!--                    <label for="ingredient2" class="ml-2">-->
-<!--                        <RadioButton v-model="this.inputOption"-->
-<!--                                     inputId="ingredient1"-->
-<!--                                     name="1"-->
-<!--                                     :value="option.value" />-->
-<!--                        {{ option.value }}-->
-<!--                    </label>-->
-<!--                </section>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        <section>-->
-<!--            <Button v-if="this.user.role === 'athlete'"-->
-<!--                    label="Записаться"-->
-<!--                    severity="primary"-->
-<!--                    class="w-100"-->
-<!--                    @click="this.invited" />-->
-<!--        </section>-->
-<!--    </Dialog>-->
-    <Dialog v-if="this.user.role === 'admin'"
+    <!-- TODO: При выборе спортсмена всё дропается -->
+    <Dialog v-if="this.user && this.user.role === 'admin'"
             v-model:visible="this.dialog"
             maximizable
             modal
@@ -274,7 +241,7 @@ export default {
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div v-if="this.invites.length > 0" class="mb-3">
             <label class="font-semibold w-6rem">Выберите спортсмена из списка</label>
-            <Listbox v-model="this.invitedValue"
+            <Listbox v-model="this.invites"
                      :options="this.invites"
                      class="w-100"
                      listStyle="max-height:310px">
@@ -306,7 +273,9 @@ export default {
         </section>
         <section class="container d-flex d-between d-flex-wrap">
             <div class="w-50">
-                <Image :src="this.baseUrl + 'storage/uploads/' + this.event.image.name" :alt="this.event.name" />
+                <Image :src="this.baseUrl + 'storage/uploads/' + this.event.image.name"
+                       imageStyle="max-width: 95%;"
+                       :alt="this.event.name" />
                 <div class="mt-3">
                     <h3>ИНФОРМАЦИЯ</h3>
                     <br>
@@ -336,18 +305,18 @@ export default {
                         </div>
                         <div class="mb-1">
                             <h3>
-                                <i class="pi pi-users" style="color: #222"></i> <span>{{ this.participant.length }} участников</span>
+                                <i class="pi pi-users" style="color: #222"></i> <span>{{ this.event.participants.length }} участников</span>
                             </h3>
                         </div>
                         <div class="mb-1">
                             <br>
-                            <Button v-if="this.user.role === 'admin'"
+                            <Button v-if="this.user && this.user.role === 'admin'"
                                     label="Записать спортсмена на событие"
                                     severity="primary"
                                     class="w-100"
                                     @click="this.dialog=true" />
                             <!-- TODO: Сделать автоматическое определение роста, веса, возраста в логике -->
-                            <Button v-if="this.user.role === 'athlete'"
+                            <Button v-if="this.user && this.user.role === 'athlete'"
                                     label="Записаться"
                                     severity="primary"
                                     class="w-100"
@@ -382,12 +351,11 @@ export default {
                         </template>
                         <template #content>
                             <section v-if="this.event['participants'].length > 0">
-                                <section v-for="participant in this.event['participants']" class="option-list">
+                                <section v-for="participant in this.event.participants" class="option-list">
                                     <!-- TODO: проверить что участники события правильно изымаются из бд -->
                                     <div class="mb-3">
                                         <strong>
-                                            <a href="#">{{ participant.first_name }} {{ participant.last_name }}</a><br>
-                                            <span>{{ option.birth_date }}</span>
+                                            <a href="#">{{ participant.user.first_name }} {{ participant.user.last_name }}</a><br>
                                         </strong>
                                     </div>
                                 </section>

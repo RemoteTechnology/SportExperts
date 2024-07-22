@@ -46,9 +46,9 @@ export default {
             invited: [],
             ownerUser: null,
             token: null,
-            events: [],
-            eventsNoActive: [],
-            eventsArchive: [],
+            events: null,
+            eventsNoActive: null,
+            eventsArchive: null,
             first: 0,
             messageError: null,
             messageSuccess: null,
@@ -196,8 +196,9 @@ export default {
             let attributes = {
                 who_user_id: window.$cookies.get(IDENTIFIER)
             };
+            console.log(attributes);
             await listInvitedRequest(attributes)
-                .then((response) => { this.invited = response.data.result.original; })
+                .then((response) => { console.log(response); this.invited = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -214,8 +215,10 @@ export default {
         {
             if (this.user.role == 'admin')
             {
-                let attributes = {};
-                createArchiveRequest(attributes)
+                // let attributes = {  };
+                // createArchiveRequest(attributes)
+                let attributes = `user_id:${this.user.id}`;
+                getEventParticipantRequest(attributes)
                     .then((response) => { this.ownerUser = response.data.result.original; })
                     .catch((error) => {
                         loggingRequest({
@@ -365,11 +368,11 @@ export default {
                                     <Image src="images/athlete_default_avatar.png" width="30" />
                                 </template>
                             </Column>
-                            <Column field="user.first_name" header="Имя"></Column>
-                            <Column field="user.last_name" header="Фамилия"></Column>
+                            <Column field="who_user.first_name" header="Имя"></Column>
+                            <Column field="who_user.last_name" header="Фамилия"></Column>
                             <Column header="">
                                 <template #body>
-                                    <a :href="this.baseUrl + 'invite/detail?user_id=' + this.user.id">
+                                    <a :href="this.baseUrl + 'invite/detail?user_id=' + this.who_user.id">
                                         <Button type="button" label="Подробнее" severity="secondary"/>
                                     </a>
                                 </template>
@@ -403,8 +406,10 @@ export default {
                         </section>
                         <TabView>
                             <TabPanel header="Активные">
-                                <section v-if="this.events.data.length > 0">
-                                    <section v-for="event in this.events[RESPONSE.data]" class="mt-1 mb-1">
+                                <section v-if="this.events &&
+                                                Object.keys(this.events).includes('data') &&
+                                                this.events.data.length > 0">
+                                    <section v-for="event in this.events.data" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
                                                 <div class="d-flex d-between d-align-center">
@@ -437,7 +442,7 @@ export default {
                                                             <section>
                                                                 <p>Участников: {{ this.participants.length > 0 ? this.participants.length : 0 }}</p>
                                                                 <div class="mb-1">
-                                                                    <a :href="this.baseUrl + this.route.EVENT + '?id=' + event.id">
+                                                                    <a :href="this.baseUrl + this.route.EVENT + '/detail?id=' + event.id">
                                                                         <Button label="Подробнее" severity="secondary" outlined class="w-100" />
                                                                     </a>
                                                                 </div>
@@ -469,7 +474,9 @@ export default {
                                 </section>
                             </TabPanel>
                             <TabPanel header="Прошедшие">
-                                <section v-if="this.eventsNoActive.data.length > 0">
+                                <section v-if="this.eventsNoActive &&
+                                                Object.keys(this.eventsNoActive).includes('data') &&
+                                                this.eventsNoActive.data.length > 0">
                                     <section v-for="event in this.eventsNoActive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
@@ -533,7 +540,9 @@ export default {
                                 </section>
                             </TabPanel>
                             <TabPanel header="В архиве">
-                                <section v-if="this.eventsArchive.data.length > 0">
+                                <section v-if="this.eventsArchive &&
+                                                Object.keys(this.eventsArchive).includes('data') &&
+                                                this.eventsArchive.data.length > 0">
                                     <section v-for="event in this.eventsArchive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>

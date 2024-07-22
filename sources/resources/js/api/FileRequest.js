@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
     BASE_URL,
     JSON_RPC_VERSION,
@@ -9,9 +10,15 @@ import { FileEndpointQuery } from './query/FileEndpointQuery';
 export async function uploadFileRequest(formData, fileQuery = new FileEndpointQuery())
 {
     try {
-        fileQuery.setUrl(`${BASE_URL}api/v1/file/`);
-        fileQuery.setHeaders();
-        return await fileQuery.execute(formData);
+        return await axios.post(`${BASE_URL}api/v1/file/`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Accept': 'application/json',
+            }
+        })
+        // fileQuery.setUrl(`${BASE_URL}api/v1/file/`);
+        // fileQuery.setHeaders();
+        // return await fileQuery.execute(formData);
     } catch (error) {
         throw error;
     }

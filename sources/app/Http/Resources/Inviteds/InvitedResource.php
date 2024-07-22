@@ -47,7 +47,9 @@ class InvitedResource extends JsonResource
             'who_user' => new UserResource(User::find($this->who_user_id)),
             'user' => new UserResource(User::find($this->user_id)),
         ];
-        if ((boolean)$request->toArray()['enable_events'])
+        $this->setParticipants($response);
+        $this->setParticipants($response);
+        if (key_exists('enable_events', $request->toArray()) && (boolean)$request->toArray()['enable_events'])
         {
             $this->setParticipants($response);
         }

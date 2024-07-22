@@ -42,7 +42,7 @@ class NotificationProcedure extends Procedure
         return new JsonResponse(
             data: $this->mailingService->mailInvitedOrRecord([
                 FIELD_EMAIL         => $invite[FIELD_EMAIL],
-                'invite_user_id'    => $invite['ownerId'],
+                'invite_user_id'    => $invite['invite_user_id'],
                 'event_id'          => $invite['event_id'],
             ]),
             status: 201

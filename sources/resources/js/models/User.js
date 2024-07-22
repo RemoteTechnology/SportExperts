@@ -7,15 +7,19 @@ import { Base } from './common/Base';
  */
 export class User extends Base
 {
-    firstName;
-    firstNameEng;
-    lastName;
-    lastNameEng;
-    birthDate;
-    gender;
-    email;
-    phone;
-    location;
-    role;
-    password;
+    constructor()
+    {
+        super();
+        this.first_name = undefined;
+        this.first_name_eng = undefined;
+        this.last_name = undefined;
+        this.last_name_eng = undefined;
+        this.birth_date = undefined;
+        this.gender = undefined;
+        this.email = undefined;
+        this.phone = undefined;
+        this.location = undefined;
+        this.role = undefined;
+        this.password = undefined;
+    }
 }

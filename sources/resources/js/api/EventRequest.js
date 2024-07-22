@@ -27,7 +27,7 @@ export async function createEventRequest(attributes, eventQuery = new EventEndpo
 {
     eventQuery.setUrl(`${BASE_URL}api/v1/event/store`);
     eventQuery.setHeaders();
-    eventQuery.setMethod(`${PROCEDURES.event.store}@${REQUEST_METHOD_DEFAULT}`);
+    eventQuery.setMethod(`${PROCEDURES.event.create}@${REQUEST_METHOD_DEFAULT}`);
     eventQuery.setParams(attributes);
     return await eventQuery.execute();
 }
