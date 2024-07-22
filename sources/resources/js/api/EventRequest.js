@@ -8,7 +8,6 @@ import { EventEndpointQuery } from './query/EventEndpointQuery';
 
 export async function getEventListRequest(eventQuery = new EventEndpointQuery())
 {
-    console.log(`${PROCEDURES.event.list}@${REQUEST_METHOD_DEFAULT}`)
     eventQuery.setUrl(`${BASE_URL}api/v1/event/`);
     eventQuery.setHeaders();
     eventQuery.setMethod(`${PROCEDURES.event.list}@${REQUEST_METHOD_DEFAULT}`);

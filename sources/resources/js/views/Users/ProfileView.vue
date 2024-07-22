@@ -106,7 +106,7 @@ export default {
         {
             let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
             getRecordToEventsRequest(attributes, 'after')
-                .then((response) => { console.log(response);this.events = response.data.result.original; })
+                .then((response) => { this.events = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -196,8 +196,9 @@ export default {
             let attributes = {
                 who_user_id: window.$cookies.get(IDENTIFIER)
             };
+            console.log(attributes);
             await listInvitedRequest(attributes)
-                .then((response) => { this.invited = response.data.result.original; })
+                .then((response) => { console.log(response); this.invited = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -367,11 +368,11 @@ export default {
                                     <Image src="images/athlete_default_avatar.png" width="30" />
                                 </template>
                             </Column>
-                            <Column field="user.first_name" header="Имя"></Column>
-                            <Column field="user.last_name" header="Фамилия"></Column>
+                            <Column field="who_user.first_name" header="Имя"></Column>
+                            <Column field="who_user.last_name" header="Фамилия"></Column>
                             <Column header="">
                                 <template #body>
-                                    <a :href="this.baseUrl + 'invite/detail?user_id=' + this.user.id">
+                                    <a :href="this.baseUrl + 'invite/detail?user_id=' + this.who_user.id">
                                         <Button type="button" label="Подробнее" severity="secondary"/>
                                     </a>
                                 </template>
@@ -405,8 +406,10 @@ export default {
                         </section>
                         <TabView>
                             <TabPanel header="Активные">
-                                <section v-if="this.events && this.events.length > 0">
-                                    <section v-for="event in this.events" class="mt-1 mb-1">
+                                <section v-if="this.events &&
+                                                Object.keys(this.events).includes('data') &&
+                                                this.events.data.length > 0">
+                                    <section v-for="event in this.events.data" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
                                                 <div class="d-flex d-between d-align-center">
@@ -471,7 +474,9 @@ export default {
                                 </section>
                             </TabPanel>
                             <TabPanel header="Прошедшие">
-                                <section v-if="this.eventsNoActive && this.eventsNoActive.data.length > 0">
+                                <section v-if="this.eventsNoActive &&
+                                                Object.keys(this.eventsNoActive).includes('data') &&
+                                                this.eventsNoActive.data.length > 0">
                                     <section v-for="event in this.eventsNoActive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>
@@ -535,7 +540,9 @@ export default {
                                 </section>
                             </TabPanel>
                             <TabPanel header="В архиве">
-                                <section v-if="this.eventsArchive && this.eventsArchive.data.length > 0">
+                                <section v-if="this.eventsArchive &&
+                                                Object.keys(this.eventsArchive).includes('data') &&
+                                                this.eventsArchive.data.length > 0">
                                     <section v-for="event in this.eventsArchive[RESPONSE.data]" class="mt-1 mb-1">
                                         <Card class="w-100">
                                             <template #content>

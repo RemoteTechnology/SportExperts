@@ -97,7 +97,7 @@ export default {
         {
             let attributes = { id: this.eventId };
             getEventRequest(attributes)
-                .then((response) => { this.event = response.data.result.original; })
+                .then((response) => { console.log(response); this.event = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -109,11 +109,6 @@ export default {
                     });
                     this.messageError = MESSAGES.LOADING_ERROR;
                 });
-        },
-        addParticipant: function ()
-        {
-            let template = {event_id: null, user_id: null, invited_user_id: null, team_key: null};
-
         },
         search(event)
         {
@@ -129,11 +124,9 @@ export default {
             };
             await recordUserToEventRequest(attributes)
                 .then((response) => {
-                    console.log(response)
                     this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
                 })
                 .catch((error) => {
-                    console.log(error)
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -155,12 +148,10 @@ export default {
 
             await addNotificationUserInviteEventRequest(attributes)
                 .then((response) => {
-                    console.log(response)
                     this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
                     this.invitedEmail = '';
                 })
                 .catch((error) => {
-                    console.log(error)
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -212,7 +203,7 @@ export default {
         {
             let attributes = { who_user_id: window.$cookies.get(IDENTIFIER) };
             getInvitedOwnerRequest(attributes)
-                .then((response) => { this.invites = response.data.result.original; console.log(this.invites) })
+                .then((response) => { this.invites = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -227,18 +218,21 @@ export default {
         }
     },
     beforeMount() {
-        this.tokenRead();
-        this.userIdentifier();
+        if (this.user)
+        {
+            this.tokenRead();
+            this.userIdentifier();
+            this.getWhoInvited()
+        }
         this.getUrl();
         this.getEvent();
-        this.getWhoInvited()
     }
 }
 </script>
 
 <template>
     <!-- TODO: При выборе спортсмена всё дропается -->
-    <Dialog v-if="this.user.role === 'admin'"
+    <Dialog v-if="this.user && this.user.role === 'admin'"
             v-model:visible="this.dialog"
             maximizable
             modal
@@ -311,18 +305,18 @@ export default {
                         </div>
                         <div class="mb-1">
                             <h3>
-                                <i class="pi pi-users" style="color: #222"></i> <span>{{ this.participant.length }} участников</span>
+                                <i class="pi pi-users" style="color: #222"></i> <span>{{ this.event.participants.length }} участников</span>
                             </h3>
                         </div>
                         <div class="mb-1">
                             <br>
-                            <Button v-if="this.user.role === 'admin'"
+                            <Button v-if="this.user && this.user.role === 'admin'"
                                     label="Записать спортсмена на событие"
                                     severity="primary"
                                     class="w-100"
                                     @click="this.dialog=true" />
                             <!-- TODO: Сделать автоматическое определение роста, веса, возраста в логике -->
-                            <Button v-if="this.user.role === 'athlete'"
+                            <Button v-if="this.user && this.user.role === 'athlete'"
                                     label="Записаться"
                                     severity="primary"
                                     class="w-100"
@@ -357,12 +351,11 @@ export default {
                         </template>
                         <template #content>
                             <section v-if="this.event['participants'].length > 0">
-                                <section v-for="participant in this.event['participants']" class="option-list">
+                                <section v-for="participant in this.event.participants" class="option-list">
                                     <!-- TODO: проверить что участники события правильно изымаются из бд -->
                                     <div class="mb-3">
                                         <strong>
-                                            <a href="#">{{ participant.first_name }} {{ participant.last_name }}</a><br>
-                                            <span>{{ option.birth_date }}</span>
+                                            <a href="#">{{ participant.user.first_name }} {{ participant.user.last_name }}</a><br>
                                         </strong>
                                     </div>
                                 </section>

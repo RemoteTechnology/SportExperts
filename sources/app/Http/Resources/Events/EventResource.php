@@ -3,9 +3,11 @@
 namespace App\Http\Resources\Events;
 
 use App\Http\Resources\FileResource;
+use App\Http\Resources\Participants\ParticipantResource;
 use App\Http\Resources\Users\UserResource;
 use App\Models\File;
 use App\Models\Option;
+use App\Models\Participant;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -33,7 +35,7 @@ class EventResource extends JsonResource
             'owner' => new UserResource(User::find($this->user_id)),
             'image' => new FileResource(File::where(['key' => $this->image])->first()),
             'options' => Option::where(['event_key' => $this->key])->get(),
-            'participants' => [],
+            'participants' => new ParticipantResource(Participant::where(['event_id' => 1])->get()),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

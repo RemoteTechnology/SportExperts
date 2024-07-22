@@ -16,7 +16,6 @@ export async function recordUserToEventRequest(attributes, participantQuery = ne
 }
 
 export async function eventRecordRequest(attributes,  participantQuery = new ParticipantEndpointQuery()) {
-    console.log(attributes);
     // TODO: Сделать запись спортсмена на событие
     participantQuery.setUrl(`${BASE_URL}api/v1/participant/store/`);
     participantQuery.setHeaders();

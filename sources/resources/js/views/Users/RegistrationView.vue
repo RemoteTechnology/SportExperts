@@ -87,7 +87,6 @@ export default {
             let attributes = { key: this.event_id };
             await getEventRequest(attributes)
                 .then((response) => {
-                    console.log('getKeyEventRequest')
                     this.event = response.data.result.original;
                 })
                 .catch((error) => {
@@ -131,7 +130,6 @@ export default {
                 await registrationRequest(attributes)
                     .then((response) => {
                         this.userModel = Object.assign(new User(), response.data.result.original)
-                        console.log(this.userModel)
                     })
                     .catch((error) => {
                         loggingRequest({
@@ -165,7 +163,7 @@ export default {
                     invited_user_id: this.invite_user_id,
                 };
                 await eventRecordRequest(attributesRecord)
-                    .then((response) => { console.log(response); this.participants = response.data.result.original; })
+                    .then((response) => { this.participants = response.data.result.original; })
                     .catch((error) => {
                         loggingRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -176,7 +174,6 @@ export default {
                             message: error.message
                         })
                     });
-                console.log(this.participants)
                 if (this.participants)
                 {
                     let attributesOptions= [
@@ -221,7 +218,6 @@ export default {
                     .then((response) => {
                         this.messageSuccess = MESSAGES.FORM_SUCCESS;
                         this.userModel = Object.assign(new User(), response.data.result.original);
-                        console.log(this.userModel)
                     })
                     .catch((error) => {
                         loggingRequest({

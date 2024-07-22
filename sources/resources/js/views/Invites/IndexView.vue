@@ -77,7 +77,6 @@ export default {
             await listInvitedRequest(attributes)
                 .then((response) => { this.invites = response.data.result.original; })
                 .catch((error) => {
-                    console.log(error);
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -92,7 +91,6 @@ export default {
     },
     async beforeMount() {
         await this.getUserInvites();
-        console.log(this.invites);
     }
 }
 </script>
@@ -125,15 +123,15 @@ export default {
                                 </div>
                             </template>
                             <Column expander style="width: 5rem" />
-                            <Column field="user.last_name" header="Фамилия" sortable></Column>
-                            <Column field="user.first_name" header="Имя" sortable></Column>
+                            <Column field="who_user.last_name" header="Фамилия" sortable></Column>
+                            <Column field="who_user.first_name" header="Имя" sortable></Column>
                             <Column header="Дата рождения" sortable>
                                 <template #body="slotProps">
-                                    {{ this.formatDate(slotProps.data.user.birth_date) }}
+                                    {{ this.formatDate(slotProps.data.who_user.birth_date) }}
                                 </template>
                             </Column>
-                            <Column field="user.email" header="Почта"></Column>
-                            <Column field="user.phone" header="Номер телефона"></Column>
+                            <Column field="who_user.email" header="Почта"></Column>
+                            <Column field="who_user.phone" header="Номер телефона"></Column>
                             <template #expansion="slotProps">
                                 <h5>Мероприятия на которые записан спортсмен ({{ slotProps.data.events.length }} шт)</h5>
                                 <DataTable stripedRows :value="slotProps.data.events">
