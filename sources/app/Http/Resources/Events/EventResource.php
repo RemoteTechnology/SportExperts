@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Events;
 
 use App\Http\Resources\FileResource;
+use App\Http\Resources\Participants\ParticipantCollection;
 use App\Http\Resources\Participants\ParticipantResource;
 use App\Http\Resources\Users\UserResource;
 use App\Models\File;
@@ -11,9 +12,20 @@ use App\Models\Participant;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Js;
 
 class EventResource extends JsonResource
 {
+    private function getParticipantCollection(int $eventId): array
+    {
+        $participants = [];
+        foreach (Participant::where(['event_id' => $this->id])->get() as $value)
+        {
+            $participants[] = User::find($value->invited_user_id);
+        }
+        return $participants;
+    }
     /**
      * Transform the resource into an array.
      *
@@ -35,7 +47,7 @@ class EventResource extends JsonResource
             'owner' => new UserResource(User::find($this->user_id)),
             'image' => new FileResource(File::where(['key' => $this->image])->first()),
             'options' => Option::where(['event_key' => $this->key])->get(),
-            'participants' => new ParticipantResource(Participant::where(['event_id' => 1])->get()),
+            'participants' => $this->getParticipantCollection($this->id),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

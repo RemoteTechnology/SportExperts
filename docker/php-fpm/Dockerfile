@@ -10,11 +10,23 @@ ENV PGID ${PGID}
 ENV LC_ALL ${LOCALE}
 ENV PHP_IDE_CONFIG 'serverName=old.???'
 
-RUN apt update && apt install -y libpq-dev  \
-    git  \
-    unzip  \
-    curl  \
+RUN apt-get update && apt-get install -y \
+    zlib1g-dev \
+    libpq-dev \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libmemcached-dev \
+    curl \
+    vim \
+    git \
+    zip \
+    unzip \
+    graphviz \
     && docker-php-ext-install pdo pdo_pgsql pgsql
+
+RUN pecl install mongodb
+RUN docker-php-ext-enable mongodb
 
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug

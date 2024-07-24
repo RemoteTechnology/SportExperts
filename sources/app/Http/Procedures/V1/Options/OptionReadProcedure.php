@@ -38,10 +38,7 @@ class OptionReadProcedure extends Procedure
         if (key_exists('user_id', $option))
         {
             return new JsonResponse(
-                data: new OptionResource(
-                    // Поиск по ID атлета
-                    $this->operation->findByUserId($option['user_id'])
-                ),
+                data: $this->operation->findByUserId((int)$option['user_id']),
                 status: 201
             );
         }

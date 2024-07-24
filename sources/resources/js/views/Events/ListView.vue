@@ -17,10 +17,12 @@ import InputText from 'primevue/inputtext';
 import { getUser } from "../../api/UserRequest";
 import { getRecordToEventsRequest } from "../../api/FilterRequest";
 import {createOptionRequest, getOptionRequest} from "../../api/OptionRequest";
+import Message from "primevue/message";
 
 export default {
     data() {
       return {
+          userOptionView: false,
           messageSuccess: false,
           messageError: false,
           response: RESPONSE,
@@ -31,13 +33,15 @@ export default {
           user: null,
           options: [
               {
-                  entity: 'event_user',
+                  user_id: window.$cookies.get(IDENTIFIER),
+                  entity: 'user',
                   name: 'Weight',
                   value: null,
                   type: 'string',
               },
               {
-                  entity: 'event_user',
+                  user_id: window.$cookies.get(IDENTIFIER),
+                  entity: 'user',
                   name: 'Height',
                   value: null,
                   type: 'string',
@@ -53,6 +57,7 @@ export default {
         Button: Button,
         InputText: InputText,
         Dialog: Dialog,
+        Message: Message,
         Paginator: Paginator,
         InlineMessage: InlineMessage
     },
@@ -90,29 +95,27 @@ export default {
         },
         userReadToEvent: async function ()
         {
-            if (this.user.role === 'athlete')
-            {
-                let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
-                await getRecordToEventsRequest(attributes, 'after')
-                    .then((response) => { console.log(response); this.eventsToRead = response.data.result.original; })
-                    .catch((error) => {
-                        loggingRequest({
-                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'getRecordToEventsRequest',
-                            status: error.code,
-                            request_data: attributes.toString() + 'mode:after',
-                            message: error.message
-                        });
-                        this.messageError = MESSAGES.LOADING_ERROR;
+            let attributes = `invited_user_id:${window.$cookies.get(IDENTIFIER)}`;
+            await getRecordToEventsRequest(attributes, 'after')
+                .then((response) => { this.eventsToRead = response.data.result.original; })
+                .catch((error) => {
+                    loggingRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getRecordToEventsRequest',
+                        status: error.code,
+                        request_data: attributes.toString() + 'mode:after',
+                        message: error.message
                     });
-            }
+                    this.messageError = MESSAGES.LOADING_ERROR;
+                });
         },
         eventList: async function ()
         {
             await getEventListRequest()
                 .then((response) => { console.log(response); this.events = response.data.result.original; })
                 .catch((error) => {
+                    console.log(error);
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -173,13 +176,14 @@ export default {
         {
             for (let i=0; i < this.options.length; i++)
             {
-                if (this.options[i].value == null)
+                if (Object.keys(this.options[i]).includes('id'))
                 {
-                    await this.userOptionsCreate(i);
+                    await this.userOptionsUpdate(i);
                 }
                 else
                 {
-                    await this.userOptionsUpdate(i);
+                    console.log(123)
+                    await this.userOptionsCreate(i);
                 }
             }
         },
@@ -189,7 +193,13 @@ export default {
                 user_id: this.user.id
             };
             await getOptionRequest(attributes)
-                .then((response) => { this.options = response.data.result.original; })
+                .then((response) => {
+                    this.options = response.data.result.original;
+                    if (this.options.length == 0)
+                    {
+                        this.userOptionView = true;
+                    }
+                })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -205,15 +215,18 @@ export default {
     async beforeMount() {
         await this.userIdentifier();
         await this.eventList();
-        await this.userReadToEvent();
-        await this.getUserOptions();
+        if (this.user.role === 'athlete') {
+            await this.userReadToEvent();
+            await this.getUserOptions();
+        }
+
     }
 }
 </script>
 
 <template>
     <Dialog
-        v-if="this.user && this.user.role === 'athlete'"
+        v-if="this.user && this.user.role === 'athlete' && this.userOptionView"
         v-model:visible="visible"
         modal
         header="Укажите ваши параметры"
@@ -293,6 +306,25 @@ export default {
                         </strong>
                     </div>
                     <div v-for="eventParticipant in this.eventsToRead" class="flex gap-3 mt-2">
+                        <section v-if="this.user && Object.keys(this.user).includes('role') && this.user.role == 'athlete'">
+                            <a v-if="eventParticipant.key === event.key"
+                               :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.HISTORY + '?key=' + event.key">
+                                <Button label="Вы записаны"
+                                        icon="pi pi-check"
+                                        severity="link"
+                                        class="w-100" />
+                            </a>
+                            <a v-else
+                               :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.DETAIL + '?id=' + event.id">
+                                <Button label="Записаться 1"
+                                        severity="secondary"
+                                        outlined
+                                        class="w-100" />
+                            </a>
+                        </section>
+                        <br>
+                    </div>
+                    <section>
                         <a v-if="this.user &&
                                 Object.keys(this.user).includes('role') &&
                                 this.user.role == 'admin'"
@@ -302,26 +334,7 @@ export default {
                                     outlined
                                     class="w-100" />
                         </a>
-                        <section v-else-if="this.user &&
-                                        Object.keys(this.user).includes('role') &&
-                                        this.user.role == 'athlete'">
-                            <a v-if="eventParticipant.key !== event.key"
-                               :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.HISTORY + '?key=' + event.key">
-                                <Button label="Вы записаны"
-                                        icon="pi pi-check"
-                                        severity="link"
-                                        class="w-100" />
-                            </a>
-                            <a v-else
-                               :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.DETAIL + '?id=' + event.id">
-                                <Button label="Записаться"
-                                        severity="secondary"
-                                        outlined
-                                        class="w-100" />
-                            </a>
-                        </section>
-                        <br>
-                    </div>
+                    </section>
                     <section>
                         <a v-if="!this.user"
                            :href="this.baseUrl + this.route.EVENT + '/detail?id=' + event.id">
