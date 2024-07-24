@@ -37,13 +37,13 @@ class EventToParticipantFilterRepository
         foreach ($context as $key => $value)
         {
             switch ($key){
-                case FIELD_USER_ID:
+                case FIELD_INVITED_USER_ID:
                     $query = $this->initQuery($query,
                         TABLE_EVENT,
                         FIELD_EVENT_ID,
                         TABLE_PARTICIPANTS,
                         FIELD_ID);
-                    $query->where([TABLE_PARTICIPANTS . '.' . FIELD_USER_ID => $value]);
+                    $query->where([TABLE_PARTICIPANTS . '.' . FIELD_INVITED_USER_ID => $value]);
                     break;
                 case FIELD_TEAM_KEY:
 //                    $query = $this->initQuery($query,

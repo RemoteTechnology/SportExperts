@@ -104,10 +104,11 @@ export default {
         },
         userReadToEvent: function ()
         {
-            let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
+            let attributes = `invited_user_id:${window.$cookies.get(IDENTIFIER)}`;
             getRecordToEventsRequest(attributes, 'after')
-                .then((response) => { this.events = response.data.result.original; })
+                .then((response) => { console.log(response); this.events = response.data.result.original; })
                 .catch((error) => {
+                    console.log(error);
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -196,9 +197,8 @@ export default {
             let attributes = {
                 who_user_id: window.$cookies.get(IDENTIFIER)
             };
-            console.log(attributes);
             await listInvitedRequest(attributes)
-                .then((response) => { console.log(response); this.invited = response.data.result.original; })
+                .then((response) => { this.invited = response.data.result.original; })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -370,7 +370,7 @@ export default {
                             </Column>
                             <Column field="who_user.first_name" header="Имя"></Column>
                             <Column field="who_user.last_name" header="Фамилия"></Column>
-                            <Column header="">
+                            <Column v-if="this.who_user" header="">
                                 <template #body>
                                     <a :href="this.baseUrl + 'invite/detail?user_id=' + this.who_user.id">
                                         <Button type="button" label="Подробнее" severity="secondary"/>

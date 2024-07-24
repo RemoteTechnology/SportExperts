@@ -258,6 +258,10 @@
       <path value="$PROJECT_DIR$/sources/vendor/symfony/polyfill-php81" />
       <path value="$PROJECT_DIR$/sources/vendor/mongodb/laravel-mongodb" />
       <path value="$PROJECT_DIR$/sources/vendor/mongodb/mongodb" />
+      <path value="$PROJECT_DIR$/sources/vendor/spiral-packages/profiler" />
+      <path value="$PROJECT_DIR$/sources/vendor/maantje/xhprof-buggregator-laravel" />
+      <path value="$PROJECT_DIR$/sources/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/sources/vendor/symfony/http-client" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

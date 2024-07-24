@@ -13,6 +13,7 @@
       <sourceFolder url="file://$MODULE_DIR$/backend/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
       <sourceFolder url="file://$MODULE_DIR$/backend/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
       <sourceFolder url="file://$MODULE_DIR$/sources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/sources/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/sources/tests" isTestSource="true" packagePrefix="Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/src/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/sources/app" isTestSource="false" packagePrefix="App\" />
@@ -261,6 +262,10 @@
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/mongodb/laravel-mongodb" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/mongodb/mongodb" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/polyfill-php81" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/maantje/xhprof-buggregator-laravel" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/spiral-packages/profiler" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/http-client" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/http-client-contracts" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -35,6 +35,7 @@ export default {
             participant: [],
             whoInvited: null,
             invites: null,
+            selectedInvite: null,
             invitedValue: null,
             options: null,
             inputOption: null,
@@ -64,14 +65,14 @@ export default {
             tmp.innerHTML = html;
             return tmp.textContent || tmp.innerText || "";
         },
-        tokenRead: function ()
+        tokenRead: async function ()
         {
-            this.token = window.$cookies.get(TOKEN);
+            this.token = await window.$cookies.get(TOKEN);
         },
-        userIdentifier: function ()
+        userIdentifier: async function ()
         {
             let attributes = {id: window.$cookies.get(IDENTIFIER)};
-            getUser(attributes)
+            await getUser(attributes)
                 .then((response) => {
                     this.user = response.data.result.original;
                 })
@@ -116,17 +117,21 @@ export default {
         },
         recordToInvitedUser: async function ()
         {
+            // Параметры user_id и invited_user_id перепутаны, надо смириться с этим и однажды вспомнить...
             let attributes = {
                 event_id: this.eventId,
-                user_id: this.invitedValue.id,
-                invited_user_id: window.$cookies.get(IDENTIFIER),
+                user_id: window.$cookies.get(IDENTIFIER),
+                invited_user_id: this.selectedInvite.who_user.id,
                 // team_key: null,
             };
+            console.log(attributes)
             await recordUserToEventRequest(attributes)
                 .then((response) => {
+                    console.log(response)
                     this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
                 })
                 .catch((error) => {
+                    console.log(error)
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -170,7 +175,7 @@ export default {
                 await this.recordAndInvitedUser();
                 return;
             }
-            if (this.invitedValue) {
+            if (this.selectedInvite) {
                 await this.recordToInvitedUser();
                 return;
             }
@@ -199,7 +204,7 @@ export default {
                     this.messageError = MESSAGES.ERROR_ERROR;
                 });
         },
-        getWhoInvited: function ()
+        getWhoInvited: async function ()
         {
             let attributes = { who_user_id: window.$cookies.get(IDENTIFIER) };
             getInvitedOwnerRequest(attributes)
@@ -217,12 +222,12 @@ export default {
                 });
         }
     },
-    beforeMount() {
+    async beforeMount() {
+        await this.tokenRead();
+        await this.userIdentifier();
         if (this.user)
         {
-            this.tokenRead();
-            this.userIdentifier();
-            this.getWhoInvited()
+            await this.getWhoInvited()
         }
         this.getUrl();
         this.getEvent();
@@ -241,13 +246,13 @@ export default {
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <div v-if="this.invites.length > 0" class="mb-3">
             <label class="font-semibold w-6rem">Выберите спортсмена из списка</label>
-            <Listbox v-model="this.invites"
+            <Listbox v-model="this.selectedInvite"
                      :options="this.invites"
                      class="w-100"
                      listStyle="max-height:310px">
                 <template #option="slotProps">
                     <div class="flex align-items-center">
-                        <div>{{ slotProps.option.user.first_name }} {{ slotProps.option.user.last_name }}</div>
+                        <div>{{ slotProps.option.who_user.first_name }} {{ slotProps.option.who_user.last_name }}</div>
                     </div>
                 </template>
             </Listbox>
@@ -350,12 +355,12 @@ export default {
                             <h4 class="text-center">СПИСКИ</h4>
                         </template>
                         <template #content>
-                            <section v-if="this.event['participants'].length > 0">
+                            <section v-if="this.event.participants.length > 0">
                                 <section v-for="participant in this.event.participants" class="option-list">
                                     <!-- TODO: проверить что участники события правильно изымаются из бд -->
                                     <div class="mb-3">
                                         <strong>
-                                            <a href="#">{{ participant.user.first_name }} {{ participant.user.last_name }}</a><br>
+                                            <a href="#">{{ participant.first_name }} {{ participant.last_name }}</a><br>
                                         </strong>
                                     </div>
                                 </section>

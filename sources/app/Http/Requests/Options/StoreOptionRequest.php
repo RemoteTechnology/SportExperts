@@ -23,7 +23,7 @@ class StoreOptionRequest extends FormRequest
     {
         return [
             'event_key'         => ['nullable', 'exists:events,key'],
-            'participant_key'   => ['nullable', 'exists:participants,key'],
+            'user_id'           => ['nullable', 'exists:users,id'],
             'entity'            => ['required', 'string'],
             'name'              => ['required', 'string', 'min:2', 'max:255'],
             'value'             => ['required', 'string', 'min:2', 'max:255'],

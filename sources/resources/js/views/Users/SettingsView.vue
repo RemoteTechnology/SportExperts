@@ -27,13 +27,15 @@ export default {
           user: null,
           options: [
               {
-                  entity: 'event_user',
+                  user_id: window.$cookies.get(IDENTIFIER),
+                  entity: 'user',
                   name: 'Weight',
                   value: null,
                   type: 'string',
               },
               {
-                  entity: 'event_user',
+                  user_id: window.$cookies.get(IDENTIFIER),
+                  entity: 'user',
                   name: 'Height',
                   value: null,
                   type: 'string',
@@ -176,23 +178,26 @@ export default {
         {
             for (let i=0; i < this.options.length; i++)
             {
-                if (this.options[i].value == null)
+                if (Object.keys(this.options[i]).includes('id'))
                 {
-                    await this.userOptionsCreate(i);
+                    await this.userOptionsUpdate(i);
                 }
                 else
                 {
-                    await this.userOptionsUpdate(i);
+                    console.log(123)
+                    await this.userOptionsCreate(i);
                 }
             }
         },
         getUserOptions: async function()
         {
             let attributes = {
-                user_id: this.user.id
+                user_id: window.$cookies.get(IDENTIFIER)
             };
             await getOptionRequest(attributes)
-                .then((response) => { this.options = response.data.result.original; })
+                .then((response) => {
+                    this.options = response.data.result.original;
+                })
                 .catch((error) => {
                     loggingRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -205,8 +210,9 @@ export default {
                 });
         }
     },
-    beforeMount() {
+    async beforeMount() {
         this.userIdentifier();
+        await this.getUserOptions()
     }
 }
 </script>
@@ -370,9 +376,9 @@ export default {
                         <div class="form-block w-100">
                             <label for="name">Рост</label>
                             <InputText type="number"
-                                       v-model="this.options.height"
+                                       v-model="this.options[1].value"
                                        class="w-100"
-                                       :value="this.options.height"
+                                       :value="this.options[1].value"
                                        required />
                         </div>
                     </section>
@@ -380,9 +386,9 @@ export default {
                         <div class="form-block w-100">
                             <label for="name">Вес</label>
                             <InputText type="number"
-                                       v-model="this.options.weight"
+                                       v-model="this.options[0].value"
                                        class="w-100"
-                                       :value="this.options.weight"
+                                       :value="this.options[0].value"
                                        required />
                         </div>
                     </section>
