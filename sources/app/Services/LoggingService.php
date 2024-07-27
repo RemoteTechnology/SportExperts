@@ -4,33 +4,26 @@ namespace App\Services;
 
 use App\Domain\Abstracts\AbstractLogger;
 use App\Domain\Constants\LogLevelEnum;
-use App\Domain\Interfaces\Repositories\Entities\LoggingRepositoryInterface;
 use App\Domain\Interfaces\Services\LoggingServiceInterface;
+use App\Repository\LoggingRepository;
 use Illuminate\Support\Str;
 
-class LoggingService extends AbstractLogger implements LoggingServiceInterface
+class LoggingService extends AbstractLogger //  implements LoggingServiceInterface
 {
-    protected LoggingRepositoryInterface $repository;
+    protected LoggingRepository $repository;
 
     /**
-     * @param LoggingRepositoryInterface $repository
+     * @param LoggingRepository $repository
      */
-    public function __construct(LoggingRepositoryInterface $repository)
+    public function __construct(LoggingRepository $repository)
     {
         parent::__construct();
         $this->repository = $repository;
     }
-    public function write(LogLevelEnum $level, mixed $values): void
+    public function write(LogLevelEnum $level, mixed $values):void
     {
-        $this->repository->store([
-            'level'         => $level,
-            'key'           => Str::uuid()->toString(),
-            'root'          => $this->root($level),
-            'action'        => $values['action'],
-            'description'   => $values['description'],
-            'input_data'    => $values['input_data'],
-            'slug'          => $values['slug'],
-            'created_date'  => date('d-m-Y-H-i-s'),
-        ]);
+        $values['key'] = Str::uuid()->toString();
+        $values['level'] = $level;
+        $this->repository->store($values);
     }
 }

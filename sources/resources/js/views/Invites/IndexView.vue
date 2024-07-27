@@ -19,7 +19,7 @@ import ColumnGroup from 'primevue/columngroup';
 import Row from 'primevue/row';
 import Tag from 'primevue/tag';
 import {listInvitedRequest} from "../../api/InvitedRequest";
-import {loggingRequest} from "../../api/LoggingRequest";
+import {createLogOptionRequest} from "../../api/CreateLogOptionRequest";
 
 export default {
     data() {
@@ -77,7 +77,7 @@ export default {
             await listInvitedRequest(attributes)
                 .then((response) => { this.invites = response.data.result.original; })
                 .catch((error) => {
-                    loggingRequest({
+                    createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'listInvitedRequest',

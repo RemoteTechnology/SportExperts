@@ -50,15 +50,17 @@ services:
     container_name: ${NAME}_rabbitmq
     hostname: ${NAME}_rabbitmq
     environment:
-      docker: "true"
-      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER}"
-      RABBITMQ_DEFAULT_PASSWORD: "${RABBITMQ_PASSWORD}"
-      RABBITMQ_DEFAULT_VHOST: "${RABBITMQ_VHOST}"
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST}
     build:
       context: ${DOCKER_PATH}/rabbitmq
       dockerfile: Dockerfile
     ports:
-      - ${RABBITMQ_PORT}:15670
+      - ${RABBITMQ_PORT_CLIENT}:5672
+      - ${RABBITMQ_PORT}:15672
+    volumes:
+      - ./${DOCKER_PATH}/${RABBITMQ_CONFIG_PATH}:/etc/rabbitmq/rabbitmq.conf:ro
 
   php-fpm:
     container_name: ${NAME}_php-fpm

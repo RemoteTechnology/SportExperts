@@ -20,6 +20,7 @@ use App\Http\Procedures\V1\Inviteds\InvitedListProcedure;
 use App\Http\Procedures\V1\Inviteds\InvitedReadProcedure;
 use App\Http\Procedures\V1\Inviteds\InvitedStoreProcedure;
 use App\Http\Procedures\V1\Inviteds\NotificationProcedure;
+use App\Http\Procedures\V1\Logs\LogStoreProcedure;
 use App\Http\Procedures\V1\Options\OptionDestroyProcedure;
 use App\Http\Procedures\V1\Options\OptionListProcedure;
 use App\Http\Procedures\V1\Options\OptionReadProcedure;
@@ -68,6 +69,13 @@ function operation(string $className, string $method='__invoke'): array
 
 //// V1 USER ENDPOINTS
 Route::prefix('v1')->group(function () {
+    //// V1 LOGGING ENDPOINT
+    Route::prefix('log')->group(function () {
+        Route::rpc(ROUTE_STORE, [LogStoreProcedure::class])->name('v1.log.create');
+//        Route::rpc(ROUTE_DEFAULT, [LogListProcedure::class])->name('v1.log.list');
+    });
+    //// END V1 LOGGING ENDPOINT
+
     //// V1 FILE ENDPOINTS
     Route::prefix('file')->group(function () {
         Route::post(ROUTE_DEFAULT, operation(FileUploadController::class))->name('v1.file.uploaded');

@@ -5,43 +5,47 @@ export const IDENTIFIER = 'user_identifier';
 // Процедуры
 export const PROCEDURES = {
     users: {
-        registration: 'UserRegistrationProcedure',
-        read: 'UserReadProcedure',
-        update: 'UserUpdateProcedure',
-        reset: 'ResetProcedure',
+        registration:           'UserRegistrationProcedure',
+        read:                   'UserReadProcedure',
+        update:                 'UserUpdateProcedure',
+        reset:                  'ResetProcedure',
     },
     invites: {
-        list: 'InvitedListProcedure',
-        create: 'InvitedStoreProcedure',
-        read: 'InvitedReadProcedure',
-        notification: 'NotificationProcedure',
+        list:                   'InvitedListProcedure',
+        create:                 'InvitedStoreProcedure',
+        read:                   'InvitedReadProcedure',
+        notification:           'NotificationProcedure',
     },
     auth: {
-        login: 'AuthByEmailProcedure',
+        login:                  'AuthByEmailProcedure',
     },
     filter: {
-        userRecord: 'EventDateFilterProcedure',
-        ownerParticipantList: 'ParticipantOwnerFilterProcedure',
-        ownerEventsList: 'EventOwnerFilterProcedure',
+        userRecord:             'EventDateFilterProcedure',
+        ownerParticipantList:   'ParticipantOwnerFilterProcedure',
+        ownerEventsList:        'EventOwnerFilterProcedure',
     },
     event: {
-        list: 'EventListProcedure',
-        create: 'EventStoreProcedure',
-        read: 'EventReadProcedure',
-        update: 'EventUpdateProcedure',
-        getKey: 'EventGetKeyProcedure',
+        list:                   'EventListProcedure',
+        create:                 'EventStoreProcedure',
+        read:                   'EventReadProcedure',
+        update:                 'EventUpdateProcedure',
+        getKey:                 'EventGetKeyProcedure',
     },
     archive: {
-        create: 'ArchiveStoreProcedure',
-        delete: 'ArchiveDestroyProcedure',
+        create:                 'ArchiveStoreProcedure',
+        delete:                 'ArchiveDestroyProcedure',
     },
     option: {
-        create: 'OptionStoreProcedure',
-        read: 'OptionReadProcedure',
-        update: 'OptionUpdateProcedure',
+        create:                 'OptionStoreProcedure',
+        read:                   'OptionReadProcedure',
+        update:                 'OptionUpdateProcedure',
     },
     participant: {
-        create: 'ParticipantStoreProcedure',
+        create:                 'ParticipantStoreProcedure',
+    },
+    log: {
+        create:                 'LogStoreProcedure',
+        list:                   'LogListProcedure',
     }
 };
 export const REQUEST_METHOD_DEFAULT = 'handle';
