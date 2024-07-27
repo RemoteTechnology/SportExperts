@@ -6,7 +6,12 @@ namespace App\Http\Procedures\V1\Participants;
 
 use App\Http\Requests\Participants\StoreParticipantReqest;
 use App\Http\Resources\Participants\ParticipantResource;
+use App\Models\Event;
+use App\Models\TournamentValue;
+use App\Repository\EventRepository;
 use App\Repository\ParticipantRepository;
+use App\Repository\TournamentValueRepository;
+use App\Services\Tournaments\AlgorithmRanging;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Sajya\Server\Procedure;
@@ -22,10 +27,22 @@ class ParticipantStoreProcedure extends Procedure
      */
     public static string $name = 'ParticipantStoreProcedure';
 
+    private AlgorithmRanging $algorithmRanging;
     private ParticipantRepository $participantRepository;
+    private EventRepository $eventRepository;
+    private TournamentValueRepository $tournamentValue;
 
-    public function __construct(ParticipantRepository $participantRepository) {
+    public function __construct(
+        ParticipantRepository $participantRepository,
+        AlgorithmRanging $algorithmRanging,
+        EventRepository $eventRepository,
+        TournamentValueRepository $tournamentValue
+    )
+    {
         $this->participantRepository = $participantRepository;
+        $this->algorithmRanging = $algorithmRanging;
+        $this->eventRepository = $eventRepository;
+        $this->tournamentValue = $tournamentValue;
     }
 
     /**
@@ -53,8 +70,17 @@ class ParticipantStoreProcedure extends Procedure
                 );
             }
         }
+
+        $participantStore = $this->participantRepository->store($participant);
+        $event = $this->eventRepository->findById((integer)$participant['event_id']);
+        // TODO: поставить задачу фоном
+        foreach ($this->algorithmRanging->ranging($event->key) as $item)
+        {
+            $this->tournamentValue->store($item);
+        }
+
         return new JsonResponse(
-            data: $this->participantRepository->store($participant),
+            data: $participantStore->toArray(),
             status: 201
         );
     }

@@ -87,9 +87,11 @@ export default {
             let attributes = { key: this.event_id };
             await getEventRequest(attributes)
                 .then((response) => {
+                    console.log(response);
                     this.event = response.data.result.original;
                 })
                 .catch((error) => {
+                    console.log(error);
                     createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -100,7 +102,8 @@ export default {
                     })
                 });
         },
-        translation: function (argField) {
+        translation: function (argField)
+        {
             return argField.split('').map(char => this.symbols[char] || char).join('');
         },
         translationFirstName: function (event) { this.user.firstNameEng = this.translation(this.user.firstName) },
@@ -129,9 +132,11 @@ export default {
             {
                 await registrationRequest(attributes)
                     .then((response) => {
+                        console.log(response);
                         this.userModel = Object.assign(new User(), response.data.result.original)
                     })
                     .catch((error) => {
+                        console.log(error);
                         createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -143,15 +148,17 @@ export default {
                     });
                 let attributesInvite = {
                     who_user_id: this.invite_user_id,
-                    user_id: this.user.id,
+                    user_id: this.userModel.id,
                 }
+                console.log(attributesInvite);
                 await createInvitedRequest(attributesInvite)
-                    // .then((response) => { })
+                    .then((response) => { console.log(response); })
                     .catch((error) => {
+                        console.log(error);
                         createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'registrationRequest',
+                            method: 'createInvitedRequest',
                             status: error.code,
                             request_data: attributesInvite.toString(),
                             message: error.message
@@ -163,8 +170,9 @@ export default {
                     invited_user_id: this.invite_user_id,
                 };
                 await eventRecordRequest(attributesRecord)
-                    .then((response) => { this.participants = response.data.result.original; })
+                    .then((response) => { console.log(response); this.participants = response.data.result.original; })
                     .catch((error) => {
+                        console.log(error);
                         createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -179,15 +187,15 @@ export default {
                     let attributesOptions= [
                         {
                             participant_key: this.participants.key,
-                            entity: "event_user",
-                            name: "Вес",
+                            entity: "user",
+                            name: "Weight",
                             value: this.option.weight,
                             type: "string",
                         },
                         {
                             participant_key: this.participants.key,
-                            entity: "event_user",
-                            name: "Рост",
+                            entity: "user",
+                            name: "Height",
                             value: this.option.height,
                             type: "string",
                         }
@@ -196,8 +204,9 @@ export default {
                     while(i < attributesOptions.length)
                     {
                         await createOptionRequest(attributesOptions[i])
-                            // .then((response) => { })
+                            .then((response) => { console.log(response); })
                             .catch((error) => {
+                                console.log(error);
                                 createLogOptionRequest({
                                     current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                                     current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -216,10 +225,12 @@ export default {
             {
                 await registrationRequest(attributes)
                     .then((response) => {
+                        console.log(response);
                         this.messageSuccess = MESSAGES.FORM_SUCCESS;
                         this.userModel = Object.assign(new User(), response.data.result.original);
                     })
                     .catch((error) => {
+                        console.log(error);
                         createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -237,8 +248,8 @@ export default {
             // }
         }
     },
-    beforeMount() {
-        this.getUrl();
+    async beforeMount() {
+        await this.getUrl();
     }
 }
 
