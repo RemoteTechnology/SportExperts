@@ -7,6 +7,7 @@ namespace App\Http\Procedures\V1\Participants;
 use App\Http\Requests\Participants\StoreParticipantReqest;
 use App\Http\Resources\Participants\ParticipantResource;
 use App\Repository\ParticipantRepository;
+use App\Services\Tournaments\AlgorithmRanging;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Sajya\Server\Procedure;
@@ -22,10 +23,12 @@ class ParticipantStoreProcedure extends Procedure
      */
     public static string $name = 'ParticipantStoreProcedure';
 
+    private AlgorithmRanging $algorithmRanging;
     private ParticipantRepository $participantRepository;
 
-    public function __construct(ParticipantRepository $participantRepository) {
+    public function __construct(ParticipantRepository $participantRepository, AlgorithmRanging $algorithmRanging) {
         $this->participantRepository = $participantRepository;
+        $this->algorithmRanging = $algorithmRanging;
     }
 
     /**
@@ -53,8 +56,12 @@ class ParticipantStoreProcedure extends Procedure
                 );
             }
         }
+
+        $participantStore = $this->participantRepository->store($participant);
+        $this->algorithmRanging->ranging($participantStore->key);
+
         return new JsonResponse(
-            data: $this->participantRepository->store($participant),
+            data: $participantStore,
             status: 201
         );
     }
