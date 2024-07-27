@@ -12,7 +12,7 @@ import { eventRecordRequest } from '../../api/ParticipantRequest';
 import { createOptionRequest } from '../../api/OptionRequest';
 import {getEventRequest, getKeyEventRequest} from '../../api/EventRequest';
 //TODO: зафигачить опции
-import { loggingRequest } from '../../api/LoggingRequest';
+import { createLogOptionRequest } from '../../api/CreateLogOptionRequest';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
@@ -90,7 +90,7 @@ export default {
                     this.event = response.data.result.original;
                 })
                 .catch((error) => {
-                    loggingRequest({
+                    createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'getKeyEventRequest',
@@ -132,7 +132,7 @@ export default {
                         this.userModel = Object.assign(new User(), response.data.result.original)
                     })
                     .catch((error) => {
-                        loggingRequest({
+                        createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'registrationRequest',
@@ -148,7 +148,7 @@ export default {
                 await createInvitedRequest(attributesInvite)
                     // .then((response) => { })
                     .catch((error) => {
-                        loggingRequest({
+                        createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'registrationRequest',
@@ -165,7 +165,7 @@ export default {
                 await eventRecordRequest(attributesRecord)
                     .then((response) => { this.participants = response.data.result.original; })
                     .catch((error) => {
-                        loggingRequest({
+                        createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'registrationRequest',
@@ -198,7 +198,7 @@ export default {
                         await createOptionRequest(attributesOptions[i])
                             // .then((response) => { })
                             .catch((error) => {
-                                loggingRequest({
+                                createLogOptionRequest({
                                     current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                                     current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                                     method: 'createOptionRequest',
@@ -220,7 +220,7 @@ export default {
                         this.userModel = Object.assign(new User(), response.data.result.original);
                     })
                     .catch((error) => {
-                        loggingRequest({
+                        createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'registrationRequest',

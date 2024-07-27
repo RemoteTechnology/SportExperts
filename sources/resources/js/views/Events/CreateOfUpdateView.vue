@@ -18,7 +18,7 @@ import Textarea from 'primevue/textarea';
 import Card from 'primevue/card';
 import Calendar from 'primevue/calendar';
 import FileUpload from 'primevue/fileupload';
-import {loggingRequest} from "../../api/LoggingRequest";
+import {createLogOptionRequest} from "../../api/CreateLogOptionRequest";
 
 export default {
     data() {
@@ -96,7 +96,7 @@ export default {
                         this.event.image = response.data.key;
                     })
                     .catch((error) => {
-                        loggingRequest({
+                        createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'uploadFileRequest',
@@ -130,7 +130,7 @@ export default {
                     this.messageSuccess = MESSAGES.FORM_SUCCESS;
                 })
                 .catch((error) => {
-                    loggingRequest({
+                    createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'createEventRequest',
@@ -156,7 +156,7 @@ export default {
                 await createEventOptionRequest(attributes)
                     .then((response) => { this.event = response.data.result.original; })
                     .catch((error) => {
-                        loggingRequest({
+                        createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'createEventOptionRequest',
@@ -196,7 +196,7 @@ export default {
                     this.messageSuccess = MESSAGES.FORM_SUCCESS;
                 })
                 .catch((error) => {
-                    loggingRequest({
+                    createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'updateEventRequest',
@@ -223,7 +223,7 @@ export default {
                     updateEventOptionRequest(option)
                         .then((response) => { this.options = response.data.result.original; })
                         .catch((error) => {
-                            loggingRequest({
+                            createLogOptionRequest({
                                 current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                                 current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                                 method: 'updateEventOptionRequest',
@@ -239,7 +239,7 @@ export default {
                     createEventOptionRequest(option)
                         .then((response) => { this.options = response.data.result.original; })
                         .catch((error) => {
-                            loggingRequest({
+                            createLogOptionRequest({
                                 current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                                 current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                                 method: 'createEventOptionRequest',
@@ -278,7 +278,7 @@ export default {
                         this.options = this.event.options;
                     })
                     .catch((error) => {
-                        loggingRequest({
+                        createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'getEventRequest',

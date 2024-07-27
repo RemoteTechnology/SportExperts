@@ -7,7 +7,7 @@ import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Paginator from 'primevue/paginator';
-import {loggingRequest} from "../../api/LoggingRequest";
+import {createLogOptionRequest} from "../../api/CreateLogOptionRequest";
 
 export default {
     computed: {
@@ -40,7 +40,7 @@ export default {
             getUser(attributes)
                 .then((response) => { this.user = response.data.result.original; })
                 .catch((error) => {
-                    loggingRequest({
+                    createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'getUserRequest',

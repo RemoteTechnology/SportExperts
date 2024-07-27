@@ -1,7 +1,7 @@
 <script>
 import {BASE_URL, TOKEN, IDENTIFIER, MESSAGES, RESPONSE, ENDPOINTS} from '../../constant';
 import { getUser } from '../../api/UserRequest';
-import { loggingRequest } from '../../api/LoggingRequest';
+import { createLogOptionRequest } from '../../api/CreateLogOptionRequest';
 import {
     createArchiveRequest,
     removeArchiveRequest
@@ -81,7 +81,7 @@ export default {
                     this.user = response.data.result.original;
                 })
                 .catch((error) => {
-                    loggingRequest({
+                    createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'getUserRequest',
@@ -109,7 +109,7 @@ export default {
                 .then((response) => { console.log(response); this.events = response.data.result.original; })
                 .catch((error) => {
                     console.log(error);
-                    loggingRequest({
+                    createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'getRecordToEventsRequest',
@@ -135,7 +135,7 @@ export default {
                         this.events = response.data.result.original;
                     })
                     .catch((error) => {
-                        loggingRequest({
+                        createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'getEventOwnerRequest',
@@ -157,7 +157,7 @@ export default {
                         this.eventsNoActive = response.data.result.original;
                     })
                     .catch((error) => {
-                        loggingRequest({
+                        createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'getEventOwnerRequest',
@@ -180,7 +180,7 @@ export default {
                         this.eventsArchive = response.data.result.original;
                     })
                     .catch((error) => {
-                        loggingRequest({
+                        createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'getEventOwnerRequest',
@@ -200,7 +200,7 @@ export default {
             await listInvitedRequest(attributes)
                 .then((response) => { this.invited = response.data.result.original; })
                 .catch((error) => {
-                    loggingRequest({
+                    createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'listInvitedRequest',
@@ -221,7 +221,7 @@ export default {
                 getEventParticipantRequest(attributes)
                     .then((response) => { this.ownerUser = response.data.result.original; })
                     .catch((error) => {
-                        loggingRequest({
+                        createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                             method: 'getEventParticipantRequest',
@@ -242,7 +242,7 @@ export default {
                     this.getEventOwner();
                 })
                 .catch((error) => {
-                    loggingRequest({
+                    createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'getEventParticipantRequest',
@@ -262,7 +262,7 @@ export default {
                     this.getEventOwner();
                 })
                 .catch((error) => {
-                    loggingRequest({
+                    createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'getEventParticipantRequest',

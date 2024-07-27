@@ -195,7 +195,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         // using database for logging
-        \MongoDB\Laravel\MongoDBServiceProvider::class,
+        MongoDB\Laravel\MongoDBServiceProvider::class,
         // using my service provider
         App\Providers\QueriesServiceProvider::class,
         App\Providers\FilterOperationServiceProvider::class,
