@@ -6,7 +6,11 @@ namespace App\Http\Procedures\V1\Participants;
 
 use App\Http\Requests\Participants\StoreParticipantReqest;
 use App\Http\Resources\Participants\ParticipantResource;
+use App\Models\Event;
+use App\Models\TournamentValue;
+use App\Repository\EventRepository;
 use App\Repository\ParticipantRepository;
+use App\Repository\TournamentValueRepository;
 use App\Services\Tournaments\AlgorithmRanging;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
@@ -25,10 +29,20 @@ class ParticipantStoreProcedure extends Procedure
 
     private AlgorithmRanging $algorithmRanging;
     private ParticipantRepository $participantRepository;
+    private EventRepository $eventRepository;
+    private TournamentValueRepository $tournamentValue;
 
-    public function __construct(ParticipantRepository $participantRepository, AlgorithmRanging $algorithmRanging) {
+    public function __construct(
+        ParticipantRepository $participantRepository,
+        AlgorithmRanging $algorithmRanging,
+        EventRepository $eventRepository,
+        TournamentValueRepository $tournamentValue
+    )
+    {
         $this->participantRepository = $participantRepository;
         $this->algorithmRanging = $algorithmRanging;
+        $this->eventRepository = $eventRepository;
+        $this->tournamentValue = $tournamentValue;
     }
 
     /**
@@ -58,10 +72,15 @@ class ParticipantStoreProcedure extends Procedure
         }
 
         $participantStore = $this->participantRepository->store($participant);
-        $this->algorithmRanging->ranging($participantStore->key);
+        $event = $this->eventRepository->findById((integer)$participant['event_id']);
+        // TODO: поставить задачу фоном
+        foreach ($this->algorithmRanging->ranging($event->key) as $item)
+        {
+            $this->tournamentValue->store($item);
+        }
 
         return new JsonResponse(
-            data: $participantStore,
+            data: $participantStore->toArray(),
             status: 201
         );
     }

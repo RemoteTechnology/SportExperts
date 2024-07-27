@@ -4,6 +4,8 @@ namespace App\Services\Tournaments;
 
 use App\Domain\Abstracts\AbstractAlgorithmRanging;
 use App\Domain\Interfaces\Services\Tournaments\AlgorithmRangingInterface;
+use App\Models\Event;
+use App\Models\Participant;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,7 +24,7 @@ class AlgorithmRanging extends AbstractAlgorithmRanging implements
         return $this->optionRepository->findByKey($key);
     }
 
-    function getTournament(string $key): Model
+    function getTournament(string $key): Model|null
     {
         return $this->tournamentRepository->findByTournamentKey($key);
     }
@@ -69,6 +71,24 @@ class AlgorithmRanging extends AbstractAlgorithmRanging implements
     public function ranging(string $event_key): array
     {
         $tournament = $this->getTournament($event_key);
+
+        if (is_null($tournament))
+        {
+            $event = Event::where(['key' => $event_key])->first();
+            if (count($this->interiorData) == 0)
+            {
+                $this->outputData[] = [
+                    'participants_A' => Participant::where(['event_id' => $event->id])->first(),
+                    'participants_B' => null
+                ];
+                return $this->outputData;
+            }
+            $this->outputData[] = [
+                'participants_A' => $this->interiorData[0]['participant']->key,
+                'participants_B' => null
+            ];
+            return $this->outputData;
+        }
         $this->init($this->getTournamentValue($tournament->key));
 
         for ($i=0; $i < count($this->interiorData); $i++)

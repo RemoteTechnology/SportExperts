@@ -35,6 +35,6 @@ abstract class AbstractAlgorithmRanging
 
     abstract function getParticipants(string $key): Model;
     abstract function getOptions(string $key): Model;
-    abstract function getTournament(string $key): Model;
+    abstract function getTournament(string $key): Model|null;
     abstract function getTournamentValue(string $key): Collection;
 }

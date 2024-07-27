@@ -29,9 +29,9 @@ final class TournamentRepository implements LCRUD_OperationInterface
 
     /**
      * @param string $eventKey
-     * @return Model
+     * @return Model|null
      */
-    public function findByTournamentKey(string $eventKey): Model
+    public function findByTournamentKey(string $eventKey): Model|null
     {
         return $this->model::where(['event_key' => $eventKey])->first();
     }
