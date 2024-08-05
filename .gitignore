@@ -1,5 +1,5 @@
 /.idea
 /data
-/.env
+*.env
 /sources/vendor
 /.$schema.drawio.bkp
