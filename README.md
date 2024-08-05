@@ -28,13 +28,22 @@
     <li>
         <p>
             <span>Поднять docker:</span><br>
-            <b style="color: #222;">(sudo) docker-compose up --build</b>
+            <b style="color: #222;">(sudo) docker-compose up --build -d</b>
         </p>
     </li>
     <br />
     <li>
         <p>
             <span>Создать/настроить конфиг, как минимум надо настроить подключение к БД:</span><br>
+            <b style="color: #222;">(sudo) cp .example.env .env</b><br>
+            <span>Так же рекоммендуется создацть коллекцию для журнала ошибок.</span><br>
+        </p>
+    </li>
+    <br />
+    <li>
+        <p>
+            <span>Создать/настроить конфиг, для работы Laravel:</span><br>
+            <b style="color: #222;">cd sources</b><br>
             <b style="color: #222;">(sudo) cp .example.env .env</b><br>
             <span>Так же рекоммендуется создацть коллекцию для журнала ошибок.</span><br>
         </p>
@@ -50,7 +59,7 @@
     <br />
     <li>
         <span>Создать миграции: <small>(Нужно проверить есть ли база)</small></span><br>
-        <b style="color: #222;">(sudo) docker-compose run php-fpm artisan migrate</b><br>
+        <b style="color: #222;">(sudo) docker-compose run php-fpm php artisan migrate</b><br>
     </li>
     <br />
     <li>
@@ -60,7 +69,31 @@
     <br />
     <li>
         <span>Заполнить базу тестовыми данными:</span><br>
-        <b style="color: #222;">(sudo) docker-compose run php-fpm artisan db:seed</b><br>
+        <b style="color: #222;">(sudo) docker-compose run php-fpm php artisan db:seed</b><br>
+    </li>
+    <br />
+    <li>
+        <span>Сгенерировать CSRF токен:</span><br>
+        <b style="color: #222;">(sudo) docker-compose run php-fpm php artisan key:generate</b><br>
+    </li>
+    <br />
+    <li>
+        <span>Установить права и группу на директорию с проектом:</span><br>
+        <b style="color: #222;">sudo chmod -R 777 $PWD</b><br>
+        <b style="color: #222;">sudo chown -R <MY GROUP>:<MY GROUP> $PWD</b><br>
+    </li>
+    <br />
+    <li>
+        <span>Создать коллекцию "logs" <small>(Желательно использовать MongoDB Compass)</small></span><br>
+    </li>
+    <br />
+    <li>
+        <span>Добавить почтовый сервер <small>(или хотя бы пароль, я использую smtp.yandex.ru)</small></span><br>
+    </li>
+    <br />
+    <li>
+        <span>Создать ссылку на storage:</span><br>
+        <b style="color: #222;">(sudo) docker-compose run php-fpm php artisan storage:link</b><br>
     </li>
 </ul>
 <hr />
