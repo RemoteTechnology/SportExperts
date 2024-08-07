@@ -130,7 +130,7 @@ export default {
         },
         userPasswordNew: function ()
         {
-
+            // TODO: реализовать
         },
         userOptionsCreate: async function (idx)
         {

@@ -6,131 +6,76 @@ use App\Domain\Abstracts\AbstractAlgorithmRanging;
 use App\Domain\Interfaces\Services\Tournaments\AlgorithmRangingInterface;
 use App\Models\Event;
 use App\Models\Participant;
+use App\Repository\OptionRepository;
+use App\Repository\ParticipantRepository;
+use App\Repository\TournamentValueRepository;
+use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class AlgorithmRanging extends AbstractAlgorithmRanging implements
-    AlgorithmRangingInterface
+class AlgorithmRanging extends AbstractAlgorithmRanging
 {
     const WEIGHT_DISCREPANCY = 5;
     const HEIGHT_DISCREPANCY = 3;
-    public function getParticipants(string $key): Model
+    const AGE_DISCREPANCY = 2;
+    private OptionRepository $optionRepository;
+    private UserRepository $userRepository;
+    private TournamentValueRepository $tournamentValueRepository;
+
+    public function __construct(
+        TournamentValueRepository $tournamentValueRepository,
+        OptionRepository $optionRepository,
+        UserRepository $userRepository
+    )
     {
-        return $this->participantRepository->findByKey($key);
+        $this->tournamentValueRepository    = $tournamentValueRepository;
+        $this->optionRepository             = $optionRepository;
+        $this->userRepository               = $userRepository;
     }
 
-    public function getOptions(string $key): Model
+    /**
+     * @param Model $event
+     * @param Model $tournament
+     * @param ParticipantRepository $participantRepository
+     * @return void
+     */
+    public function ranging(
+        Model $event,
+        Model $tournament,
+        ParticipantRepository $participantRepository
+    ): void
     {
-        return $this->optionRepository->findByKey($key);
-    }
-
-    function getTournament(string $key): Model|null
-    {
-        return $this->tournamentRepository->findByTournamentKey($key);
-    }
-
-    function getTournamentValue(string $key): Collection
-    {
-        return $this->tournamentValueRepository->findByTournamentValueKey($key);
-    }
-
-    public function init(Collection $dataSet): void
-    {
-        // Разделение спортсменов для дальнейшего перераспределения по парам
-        if (count($dataSet->toArray()) > 0)
+        $values =  $this->tournamentValueRepository->findByTournamentValue($tournament->id);
+        $participants = $participantRepository->findByEventId($event->id);
+        if (count($values) === 0)
         {
-            foreach ($dataSet as $value)
+            foreach ($participants as $participant)
             {
-                $this->interiorData[] = [
-                    'participant' => $this->getParticipants($value->participants_A),
-                    'option' => $this->getOptions($value->participants_A),
-                ];
-                if (!is_null($value->participants_B))
-                {
-                    $this->interiorData[] = [
-                        'participant' => $this->getParticipants($value->participants_B),
-                        'option' => $this->getOptions($value->participants_B),
-                    ];
+                $this->tournamentValueRepository->store([
+                    'tournament_id'         => $tournament->id,
+                    'participants_A'        => $participant->key,
+                    'participants_B'        => null,
+                    'participants_passes'   => null,
+                ]);
+            }
+        }
+        else
+        {
+            for ($a=0; $a >= count($participants); $a++)
+            {
+                $participantAOptions        = $this->optionRepository->findByUserId($participants[$a]->id);
+                for ($b = count($participants) - 1; $b >= 0; $b--) {
+                    $participantBOptions    = $this->optionRepository->findByUserId($participants[$b]->id);
+                    // TODO: проверить что $participants[$a] и $participants[$b] не стоят в парах
+                    // TODO: проверить параметры рост, вес, возраст и если всё ок то ебнуть пару!!!
+                    $this->tournamentValueRepository->store([
+                        'tournament_id'         => $tournament->id,
+                        'participants_A'        => $participants[$a]->key,
+                        'participants_B'        => $participants[$b]->key,
+                        'participants_passes'   => null,
+                    ]);
                 }
             }
         }
-    }
-
-    private function discrepancy($optionAthlete1, $optionAthlete2)
-    {
-        if ($optionAthlete1 > $optionAthlete2)
-        {
-            return ($optionAthlete1 - $optionAthlete2);
-        }
-        elseif ($optionAthlete2 > $optionAthlete1)
-        {
-            return ($optionAthlete2 - $optionAthlete1);
-        }
-    }
-
-    public function ranging(string $event_key): array
-    {
-        $tournament = $this->getTournament($event_key);
-
-        if (is_null($tournament))
-        {
-            $event = Event::where(['key' => $event_key])->first();
-            if (count($this->interiorData) == 0)
-            {
-                $this->outputData[] = [
-                    'participants_A' => Participant::where(['event_id' => $event->id])->first(),
-                    'participants_B' => null
-                ];
-                return $this->outputData;
-            }
-            $this->outputData[] = [
-                'participants_A' => $this->interiorData[0]['participant']->key,
-                'participants_B' => null
-            ];
-            return $this->outputData;
-        }
-        $this->init($this->getTournamentValue($tournament->key));
-
-        for ($i=0; $i < count($this->interiorData); $i++)
-        {
-            for ($y=count($this->interiorData) - 1; $y >= 0; $y--)
-            {
-                if (
-                    $this->interiorData[$i]['participant'] !== $this->interiorData[$y]['participant']
-                    && empty($this->interiorData[$i]['option'])
-                    && empty($this->interiorData[$y]['option'])
-                    && is_null($this->interiorData[$i]['option']['name'] == 'Weight')
-                    && is_null($this->interiorData[$i]['option']['name'] == 'Height')
-                    && is_null($this->interiorData[$y]['option']['name'] == 'Weight')
-                    && is_null($this->interiorData[$y]['option']['name'] == 'Height')
-                )
-                {
-                    $discrepancyWeigh = $this->discrepancy($this->interiorData[$i]['option']['Weight'], $this->interiorData[$y]['option']['Weight']);
-                    $discrepancyHeight = $this->discrepancy($this->interiorData[$i]['option']['Height'], $this->interiorData[$y]['option']['Height']);
-
-                    if ($discrepancyWeigh < self::WEIGHT_DISCREPANCY && $discrepancyHeight < self::HEIGHT_DISCREPANCY)
-                    {
-                        $this->outputData[] = [
-                            'participants_A' => $this->interiorData[$i]['participant']->key,
-                            'participants_B' => $this->interiorData[$y]['participant']->key
-                        ];
-                        unset($this->interiorData[$i]);
-                        unset($this->interiorData[$y]);
-                    }
-                }
-            }
-        }
-        if (count($this->interiorData) == 1)
-        {
-            $this->outputData[] = [
-                'participants_A' => $this->interiorData[0]['participant']->key,
-                'participants_B' => null
-            ];
-        }
-        elseif (count($this->interiorData) > 1)
-        {
-            // TODO: Запустить рассылку о том что вы попали в запасные :)
-        }
-        return $this->outputData;
     }
 }
