@@ -28,11 +28,20 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
     }
 
     /**
-     * @param string $tournamentKey
-     * @return Model
+     * @param int $tournamentId
+     * @return Collection
      */
     public function findByTournamentValue(int $tournamentId): Collection
     {
         return $this->model::where(['tournament_id' => $tournamentId])->get();
+    }
+
+    /**
+     * @param array $attributes
+     * @return mixed
+     */
+    public function queryExists(array $attributes): mixed
+    {
+        return $this->model::where($attributes)->first();
     }
 }

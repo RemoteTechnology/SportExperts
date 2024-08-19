@@ -12,6 +12,7 @@ use App\Repository\Traits\GetByKeyTrait;
 use App\Repository\Traits\ListQueryTrait;
 use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\UpdateQueryTrait;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 final class OptionRepository implements LCRUD_OperationInterface
@@ -29,5 +30,15 @@ final class OptionRepository implements LCRUD_OperationInterface
     public function __construct(Option $model = new Option())
     {
         $this->model = $model;
+    }
+
+    /**
+     * @param array $attributes
+     * @return mixed
+     */
+    public function queryExists(array $attributes, string $mode='one'): mixed
+    {
+        $query = $this->model::where($attributes);
+        return  $mode === 'one' ? $query->first() : $query->get();
     }
 }

@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Participants;
 
 use App\Http\Requests\Participants\StoreParticipantReqest;
-use App\Http\Resources\Participants\ParticipantResource;
-use App\Models\Event;
-use App\Models\TournamentValue;
 use App\Repository\EventRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\TournamentRepository;
@@ -39,14 +36,12 @@ class ParticipantStoreProcedure extends Procedure
         AlgorithmRanging $algorithmRanging,
         EventRepository $eventRepository,
         TournamentRepository $tournament,
-        TournamentValueRepository $tournamentValue
     )
     {
         $this->participantRepository        = $participantRepository;
         $this->algorithmRanging             = $algorithmRanging;
         $this->eventRepository              = $eventRepository;
         $this->tournament                   = $tournament;
-        $this->tournamentValue              = $tournamentValue;
     }
 
     /**
@@ -79,8 +74,7 @@ class ParticipantStoreProcedure extends Procedure
         $event                              = $this->eventRepository->findById((integer)$participant['event_id']);
         $tournament                         = $this->tournament->findByTournamentKey($event->key);
 
-        // TODO: поставить задачу фоном
-        $this->algorithmRanging->ranging($event, $tournament, $this->participantRepository);
+        $this->algorithmRanging->ranging($event, $tournament, $this->participantRepository, $participantStore);
 
         return new JsonResponse(
             data: $participantStore->toArray(),
