@@ -16,7 +16,8 @@
     },
     "dependencies": {
         "@vueup/vue-quill": "^1.2.0",
-        "leader-line": "^1.0.7",
+        "leader-line-new": "^1.1.9",
+        "leader-line-vue": "^2.1.1",
         "pinia": "^2.1.7",
         "primeicons": "^7.0.0",
         "primevue": "^3.52.0",

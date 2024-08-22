@@ -173,3 +173,21 @@ ul li{
     height: 320px!important;
     border-radius: 0 0 0.4em 0.4em!important;
 }
+#tid{
+    flex-wrap: wrap;
+    width: 16%;
+    margin: 0 auto;
+    padding: 2em;
+
+}
+
+.flag{
+    width: 1em;
+    height: 1em;
+    display: block;
+    border-radius: 5em;
+    position: relative;
+    left: 108%;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    background-color: #5C5C5CFF;
+}

@@ -46,6 +46,9 @@ export const PROCEDURES = {
     log: {
         create:                 'LogStoreProcedure',
         list:                   'LogListProcedure',
+    },
+    tournament: {
+        read:                   'TournamentReadProcedure'
     }
 };
 export const REQUEST_METHOD_DEFAULT = 'handle';

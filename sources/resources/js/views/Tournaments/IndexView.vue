@@ -1,17 +1,14 @@
 <script>
 import {
     BASE_URL,
-    TOKEN,
-    IDENTIFIER,
     MESSAGES,
     ENDPOINTS
 } from '../../constant';
-import { getTournamentTableToEvent } from '../../api/TournamentRequest';
-import { LeaderLine } from 'leader-line';
+import { tournamentReadRequest } from '../../api/TournamentRequest';
 import Message from 'primevue/message';
 import Card from 'primevue/card';
-import InputText from "primevue/inputtext";
-import Button from "primevue/button";
+import LeaderLine from 'leader-line-vue';
+import { createLogOptionRequest } from "../../api/CreateLogOptionRequest";
 
 export default {
     data() {
@@ -20,75 +17,114 @@ export default {
             currentDate: new Date(),
             messageError: null,
             baseUrl: BASE_URL,
-            tournamentAdmin: [
-                {id: 997, first_name: 'Китай на', last_name: 'Связи'},
-                {id: 998, first_name: 'Миска', last_name: 'Рис'},
-                {id: 999, first_name: 'Китаёза', last_name: 'Китаёзовна'},
-            ],
-            tournament: [
-                [
-                    {id: 1, key: '123', winner: {id: 2, first_name: 'Дмитрий', last_name: 'Ванюков'}, loser: {id: 1, first_name: 'Вячеслав', last_name: 'Миронов'}},
-                    {id: 2, key: '321', winner: {id: 3, first_name: 'Дмитрий', last_name: 'Миронов'}, loser: {id: 15, first_name: 'Вячеслав', last_name: 'Ванюков'}},
-
-                    {id: 3, key: '456', winner: {id: 4, first_name: 'Дмитрий', last_name: 'Ванюков'}, loser: {id: 8, first_name: 'Вячеслав', last_name: 'Миронов'}},
-                    {id: 4, key: '456', winner: {id: 10, first_name: 'Дмитрий', last_name: 'Миронов'}, loser: {id: 9, first_name: 'Вячеслав', last_name: 'Ванюков'}},
-
-                    {id: 5, key: '654', winner: {id: 17, first_name: 'Дмитрий', last_name: 'Ванюков'}, loser: {id: 18, first_name: 'Вячеслав', last_name: 'Миронов'}},
-                    {id: 6, key: '789', winner: {id: 22, first_name: 'Дмитрий', last_name: 'Миронов'}, loser: {id: 106, first_name: 'Вячеслав', last_name: 'Ванюков'}},
-
-                    {id: 7, key: '987', winner: {id: 112, first_name: 'Дмитрий', last_name: 'Ванюков'}, loser: {id: 101, first_name: 'Вячеслав', last_name: 'Миронов'}},
-                    {id: 8, key: '911', winner: {id: 6, first_name: 'Дмитрий', last_name: 'Миронов'}, loser: {id: 102, first_name: 'Вячеслав', last_name: 'Ванюков'}},
-                ],
-                [
-                    {id: 1, key: '123', winner: {id: 2, first_name: 'Дмитрий', last_name: 'Ванюков'}, loser: {id: 1, first_name: 'Вячеслав', last_name: 'Миронов'}},
-                    {id: 3, key: '456', winner: {id: 4, first_name: 'Дмитрий', last_name: 'Ванюков'}, loser: {id: 8, first_name: 'Вячеслав', last_name: 'Миронов'}},
-
-                    {id: 5, key: '654', winner: {id: 17, first_name: 'Дмитрий', last_name: 'Ванюков'}, loser: {id: 18, first_name: 'Вячеслав', last_name: 'Миронов'}},
-                    {id: 7, key: '987', winner: {id: 112, first_name: 'Дмитрий', last_name: 'Ванюков'}, loser: {id: 101, first_name: 'Вячеслав', last_name: 'Миронов'}},
-                ],
-                [
-                    {id: 3, key: '456', winner: {id: 4, first_name: 'Дмитрий', last_name: 'Ванюков'}, loser: {id: 8, first_name: 'Вячеслав', last_name: 'Миронов'}},
-                    {id: 7, key: '987', winner: {id: 112, first_name: 'Дмитрий', last_name: 'Ванюков'}, loser: {id: 101, first_name: 'Вячеслав', last_name: 'Миронов'}},
-                ],
-                [
-                    {id: 7, key: '987', winner: {id: 112, first_name: 'Дмитрий', last_name: 'Ванюков'}, loser: {id: 101, first_name: 'Вячеслав', last_name: 'Миронов'}},
-                ]
-            ]
+            eventKey: '',
+            tournamentDetails: null
         };
     },
     components: {
-        Card: Card,
-        Message: Message,
+        Card,
+        Message,
     },
     methods: {
-        drawingTournamentGrid: function()
-        {
+        getUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            this.eventKey = urlParams.get('event');
+        },
+        async readTournament() {
+            const attributes = {
+                event_key: this.eventKey,
+            };
+            try {
+                const response = await tournamentReadRequest(attributes);
+                this.tournamentDetails = response.data.result.original;
+            } catch (error) {
+                createLogOptionRequest({
+                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                    method: 'tournamentReadRequest',
+                    status: error.code,
+                    request_data: attributes.toString(),
+                    message: error.message
+                });
+                this.messageError = MESSAGES.ERROR_ERROR;
+            }
+        },
+        tyingAthlete() {
+            if (this.tournamentDetails && this.tournamentDetails.values) {
+                this.tournamentDetails.values.forEach((value) => {
 
+                    if (
+                        document.getElementById(value.participants_A.key) &&
+                        document.getElementById(value.participants_B.key)
+                    )
+                    {
+                        let line = new LeaderLine.setLine(
+                            document.getElementById(value.participants_A.key),
+                            document.getElementById(value.participants_B.key),
+                            {
+                                color: "#5c5c5c",
+                                path: "arc",
+                                endPlug: "behind",
+                            }
+                        );
+                        line.setOptions({ startSocket: 'top', endSocket: 'right' });
+                    } else {
+                        console.error(`Not found for: ${value.participants_A.key} or ${value.participants_B.key}`);
+                    }
+                });
+            }
         }
     },
-    beforeUnmount() {
-        this.drawingTournamentGrid();
+    async mounted() {
+        await this.getUrl();
+        await this.readTournament();
+        await this.$nextTick(() => {
+            this.tyingAthlete();
+        });
     }
 };
 </script>
 
 <template>
-    <section class="d-flex d-center">
-        <section class="mt-5">
-            <section class="mt-1 mb-2" v-if="this.messageError !== null">
+        <section class="d-center">
+            <section class="mt-5">
+                <section class="mt-1 mb-2" v-if="this.messageError !== null">
                 <Message severity="error">{{ this.messageError }}</Message>
             </section>
+            <h2 class="text-center mb-2">{{ this.tournamentDetails.tournament.event.name }}</h2>
             <div class="d-flex">
-                <div class="w-100">
-                    <h2>Название события</h2>
-                    <section id="tid" class="w-140 d-flex d-between d-align-center">
-                        <section v-for="t_list in this.tournament" class="w-160">
-                            <section v-for="athlete in t_list" class="w-90">
+                <div v-if="
+                        this.tournamentDetails !== null &&
+                        Object.keys(this.tournamentDetails).includes('tournament') &&
+                        Object.keys(this.tournamentDetails.tournament).includes('event')
+                    " class="w-100">
+                    <section v-if="
+                                this.tournamentDetails !== null &&
+                                Object.keys(this.tournamentDetails).includes('values') &&
+                                this.tournamentDetails.values.length > 0
+                            "
+                            id="tid"
+                            class="d-flex d-between d-align-center">
+                        <section v-for="value in this.tournamentDetails.values"  style="width: 150%;">
+                            <section>
                                 <Card class="mt-1">
-                                    <template #content>{{ athlete.winner.first_name }} {{ athlete.winner.last_name }}</template>
+                                    <template #content>
+                                        <span>{{ value.users[0].first_name }} {{ value.users[0].last_name }}</span><br />
+                                        <span class="flag"  :id="value.participants_A.key"></span>
+                                        <small>Команда</small>
+                                    </template>
                                 </Card>
                                 <Card class="mt-1">
-                                    <template #content>{{ athlete.loser.first_name }} {{ athlete.loser.last_name }}</template>
+                                    <template #content v-if="value.users[1] !== null">
+                                        <span>{{ value.users[1].first_name }} {{ value.users[1].last_name }}</span><br />
+                                        <span class="flag" :id="value.participants_B.key"></span>
+                                        <small>Команда</small>
+                                    </template>
+                                    <template #content v-else>
+                                        <span style="color: #bd3131">
+                                            <i>(Нет соперника)</i>
+                                        </span>
+                                    </template>
                                 </Card>
                             </section>
                         </section>
@@ -97,5 +133,4 @@ export default {
             </div>
         </section>
     </section>
-
 </template>

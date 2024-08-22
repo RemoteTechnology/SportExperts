@@ -37,6 +37,9 @@ use App\Http\Procedures\V1\Teams\TeamListProcedure;
 use App\Http\Procedures\V1\Teams\TeamReadProcedure;
 use App\Http\Procedures\V1\Teams\TeamStoreProcedure;
 use App\Http\Procedures\V1\Teams\TeamUpdateProcedure;
+use App\Http\Procedures\V1\Tournaments\TournamentDestroyProcedure;
+use App\Http\Procedures\V1\Tournaments\TournamentReadProcedure;
+use App\Http\Procedures\V1\Tournaments\TournamentUpdateProcedure;
 use App\Http\Procedures\V1\Users\ResetProcedure;
 use App\Http\Procedures\V1\Users\UserReadProcedure;
 use App\Http\Procedures\V1\Users\UserRegistrationProcedure;
@@ -177,4 +180,14 @@ Route::prefix('v1')->group(function () {
 //        });
     });
     //// END V1 Invite ENDPOINTS
+
+    //// V1 Tournament ENDPOINTS
+    Route::prefix('tournament')->group(function () {
+        Route::rpc(ROUTE_READ, [TournamentReadProcedure::class])->name('tournament.read');
+//        Route::middleware('auth:sanctum')->group(function () {
+        Route::rpc(ROUTE_UPDATE, [TournamentUpdateProcedure::class])->name('option.update');
+        Route::rpc(ROUTE_DESTROY, [TournamentDestroyProcedure::class])->name('option.destroy');
+//        });
+    });
+    //// END V1 Tournament ENDPOINTS
 });
