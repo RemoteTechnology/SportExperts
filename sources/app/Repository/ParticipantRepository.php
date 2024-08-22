@@ -27,4 +27,9 @@ final class ParticipantRepository extends ParticipantIsUserFilter implements LCR
     {
         $this->model = $model;
     }
+
+    public function findByEventId(int $event_id)
+    {
+        return $this->model->where(['event_id' => $event_id])->get();
+    }
 }

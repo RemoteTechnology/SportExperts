@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Participants;
 
 use App\Http\Requests\Participants\StoreParticipantReqest;
-use App\Http\Resources\Participants\ParticipantResource;
-use App\Models\Event;
-use App\Models\TournamentValue;
 use App\Repository\EventRepository;
 use App\Repository\ParticipantRepository;
+use App\Repository\TournamentRepository;
 use App\Repository\TournamentValueRepository;
 use App\Services\Tournaments\AlgorithmRanging;
 use Illuminate\Http\JsonResponse;
@@ -30,19 +28,20 @@ class ParticipantStoreProcedure extends Procedure
     private AlgorithmRanging $algorithmRanging;
     private ParticipantRepository $participantRepository;
     private EventRepository $eventRepository;
+    private TournamentRepository $tournament;
     private TournamentValueRepository $tournamentValue;
 
     public function __construct(
         ParticipantRepository $participantRepository,
         AlgorithmRanging $algorithmRanging,
         EventRepository $eventRepository,
-        TournamentValueRepository $tournamentValue
+        TournamentRepository $tournament,
     )
     {
-        $this->participantRepository = $participantRepository;
-        $this->algorithmRanging = $algorithmRanging;
-        $this->eventRepository = $eventRepository;
-        $this->tournamentValue = $tournamentValue;
+        $this->participantRepository        = $participantRepository;
+        $this->algorithmRanging             = $algorithmRanging;
+        $this->eventRepository              = $eventRepository;
+        $this->tournament                   = $tournament;
     }
 
     /**
@@ -55,10 +54,10 @@ class ParticipantStoreProcedure extends Procedure
     public function handle(StoreParticipantReqest $request): JsonResponse
     {
         $participant = $request->validated();
-        $participant['event_id'] = (integer)$participant['event_id'];
-        $participant['user_id'] = (integer)$participant['user_id'];
-        $participant['invited_user_id'] = (integer)$participant['invited_user_id'];
-        $participant['key'] = Str::uuid()->toString();
+        $participant['event_id']            = (integer)$participant['event_id'];
+        $participant['user_id']             = (integer)$participant['user_id'];
+        $participant['invited_user_id']     = (integer)$participant['invited_user_id'];
+        $participant['key']                 = Str::uuid()->toString();
         // TODO: пока оставить так, но потом сделать как в InvitedStoreProcedure:44!
         foreach ($this->participantRepository->userList($participant['event_id']) as $value)
         {
@@ -71,13 +70,11 @@ class ParticipantStoreProcedure extends Procedure
             }
         }
 
-        $participantStore = $this->participantRepository->store($participant);
-        $event = $this->eventRepository->findById((integer)$participant['event_id']);
-        // TODO: поставить задачу фоном
-        foreach ($this->algorithmRanging->ranging($event->key) as $item)
-        {
-            $this->tournamentValue->store($item);
-        }
+        $participantStore                   = $this->participantRepository->store($participant);
+        $event                              = $this->eventRepository->findById((integer)$participant['event_id']);
+        $tournament                         = $this->tournament->findByTournamentKey($event->key);
+
+        $this->algorithmRanging->ranging($event, $tournament, $this->participantRepository, $participantStore);
 
         return new JsonResponse(
             data: $participantStore->toArray(),

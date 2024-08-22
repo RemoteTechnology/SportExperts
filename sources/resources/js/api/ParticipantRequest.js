@@ -1,6 +1,5 @@
 import {
     BASE_URL,
-    JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
     PROCEDURES
 } from '../constant';

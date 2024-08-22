@@ -6,131 +6,114 @@ use App\Domain\Abstracts\AbstractAlgorithmRanging;
 use App\Domain\Interfaces\Services\Tournaments\AlgorithmRangingInterface;
 use App\Models\Event;
 use App\Models\Participant;
+use App\Repository\OptionRepository;
+use App\Repository\ParticipantRepository;
+use App\Repository\TournamentValueRepository;
+use App\Repository\UserRepository;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class AlgorithmRanging extends AbstractAlgorithmRanging implements
-    AlgorithmRangingInterface
+class AlgorithmRanging extends AbstractAlgorithmRanging
 {
     const WEIGHT_DISCREPANCY = 5;
     const HEIGHT_DISCREPANCY = 3;
-    public function getParticipants(string $key): Model
+    const AGE_DISCREPANCY = 2;
+    private OptionRepository $optionRepository;
+    private UserRepository $userRepository;
+    private TournamentValueRepository $tournamentValueRepository;
+
+    public function __construct(
+        TournamentValueRepository $tournamentValueRepository,
+        OptionRepository $optionRepository,
+        UserRepository $userRepository
+    )
     {
-        return $this->participantRepository->findByKey($key);
+        $this->tournamentValueRepository    = $tournamentValueRepository;
+        $this->optionRepository             = $optionRepository;
+        $this->userRepository               = $userRepository;
     }
 
-    public function getOptions(string $key): Model
+    /**
+     * @param Model $participant
+     * @param Model $tournament
+     * @return Model
+     */
+    private function addTournamentValue(Model $participant, Model|null $tournament): Model
     {
-        return $this->optionRepository->findByKey($key);
+        return $this->tournamentValueRepository->store([
+            'tournament_id' => $tournament->id,
+            'participants_A' => $participant->key,
+            'participants_B' => null,
+            'participants_passes' => null,
+        ]);
     }
 
-    function getTournament(string $key): Model|null
+    /**
+     * @param Collection $participants
+     * @param Model $participant
+     * @param Model $tournament
+     */
+    public function addRivalExists(Collection $participants, Model $participant, Model $tournament)
     {
-        return $this->tournamentRepository->findByTournamentKey($key);
-    }
+        // Параметры текущего спортсмена
+        $athleteWeight = $this->optionRepository->queryExists(['user_id' => $participant->user_id, 'name' => 'Weight']);
+        $athleteHeight = $this->optionRepository->queryExists(['user_id' => $participant->user_id, 'name' => 'Height']);
+        $athleteAge = Carbon::parse($this->userRepository->findById($participant->user_id)->birth_date);
 
-    function getTournamentValue(string $key): Collection
-    {
-        return $this->tournamentValueRepository->findByTournamentValueKey($key);
-    }
-
-    public function init(Collection $dataSet): void
-    {
-        // Разделение спортсменов для дальнейшего перераспределения по парам
-        if (count($dataSet->toArray()) > 0)
+        foreach ($participants as $item)
         {
-            foreach ($dataSet as $value)
+            if ($participant->key !== $item->key)
             {
-                $this->interiorData[] = [
-                    'participant' => $this->getParticipants($value->participants_A),
-                    'option' => $this->getOptions($value->participants_A),
-                ];
-                if (!is_null($value->participants_B))
+                // Параметры соперника
+                $participantWeight = $this->optionRepository->queryExists(['user_id' => $item->user_id, 'name' => 'Weight']);
+                $participantHeight = $this->optionRepository->queryExists(['user_id' => $item->user_id, 'name' => 'Height']);
+                $participantAge = Carbon::parse($this->userRepository->findById($item->user_id)->birth_date);
+
+                $weight = abs((int)$athleteWeight->value - (int)$participantWeight->value);
+                $height = abs((int)$athleteHeight->value - (int)$participantHeight->value);
+                $age = $athleteAge->diffInYears($participantAge);
+
+
+                if (($weight <= self::WEIGHT_DISCREPANCY) && ($height <= self::HEIGHT_DISCREPANCY) && ($age <= self::AGE_DISCREPANCY))
                 {
-                    $this->interiorData[] = [
-                        'participant' => $this->getParticipants($value->participants_B),
-                        'option' => $this->getOptions($value->participants_B),
-                    ];
+                    $tournamentValue = $this->tournamentValueRepository->queryExists(['participants_A' => $item->key]);
+                    return $this->tournamentValueRepository->update($tournamentValue, [
+                        'participants_B' => $participant->key
+                    ]);
                 }
             }
         }
+
+        return $this->addTournamentValue($participant, $tournament);
     }
 
-    private function discrepancy($optionAthlete1, $optionAthlete2)
+    /**
+     * @param Model $event
+     * @param Model|null $tournament
+     * @param ParticipantRepository $participantRepository
+     * @param Model $participant
+     * @return Model|void
+     */
+    public function ranging(
+        Model $event,
+        Model|null $tournament,
+        ParticipantRepository $participantRepository,
+        Model $participant
+    )
     {
-        if ($optionAthlete1 > $optionAthlete2)
+        $values =  $this->tournamentValueRepository->findByTournamentValue($tournament->id);
+        $participants = $participantRepository->findByEventId($event->id);
+        if (count($values) === 0)
         {
-            return ($optionAthlete1 - $optionAthlete2);
-        }
-        elseif ($optionAthlete2 > $optionAthlete1)
-        {
-            return ($optionAthlete2 - $optionAthlete1);
-        }
-    }
-
-    public function ranging(string $event_key): array
-    {
-        $tournament = $this->getTournament($event_key);
-
-        if (is_null($tournament))
-        {
-            $event = Event::where(['key' => $event_key])->first();
-            if (count($this->interiorData) == 0)
-            {
-                $this->outputData[] = [
-                    'participants_A' => Participant::where(['event_id' => $event->id])->first(),
-                    'participants_B' => null
-                ];
-                return $this->outputData;
-            }
-            $this->outputData[] = [
-                'participants_A' => $this->interiorData[0]['participant']->key,
-                'participants_B' => null
-            ];
-            return $this->outputData;
-        }
-        $this->init($this->getTournamentValue($tournament->key));
-
-        for ($i=0; $i < count($this->interiorData); $i++)
-        {
-            for ($y=count($this->interiorData) - 1; $y >= 0; $y--)
-            {
-                if (
-                    $this->interiorData[$i]['participant'] !== $this->interiorData[$y]['participant']
-                    && empty($this->interiorData[$i]['option'])
-                    && empty($this->interiorData[$y]['option'])
-                    && is_null($this->interiorData[$i]['option']['name'] == 'Weight')
-                    && is_null($this->interiorData[$i]['option']['name'] == 'Height')
-                    && is_null($this->interiorData[$y]['option']['name'] == 'Weight')
-                    && is_null($this->interiorData[$y]['option']['name'] == 'Height')
-                )
-                {
-                    $discrepancyWeigh = $this->discrepancy($this->interiorData[$i]['option']['Weight'], $this->interiorData[$y]['option']['Weight']);
-                    $discrepancyHeight = $this->discrepancy($this->interiorData[$i]['option']['Height'], $this->interiorData[$y]['option']['Height']);
-
-                    if ($discrepancyWeigh < self::WEIGHT_DISCREPANCY && $discrepancyHeight < self::HEIGHT_DISCREPANCY)
-                    {
-                        $this->outputData[] = [
-                            'participants_A' => $this->interiorData[$i]['participant']->key,
-                            'participants_B' => $this->interiorData[$y]['participant']->key
-                        ];
-                        unset($this->interiorData[$i]);
-                        unset($this->interiorData[$y]);
-                    }
-                }
+            foreach ($participants as $item) {
+                return $this->addTournamentValue($item, $tournament);
             }
         }
-        if (count($this->interiorData) == 1)
+        else
         {
-            $this->outputData[] = [
-                'participants_A' => $this->interiorData[0]['participant']->key,
-                'participants_B' => null
-            ];
+            return $this->addRivalExists($participants, $participant, $tournament);
         }
-        elseif (count($this->interiorData) > 1)
-        {
-            // TODO: Запустить рассылку о том что вы попали в запасные :)
-        }
-        return $this->outputData;
     }
 }

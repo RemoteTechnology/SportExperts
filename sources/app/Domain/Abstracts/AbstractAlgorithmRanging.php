@@ -11,30 +11,5 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class AbstractAlgorithmRanging
 {
-    // Итоговый массив
-    public array $outputData = []; // $outputData = [];
-    // Массив для временного хрпнения
-    public array $interiorData = [];
 
-    protected ParticipantRepository $participantRepository;
-    protected OptionRepository $optionRepository;
-    protected TournamentRepository $tournamentRepository;
-    protected TournamentValueRepository $tournamentValueRepository;
-    public function __construct(
-        ParticipantRepository $participantRepository,
-        OptionRepository $optionRepository,
-        TournamentRepository $tournamentRepository,
-        TournamentValueRepository $tournamentValueRepository
-    )
-    {
-        $this->participantRepository = $participantRepository;
-        $this->optionRepository = $optionRepository;
-        $this->tournamentRepository = $tournamentRepository;
-        $this->tournamentValueRepository = $tournamentValueRepository;
-    }
-
-    abstract function getParticipants(string $key): Model;
-    abstract function getOptions(string $key): Model;
-    abstract function getTournament(string $key): Model|null;
-    abstract function getTournamentValue(string $key): Collection;
 }

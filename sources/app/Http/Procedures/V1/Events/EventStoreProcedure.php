@@ -7,6 +7,7 @@ namespace App\Http\Procedures\V1\Events;
 use App\Http\Requests\Events\StoreEventRequest;
 use App\Http\Resources\Events\EventResource;
 use App\Repository\EventRepository;
+use App\Repository\TournamentRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Sajya\Server\Procedure;
@@ -22,10 +23,12 @@ class EventStoreProcedure extends Procedure
      */
     public static string $name = 'EventStoreProcedure';
 
-    private EventRepository $operation;
+    private EventRepository $eventRepository;
+    private TournamentRepository $tournamentRepository;
 
-    public function __construct(EventRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(EventRepository $eventRepository, TournamentRepository $tournamentRepository) {
+        $this->eventRepository = $eventRepository;
+        $this->tournamentRepository = $tournamentRepository;
     }
 
     /**
@@ -37,15 +40,19 @@ class EventStoreProcedure extends Procedure
      */
     public function handle(StoreEventRequest $request): JsonResponse
     {
-        $event = $request->validated();
-        $event['status'] = EVENT_ACTIVE;
-        $event['key'] = Str::uuid()->toString();
+        $eventAttributes = $request->validated();
+        $eventAttributes['status'] = EVENT_ACTIVE;
+        $eventAttributes['key'] = Str::uuid()->toString();
+        $event = $this->eventRepository->store($eventAttributes);
+
+        $this->tournamentRepository->store([
+            'key'       => Str::uuid()->toString(),
+            'event_key' => $event->key,
+            'stage'     => 1
+        ]);
+
         return new JsonResponse(
-            data: new EventResource(
-                $this->operation->store(
-                    $event
-                )
-            ),
+            data: new EventResource($event),
             status: 201
         );
     }
