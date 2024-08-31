@@ -98,7 +98,7 @@ export default {
         {
             let attributes = { id: this.eventId };
             getEventRequest(attributes)
-                .then((response) => { console.log(response); this.event = response.data.result.original; })
+                .then((response) => { this.event = response.data.result.original; })
                 .catch((error) => {
                     createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -124,14 +124,11 @@ export default {
                 invited_user_id: this.selectedInvite.who_user.id,
                 // team_key: null,
             };
-            console.log(attributes)
             await recordUserToEventRequest(attributes)
                 .then((response) => {
-                    console.log(response)
                     this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
                 })
                 .catch((error) => {
-                    console.log(error)
                     createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -210,6 +207,7 @@ export default {
             getInvitedOwnerRequest(attributes)
                 .then((response) => { this.invites = response.data.result.original; })
                 .catch((error) => {
+                    console.log(error)
                     createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -236,7 +234,6 @@ export default {
 </script>
 
 <template>
-    <!-- TODO: При выборе спортсмена всё дропается -->
     <Dialog v-if="this.user && this.user.role === 'admin'"
             v-model:visible="this.dialog"
             maximizable
@@ -252,7 +249,7 @@ export default {
                      listStyle="max-height:310px">
                 <template #option="slotProps">
                     <div class="flex align-items-center">
-                        <div>{{ slotProps.option.who_user.first_name }} {{ slotProps.option.who_user.last_name }}</div>
+                        <div>{{ slotProps.option.user.first_name }} {{ slotProps.option.user.last_name }}</div>
                     </div>
                 </template>
             </Listbox>
@@ -320,7 +317,6 @@ export default {
                                     severity="primary"
                                     class="w-100"
                                     @click="this.dialog=true" />
-                            <!-- TODO: Сделать автоматическое определение роста, веса, возраста в логике -->
                             <Button v-if="this.user && this.user.role === 'athlete'"
                                     label="Записаться"
                                     severity="primary"

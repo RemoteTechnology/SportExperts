@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 require_once dirname(__DIR__, 2) . '/app/Domain/Constants/FieldConst.php';
 require_once dirname(__DIR__, 2) . '/app/Domain/Constants/EntitiesConst.php';
 
-class Option extends Model
+class Invite extends Model
 {
     use HasFactory;
 
-    protected $table = TABLE_OPTIONS;
+    protected $table = TABLE_INVITES;
 
     /**
      * The attributes that are mass assignable.
@@ -20,12 +20,8 @@ class Option extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        FIELD_EVENT_KEY,
+        FIELD_WHO_USER_ID,
         FIELD_USER_ID,
-        FIELD_ENTITY,
-        FIELD_NAME,
-        FIELD_VALUE,
-        FIELD_TYPE,
         FIELD_CREATED_AT,
         FIELD_UPDATED_AT,
         FIELD_DELETED_AT,

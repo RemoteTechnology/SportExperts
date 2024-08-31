@@ -4,7 +4,7 @@ namespace App\Http\Requests\Inviteds;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ReadInvitedRequest extends FormRequest
+class InvitedReadUserParticipantRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class ReadInvitedRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required']
+            'user_id' => ['required', 'numeric', 'exists:users,id', 'exists:invites,user_id']
         ];
     }
 }

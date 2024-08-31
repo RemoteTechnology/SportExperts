@@ -4,6 +4,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/EntitiesConst.php';
+
+
 return new class extends Migration
 {
     /**
@@ -11,36 +15,36 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tournament_values', function (Blueprint $table) {
-            $table->id();
-            $table->integer('tournament_id');
-            $table->uuid('participants_A');
-            $table->uuid('participants_B')->nullable();
-            $table->integer('participants_passes')->nullable();
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
-            $table->timestamp('deleted_at')
+        Schema::create(TABLE_TOURNAMENT_VALUES, function (Blueprint $table) {
+            $table->id(FIELD_ID);
+            $table->integer(FIELD_TOURNAMENT_ID);
+            $table->uuid(FIELD_PARTICIPANTS_A);
+            $table->uuid(FIELD_PARTICIPANTS_B)->nullable();
+            $table->integer(FIELD_PARTICIPANTS_PASSES)->nullable();
+            $table->timestamp(FIELD_CREATED_AT);
+            $table->timestamp(FIELD_UPDATED_AT);
+            $table->timestamp(FIELD_DELETED_AT)
                 ->nullable();
             // Связи
-            $table->foreign('tournament_id')
-                ->on('tournaments')
-                ->references('id');
-            $table->foreign('participants_A')
-                ->on('participants')
-                ->references('key');
-            $table->foreign('participants_B')
-                ->on('participants')
-                ->references('key');
-            $table->foreign('participants_passes')
-                ->on('users')
-                ->references('id');
+            $table->foreign(FIELD_TOURNAMENT_ID)
+                ->on(TABLE_TOURNAMENTS)
+                ->references(FIELD_ID);
+            $table->foreign(FIELD_PARTICIPANTS_A)
+                ->on(TABLE_PARTICIPANTS)
+                ->references(FIELD_KEY);
+            $table->foreign(FIELD_PARTICIPANTS_B)
+                ->on(TABLE_PARTICIPANTS)
+                ->references(FIELD_KEY);
+            $table->foreign(FIELD_PARTICIPANTS_PASSES)
+                ->on(TABLE_USERS)
+                ->references(FIELD_ID);
             // Индексы
             $table->index([
-                'id',
-                'tournament_id',
-                'participants_A',
-                'participants_B',
-                'participants_passes',
+                FIELD_ID,
+                FIELD_TOURNAMENT_ID,
+                FIELD_PARTICIPANTS_A,
+                FIELD_PARTICIPANTS_B,
+                FIELD_PARTICIPANTS_PASSES,
             ]);
         });
     }
@@ -50,6 +54,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tournament_values');
+        Schema::dropIfExists(TABLE_TOURNAMENT_VALUES);
     }
 };

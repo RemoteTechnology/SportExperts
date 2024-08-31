@@ -40,9 +40,9 @@ class InvitedListProcedure extends Procedure
 //        $invites = new InvitedCollection($this->operation->list('paginate')->where(['who_user_id' => $request->validated()['who_user_id']]));
         $invites = $request->validated();
         $invitesList = new InvitedCollection(
-            DB::table('inviteds')
+            DB::table('invites')
                 ->select('*')
-                ->where(['user_id' => (int)$invites['who_user_id']])
+                ->where(['who_user_id' => (int)$invites['who_user_id']])
                 ->paginate(12)
         );
         return new JsonResponse(

@@ -18,6 +18,7 @@ use App\Http\Procedures\V1\Events\Filter\EventDateFilterProcedure;
 use App\Http\Procedures\V1\Events\Filter\EventOwnerFilterProcedure;
 use App\Http\Procedures\V1\Inviteds\InvitedListProcedure;
 use App\Http\Procedures\V1\Inviteds\InvitedReadProcedure;
+use App\Http\Procedures\V1\Inviteds\InvitedReadUserParticipantProcedure;
 use App\Http\Procedures\V1\Inviteds\InvitedStoreProcedure;
 use App\Http\Procedures\V1\Inviteds\NotificationProcedure;
 use App\Http\Procedures\V1\Logs\LogStoreProcedure;
@@ -27,6 +28,7 @@ use App\Http\Procedures\V1\Options\OptionReadProcedure;
 use App\Http\Procedures\V1\Options\OptionStoreProcedure;
 use App\Http\Procedures\V1\Options\OptionUpdateProcedure;
 use App\Http\Procedures\V1\Participants\Filter\ParticipantOwnerFilterProcedure;
+use App\Http\Procedures\V1\Participants\Filter\ParticipantUsersToEventFilterProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantDestroyProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantListProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantReadProcedure;
@@ -81,9 +83,11 @@ Route::prefix('v1')->group(function () {
 
     //// V1 FILE ENDPOINTS
     Route::prefix('file')->group(function () {
-        Route::post(ROUTE_DEFAULT, operation(FileUploadController::class))->name('v1.file.uploaded');
         Route::get(ROUTE_DEFAULT, operation(FileReadController::class))->name('v1.file.read');
-        Route::delete(ROUTE_DEFAULT, operation(FileDestroyController::class))->name('v1.file.delete');
+//        Route::middleware('auth:sanctum')->group(function () {
+            Route::post(ROUTE_DEFAULT, operation(FileUploadController::class))->name('v1.file.uploaded');
+            Route::delete(ROUTE_DEFAULT, operation(FileDestroyController::class))->name('v1.file.delete');
+//        });
     });
     //// END V1 FILE ENDPOINTS
 
@@ -154,6 +158,7 @@ Route::prefix('v1')->group(function () {
 //        });
         Route::prefix(ROUTE_FILTER)->group(function () {
             Route::rpc(ROUTE_DEFAULT . '/events/my/participants', [ParticipantOwnerFilterProcedure::class])->name('participant.owner.filter');
+            Route::rpc(ROUTE_DEFAULT . 'events/in/users', [ParticipantUsersToEventFilterProcedure::class])->name('participant.events.in.users.filter');
         });
     });
     //// END V1 PARTICIPANT ENDPOINTS
@@ -174,6 +179,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('invite')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [InvitedListProcedure::class])->name('invite.list');
         Route::rpc(ROUTE_READ, [InvitedReadProcedure::class])->name('invite.read');
+        Route::rpc(ROUTE_READ . '/participant', [InvitedReadUserParticipantProcedure::class])->name('invite.read.participant');
 //        Route::middleware('auth:sanctum')->group(function () {
             Route::rpc(ROUTE_STORE, [InvitedStoreProcedure::class])->name('invite.store');
             Route::rpc(ROUTE_DEFAULT . 'notification', [NotificationProcedure::class])->name('invite.notification');

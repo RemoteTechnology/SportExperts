@@ -44,3 +44,12 @@ export async function getEventParticipantRequest(attributes,
     });
     return await filterQuery.execute();
 }
+
+export async function getParticipantsToEventRequest(attributes, filterQuery = new FilterEndpointQuery())
+{
+    filterQuery.setUrl(`${BASE_URL}api/v1/participant/filter/events/in/users`);
+    filterQuery.setHeaders();
+    filterQuery.setMethod(`${PROCEDURES.filter.participantUsers}@${REQUEST_METHOD_DEFAULT}`);
+    filterQuery.setParams(attributes);
+    return await filterQuery.execute();
+}

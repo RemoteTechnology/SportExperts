@@ -1,8 +1,13 @@
 <?php
 
+use App\Domain\Constants\OptionEntityEnum;
+use App\Domain\Constants\TypeOptionEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/EntitiesConst.php';
 
 return new class extends Migration
 {
@@ -11,36 +16,43 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('options', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('event_key')
+        Schema::create(TABLE_OPTIONS, function (Blueprint $table) {
+            $table->id(FIELD_ID);
+            $table->uuid(FIELD_EVENT_KEY)
                 ->nullable();
-            $table->integer('user_id')
+            $table->integer(FIELD_USER_ID)
                 ->nullable();
-            $table->enum('entity', ['event', 'user']);
-            $table->string('name', 255)
+            $table->enum(FIELD_ENTITY, [
+                OptionEntityEnum::EVENT->value,
+                OptionEntityEnum::USER->value,
+            ]);
+            $table->string(FIELD_NAME, 255)
                 ->nullable(false);
-            $table->string('value', 255)
+            $table->string(FIELD_VALUE, 255)
                 ->nullable(false);
-            $table->enum('type', ['string', 'integer', 'boolean'])
-                ->default('string')
+            $table->enum(FIELD_TYPE, [
+                TypeOptionEnum::_STRING->value,
+                TypeOptionEnum::_INTEGER->value,
+                TypeOptionEnum::_BOOLEAN->value,
+            ])
+                ->default(TypeOptionEnum::_STRING->value)
                 ->nullable(false);
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
-            $table->timestamp('deleted_at')
+            $table->timestamp(FIELD_CREATED_AT);
+            $table->timestamp(FIELD_UPDATED_AT);
+            $table->timestamp(FIELD_DELETED_AT)
                 ->nullable();
             // Связи
-            $table->foreign('event_key')
-                ->on('events')
-                ->references('key');
-            $table->foreign('user_id')
-                ->on('users')
-                ->references('id');
+            $table->foreign(FIELD_EVENT_KEY)
+                ->on(TABLE_EVENTS)
+                ->references(FIELD_KEY);
+            $table->foreign(FIELD_USER_ID)
+                ->on(TABLE_USERS)
+                ->references(FIELD_ID);
             // Индексы
             $table->index([
-                'id',
-                'event_key',
-                'user_id',
+                FIELD_ID,
+                FIELD_EVENT_KEY,
+                FIELD_USER_ID,
             ]);
         });
     }
@@ -50,6 +62,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('options');
+        Schema::dropIfExists(TABLE_OPTIONS);
     }
 };

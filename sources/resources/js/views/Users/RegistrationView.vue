@@ -87,11 +87,9 @@ export default {
             let attributes = { key: this.event_id };
             await getEventRequest(attributes)
                 .then((response) => {
-                    console.log(response);
                     this.event = response.data.result.original;
                 })
                 .catch((error) => {
-                    console.log(error);
                     createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -109,143 +107,138 @@ export default {
         translationFirstName: function (event) { this.user.firstNameEng = this.translation(this.user.firstName) },
         translationLastName: function (event) { this.user.lastNameEng = this.translation(this.user.lastName) },
         signUp: async function () {
-            // if (this.user.password && this.user.passwordDouble && this.user.password === this.user.passwordDouble) {
-            let attributes = {
-                first_name: this.user.firstName,
-                first_name_eng: this.user.firstNameEng,
-                last_name: this.user.lastName,
-                last_name_eng: this.user.lastNameEng,
-                gender: this.user.gender,
-                password: this.user.password,
-            };
-            if (this.user.birthDate) {
-                attributes.birth_date = this.user.birthDate;
-            }
-            if (this.user.email) {
-                attributes.email = this.user.email;
-            }
-            if (this.user.phone) {
-                attributes.phone = this.user.phone;
-            }
-
-            if (this.urlKey)
-            {
-                await registrationRequest(attributes)
-                    .then((response) => {
-                        console.log(response);
-                        this.userModel = Object.assign(new User(), response.data.result.original)
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        createLogOptionRequest({
-                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'registrationRequest',
-                            status: error.code,
-                            request_data: attributes.toString(),
-                            message: error.message
-                        })
-                    });
-                let attributesInvite = {
-                    who_user_id: this.invite_user_id,
-                    user_id: this.userModel.id,
-                }
-                console.log(attributesInvite);
-                await createInvitedRequest(attributesInvite)
-                    .then((response) => { console.log(response); })
-                    .catch((error) => {
-                        console.log(error);
-                        createLogOptionRequest({
-                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'createInvitedRequest',
-                            status: error.code,
-                            request_data: attributesInvite.toString(),
-                            message: error.message
-                        })
-                    });
-                let attributesRecord = {
-                    event_id: this.event_id,
-                    user_id: this.userModel.id,
-                    invited_user_id: this.invite_user_id,
+            if (this.user.password && this.user.passwordDouble && this.user.password === this.user.passwordDouble) {
+                let attributes = {
+                    first_name: this.user.firstName,
+                    first_name_eng: this.user.firstNameEng,
+                    last_name: this.user.lastName,
+                    last_name_eng: this.user.lastNameEng,
+                    gender: this.user.gender,
+                    password: this.user.password,
                 };
-                await eventRecordRequest(attributesRecord)
-                    .then((response) => { console.log(response); this.participants = response.data.result.original; })
-                    .catch((error) => {
-                        console.log(error);
-                        createLogOptionRequest({
-                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'registrationRequest',
-                            status: error.code,
-                            request_data: attributesRecord.toString(),
-                            message: error.message
-                        })
-                    });
-                if (this.participants)
+                if (this.user.birthDate) {
+                    attributes.birth_date = this.user.birthDate;
+                }
+                if (this.user.email) {
+                    attributes.email = this.user.email;
+                }
+                if (this.user.phone) {
+                    attributes.phone = this.user.phone;
+                }
+
+                if (this.urlKey)
                 {
-                    let attributesOptions= [
-                        {
-                            participant_key: this.participants.key,
-                            entity: "user",
-                            name: "Weight",
-                            value: this.option.weight,
-                            type: "string",
-                        },
-                        {
-                            participant_key: this.participants.key,
-                            entity: "user",
-                            name: "Height",
-                            value: this.option.height,
-                            type: "string",
-                        }
-                    ];
-                    let i = 0;
-                    while(i < attributesOptions.length)
-                    {
-                        await createOptionRequest(attributesOptions[i])
-                            .then((response) => { console.log(response); })
-                            .catch((error) => {
-                                console.log(error);
-                                createLogOptionRequest({
-                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                                    method: 'createOptionRequest',
-                                    status: error.code,
-                                    request_data: attributesRecord.toString(),
-                                    message: error.message
-                                })
-                            });
-                        i++;
+                    await registrationRequest(attributes)
+                        .then(async (response) => {
+                            this.userModel = await Object.assign(new User(), response.data.result.original)
+
+                        })
+                        .catch(async (error) => {
+                            await createLogOptionRequest({
+                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                method: 'registrationRequest',
+                                status: error.code,
+                                request_data: attributes.toString(),
+                                message: error.message
+                            })
+                        });
+                    let attributesInvite = {
+                        who_user_id: this.invite_user_id,
+                        user_id: this.userModel.id,
                     }
-                    this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                    await createInvitedRequest(attributesInvite)
+                        .then((response) => {  })
+                        .catch((error) => {
+                            createLogOptionRequest({
+                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                method: 'createInvitedRequest',
+                                status: error.code,
+                                request_data: attributesInvite.toString(),
+                                message: error.message
+                            })
+                        });
+                    let attributesRecord = {
+                        event_id: this.event_id,
+                        user_id: this.userModel.id,
+                        invited_user_id: this.invite_user_id,
+                    };
+                    await eventRecordRequest(attributesRecord)
+                        .then(async (response) => { this.participants = await response.data.result.original; })
+                        .catch((error) => {
+                            createLogOptionRequest({
+                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                method: 'registrationRequest',
+                                status: error.code,
+                                request_data: attributesRecord.toString(),
+                                message: error.message
+                            })
+                        });
+                    if (this.participants)
+                    {
+                        let attributesOptions= [
+                            {
+                                participant_key: this.participants.key,
+                                entity: "user",
+                                name: "Weight",
+                                value: this.option.weight,
+                                type: "string",
+                            },
+                            {
+                                participant_key: this.participants.key,
+                                entity: "user",
+                                name: "Height",
+                                value: this.option.height,
+                                type: "string",
+                            }
+                        ];
+                        let i = 0;
+                        while(i < attributesOptions.length)
+                        {
+                            await createOptionRequest(attributesOptions[i])
+                                .then((response) => {  })
+                                .catch((error) => {
+                                    createLogOptionRequest({
+                                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                        method: 'createOptionRequest',
+                                        status: error.code,
+                                        request_data: attributesRecord.toString(),
+                                        message: error.message
+                                    })
+                                });
+                            i++;
+                        }
+                        this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                    }
+                    window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                }
+                else
+                {
+                    await registrationRequest(attributes)
+                        .then((response) => {
+                            this.messageSuccess = MESSAGES.FORM_SUCCESS;
+                            // this.userModel = Object.assign(new User(), response.data.result.original);
+                            window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                        })
+                        .catch((error) => {
+                            createLogOptionRequest({
+                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                method: 'registrationRequest',
+                                status: error.code,
+                                request_data: attributes.toString(),
+                                message: error.message
+                            })
+                        });
                 }
             }
             else
             {
-                await registrationRequest(attributes)
-                    .then((response) => {
-                        console.log(response);
-                        this.messageSuccess = MESSAGES.FORM_SUCCESS;
-                        this.userModel = Object.assign(new User(), response.data.result.original);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        createLogOptionRequest({
-                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                            method: 'registrationRequest',
-                            status: error.code,
-                            request_data: attributes.toString(),
-                            message: error.message
-                        })
-                    });
+                this.messageError = MESSAGES.PASSWORD_DOUBLE;
             }
-            // }
-            // else
-            // {
-            //     this.messageError = MESSAGES.PASSWORD_DOUBLE;
-            // }
         }
     },
     async beforeMount() {
@@ -342,6 +335,7 @@ export default {
                 </div>
                 <div class="form-block">
                     <label for="#">Придумайте пароль</label>
+                    <!-- TODO: Сделать глазок (https://v3.primevue.org/password/) -->
                     <InputText type="password"
                                v-model="this.user.password"
                                class="w-100" />

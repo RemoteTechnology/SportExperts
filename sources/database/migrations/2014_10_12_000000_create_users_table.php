@@ -3,6 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Domain\Constants\GenderEnum;
+use App\Domain\Constants\RoleEnum;
+
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/EntitiesConst.php';
 
 return new class extends Migration
 {
@@ -11,43 +16,50 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('first_name', 255)
+        Schema::create(TABLE_USERS, function (Blueprint $table) {
+            $table->id(FIELD_ID);
+            $table->string(FIELD_FIRST_NAME, 255)
                 ->nullable(false);
-            $table->string('first_name_eng')
+            $table->string(FIELD_FIRST_NAME_ENG)
                 ->nullable(false);
-            $table->string('last_name')
+            $table->string(FIELD_LAST_NAME)
                 ->nullable(false);
-            $table->string('last_name_eng')
+            $table->string(FIELD_LAST_NAME_ENG)
                 ->nullable(false);
-            $table->date('birth_date')
+            $table->date(FIELD_BIRTH_DATE)
                 ->nullable();
-            $table->enum('gender', ['Мужчина', 'Женщина'])
+            $table->enum(FIELD_GENDER, [
+                GenderEnum::MALE->value,
+                GenderEnum::FEMALE->value
+            ])
                 ->nullable();
-            $table->string('email', 255)
+            $table->string(FIELD_EMAIL, 255)
                 ->unique()
                 ->nullable();
-            $table->string('phone', 20)
+            $table->string(FIELD_PHONE, 20)
                 ->unique()
                 ->nullable();
-            $table->string('location', 255)
+            $table->string(FIELD_LOCATION, 255)
                 ->nullable();
-            $table->enum('role', ['superuser', 'admin', 'athlete'])
-                ->default('athlete');
-            $table->string('password', 255)
+            $table->enum(FIELD_ROLE, [
+                RoleEnum::SUPERUSER->value,
+                RoleEnum::ADMIN->value,
+                RoleEnum::ATHLETE->value,
+            ])
+                ->default(RoleEnum::ATHLETE->value);
+            $table->string(FIELD_PASSWORD, 255)
                 ->nullable(false);
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
-            $table->timestamp('deleted_at')
+            $table->timestamp(FIELD_CREATED_AT);
+            $table->timestamp(FIELD_UPDATED_AT);
+            $table->timestamp(FIELD_DELETED_AT)
                 ->nullable();
             // Индексы
             $table->index([
-                'id',
-                'email',
-                'phone',
-                'gender',
-                'role',
+                FIELD_ID,
+                FIELD_EMAIL,
+                FIELD_PHONE,
+                FIELD_GENDER,
+                FIELD_ROLE,
             ]);
         });
     }
@@ -57,6 +69,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists(TABLE_USERS);
     }
 };

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Inviteds;
+namespace App\Http\Requests\Filter;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ReadInvitedRequest extends FormRequest
+class ParticipantsUserToEventFilterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class ReadInvitedRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required']
+            'event_key' => ['required']
         ];
     }
 }

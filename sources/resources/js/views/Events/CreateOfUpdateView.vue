@@ -93,11 +93,9 @@ export default {
             try {
                 let inputFile = await this.onUpload()
                     .then((response) => {
-                        console.log(response)
                         this.event.image = response.data.key;
                     })
                     .catch((error) => {
-                        console.log(error)
                         createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -128,12 +126,10 @@ export default {
 
             await createEventRequest(attributes)
                 .then((response) => {
-                    console.log(response)
                     this.event = response.data.result.original;
                     this.messageSuccess = MESSAGES.FORM_SUCCESS;
                 })
                 .catch((error) => {
-                    console.log(error)
                     createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -177,6 +173,7 @@ export default {
             await this.createFile();
             await this.createEvent();
             await this.createOptions();
+            window.location = this.baseUrl;
         },
         updateEvent: async function()
         {

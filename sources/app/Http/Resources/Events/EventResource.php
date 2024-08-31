@@ -22,7 +22,7 @@ class EventResource extends JsonResource
         $participants = [];
         foreach (Participant::where(['event_id' => $this->id])->get() as $value)
         {
-            $participants[] = User::find($value->invited_user_id);
+            $participants[] = User::find($value->user_id);
         }
         return $participants;
     }

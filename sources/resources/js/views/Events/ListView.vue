@@ -95,10 +95,11 @@ export default {
         },
         userReadToEvent: async function ()
         {
-            let attributes = `invited_user_id:${window.$cookies.get(IDENTIFIER)}`;
+            let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
             await getRecordToEventsRequest(attributes, 'after')
-                .then((response) => { this.eventsToRead = response.data.result.original; })
+                .then((response) => { console.log(response); this.eventsToRead = response.data.result.original; })
                 .catch((error) => {
+                    console.log(error);
                     createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -113,9 +114,8 @@ export default {
         eventList: async function ()
         {
             await getEventListRequest()
-                .then((response) => { console.log(response); this.events = response.data.result.original; })
+                .then((response) => { this.events = response.data.result.original; })
                 .catch((error) => {
-                    console.log(error);
                     createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -182,7 +182,6 @@ export default {
                 }
                 else
                 {
-                    console.log(123)
                     await this.userOptionsCreate(i);
                 }
             }
@@ -308,7 +307,7 @@ export default {
                     <div v-for="eventParticipant in this.eventsToRead" class="flex gap-3 mt-2">
                         <section v-if="this.user && Object.keys(this.user).includes('role') && this.user.role == 'athlete'">
                             <a v-if="eventParticipant.key === event.key"
-                               :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.HISTORY + '?key=' + event.key">
+                               :href="this.baseUrl + this.route.TOURNAMENT + '?event=' + event.key">
                                 <Button label="Вы записаны"
                                         icon="pi pi-check"
                                         severity="link"

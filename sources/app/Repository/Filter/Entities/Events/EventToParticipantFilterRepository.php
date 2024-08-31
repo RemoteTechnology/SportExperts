@@ -8,6 +8,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/EntitiesConst.php';
+
 
 class EventToParticipantFilterRepository
 {
@@ -37,13 +39,13 @@ class EventToParticipantFilterRepository
         foreach ($context as $key => $value)
         {
             switch ($key){
-                case FIELD_INVITED_USER_ID:
+                case FIELD_USER_ID:
                     $query = $this->initQuery($query,
-                        TABLE_EVENT,
+                        TABLE_EVENTS,
                         FIELD_EVENT_ID,
                         TABLE_PARTICIPANTS,
                         FIELD_ID);
-                    $query->where([TABLE_PARTICIPANTS . '.' . FIELD_INVITED_USER_ID => $value]);
+                    $query->where([TABLE_PARTICIPANTS . '.' . FIELD_USER_ID => $value]);
                     break;
                 case FIELD_TEAM_KEY:
 //                    $query = $this->initQuery($query,
@@ -68,8 +70,8 @@ class EventToParticipantFilterRepository
     {
         $currentDateTime = Carbon::now();
         $query = new Collection($this->builder($context)->paginate($limit));
-        $query->where(TABLE_EVENT . '.' . FIELD_START_DATE, '>', $currentDateTime);
-        $query->where(TABLE_EVENT . '.' . FIELD_START_TIME, '>', $currentDateTime);
+        $query->where(TABLE_EVENTS . '.' . FIELD_START_DATE, '>', $currentDateTime);
+        $query->where(TABLE_EVENTS . '.' . FIELD_START_TIME, '>', $currentDateTime);
         return $query;
     }
 
@@ -77,8 +79,8 @@ class EventToParticipantFilterRepository
     {
         $currentDateTime = Carbon::now();
         $query = new Collection($this->builder($context)->paginate($limit));
-        $query->where(TABLE_EVENT . '.' . FIELD_START_DATE, '<', $currentDateTime);
-        $query->where(TABLE_EVENT . '.' . FIELD_START_TIME, '<', $currentDateTime);
+        $query->where(TABLE_EVENTS . '.' . FIELD_START_DATE, '<', $currentDateTime);
+        $query->where(TABLE_EVENTS . '.' . FIELD_START_TIME, '<', $currentDateTime);
         return $query;
     }
 

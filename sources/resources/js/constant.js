@@ -14,6 +14,7 @@ export const PROCEDURES = {
         list:                   'InvitedListProcedure',
         create:                 'InvitedStoreProcedure',
         read:                   'InvitedReadProcedure',
+        readUserParticipant:        'InvitedReadUserParticipantProcedure',
         notification:           'NotificationProcedure',
     },
     auth: {
@@ -23,6 +24,7 @@ export const PROCEDURES = {
         userRecord:             'EventDateFilterProcedure',
         ownerParticipantList:   'ParticipantOwnerFilterProcedure',
         ownerEventsList:        'EventOwnerFilterProcedure',
+        participantUsers:       'ParticipantUsersToEventFilterProcedure',
     },
     event: {
         list:                   'EventListProcedure',
@@ -89,6 +91,7 @@ export const ENDPOINTS = {
     RECOVERY: 'recovery',
     REGISTRATION: 'registration',
     UPDATE: 'update',
+    TOURNAMENT: 'tournament'
 };
 
 export const RESPONSE = {
