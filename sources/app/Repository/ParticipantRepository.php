@@ -36,7 +36,11 @@ final class ParticipantRepository extends ParticipantIsUserFilter implements LCR
         return $this->model->where(['event_id' => $eventId])->get();
     }
 
-    public function findByEventKey(string $eventKey)
+    /**
+     * @param string $eventKey
+     * @return array
+     */
+    public function findByEventKey(string $eventKey): array
     {
         return DB::select(/** @lang text */ "
             SELECT p.* FROM participants AS p
@@ -44,5 +48,12 @@ final class ParticipantRepository extends ParticipantIsUserFilter implements LCR
             ON p.event_id = e.id
             WHERE e.key = '{$eventKey}';
         ");
+    }
+
+    public function removeUser(Model $event, array $attributes)
+    {
+        $data['key'] = array_key_exists('participants_A', $attributes)
+            ? $attributes['participants_A'] : $attributes['participants_B'];
+        return $this->model::where(['event_id' => $event->id, ...$data])->delete();
     }
 }

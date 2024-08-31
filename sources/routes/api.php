@@ -27,6 +27,7 @@ use App\Http\Procedures\V1\Options\OptionListProcedure;
 use App\Http\Procedures\V1\Options\OptionReadProcedure;
 use App\Http\Procedures\V1\Options\OptionStoreProcedure;
 use App\Http\Procedures\V1\Options\OptionUpdateProcedure;
+use App\Http\Procedures\V1\Participants\Additionally\ParticipantDiscvaleficationProcedure;
 use App\Http\Procedures\V1\Participants\Filter\ParticipantOwnerFilterProcedure;
 use App\Http\Procedures\V1\Participants\Filter\ParticipantUsersToEventFilterProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantDestroyProcedure;
@@ -156,6 +157,12 @@ Route::prefix('v1')->group(function () {
             Route::rpc(ROUTE_UPDATE, [ParticipantUpdateProcedure::class])->name('participant.update');
             Route::rpc(ROUTE_DESTROY, [ParticipantDestroyProcedure::class])->name('participant.destroy');
 //        });
+        // TODO: эти процедуры мало чем относятся к "participant"
+        Route::prefix('additionally')->group(function () {
+            Route::rpc(ROUTE_DEFAULT . 'drop', [ParticipantDiscvaleficationProcedure::class])->name('participant.additionally.drop');
+            Route::rpc(ROUTE_DEFAULT . 'replace', [ParticipantКReplacementProcedure::class])->name('participant.additionally.replace');
+            Route::rpc(ROUTE_DEFAULT . 'skip', [ParticipantSkippedProcedure::class])->name('participant.additionally.skip');
+        });
         Route::prefix(ROUTE_FILTER)->group(function () {
             Route::rpc(ROUTE_DEFAULT . '/events/my/participants', [ParticipantOwnerFilterProcedure::class])->name('participant.owner.filter');
             Route::rpc(ROUTE_DEFAULT . 'events/in/users', [ParticipantUsersToEventFilterProcedure::class])->name('participant.events.in.users.filter');

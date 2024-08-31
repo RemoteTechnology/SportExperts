@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer(FIELD_TOURNAMENT_ID);
             $table->uuid(FIELD_PARTICIPANTS_A);
             $table->uuid(FIELD_PARTICIPANTS_B)->nullable();
-            $table->integer(FIELD_PARTICIPANTS_PASSES)->nullable();
+            $table->uuid(FIELD_PARTICIPANTS_PASSES)->nullable();
             $table->timestamp(FIELD_CREATED_AT);
             $table->timestamp(FIELD_UPDATED_AT);
             $table->timestamp(FIELD_DELETED_AT)
