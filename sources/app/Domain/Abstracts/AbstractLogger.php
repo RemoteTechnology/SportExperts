@@ -2,7 +2,7 @@
 
 namespace App\Domain\Abstracts;
 
-use App\Domain\Constants\LogLevelEnum;
+use App\Domain\Constants\EnumConstants\LogLevelEnum;
 use Illuminate\Support\Str;
 
 abstract class AbstractLogger

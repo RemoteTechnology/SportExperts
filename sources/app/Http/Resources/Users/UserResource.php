@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Users;
 
-use App\Domain\Constants\RoleEnum;
 use App\Models\Option;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

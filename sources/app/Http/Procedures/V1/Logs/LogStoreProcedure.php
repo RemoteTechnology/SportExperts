@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Logs;
 
-use App\Domain\Constants\LogLevelEnum;
+use App\Domain\Constants\EnumConstants\LogLevelEnum;
 use App\Http\Requests\Logs\StoreLogRequest;
 use App\Services\LoggingService;
 use Sajya\Server\Procedure;

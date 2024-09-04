@@ -2,7 +2,7 @@
 
 namespace App\Domain\Interfaces\Services;
 
-use App\Domain\Constants\LogLevelEnum;
+use App\Domain\Constants\EnumConstants\LogLevelEnum;
 
 interface LoggingServiceInterface
 {

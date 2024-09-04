@@ -1,10 +1,10 @@
 <?php
 
+use App\Domain\Constants\EnumConstants\GenderEnum;
+use App\Domain\Constants\EnumConstants\RoleEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Domain\Constants\GenderEnum;
-use App\Domain\Constants\RoleEnum;
 
 require_once dirname(__DIR__, 2) . '/app/Domain/Constants/FieldConst.php';
 require_once dirname(__DIR__, 2) . '/app/Domain/Constants/EntitiesConst.php';

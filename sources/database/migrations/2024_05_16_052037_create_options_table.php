@@ -1,7 +1,7 @@
 <?php
 
-use App\Domain\Constants\OptionEntityEnum;
-use App\Domain\Constants\TypeOptionEnum;
+use App\Domain\Constants\EnumConstants\OptionEntityEnum;
+use App\Domain\Constants\EnumConstants\TypeOptionEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

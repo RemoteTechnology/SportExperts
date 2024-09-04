@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Constants;
+namespace App\Domain\Constants\EnumConstants;
 
 enum GenderEnum: string
 {
