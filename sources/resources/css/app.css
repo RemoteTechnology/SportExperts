@@ -111,6 +111,9 @@ ul li{
 .w-90{
     width: 90%;
 }
+.w-95{
+    width: 95%;
+}
 .w-100{
     width: 100%;
 }
@@ -122,6 +125,9 @@ ul li{
 }
 .h-22{
     height: 22em;
+}
+.h-40{
+    height: 40em;
 }
 .form-block{
     margin-top: 2em;
@@ -179,7 +185,7 @@ ul li{
 }
 #tid{
     flex-wrap: wrap;
-    width: 16%;
+    width: 25%;
     /*margin: 0 auto;*/
     padding: 2em;
 

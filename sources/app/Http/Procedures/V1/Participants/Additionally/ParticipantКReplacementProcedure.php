@@ -43,7 +43,7 @@ class ParticipantКReplacementProcedure extends Procedure
     public function handle(ParticipantReplacementRequest $request): JsonResponse
     {
         $attributes = $request->validated();
-        $event = $this->eventRepository->findById($attributes['event_id']);
+        $event = $this->eventRepository->findByKey($attributes['event_key']);
         return new JsonResponse(
             data: new TournamentValueResource($this->tournamentValueRepository->replaceParticipant($event, $attributes)),
             status: Response::HTTP_CREATED

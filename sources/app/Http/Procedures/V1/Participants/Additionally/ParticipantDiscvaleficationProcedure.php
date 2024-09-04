@@ -42,9 +42,11 @@ class ParticipantDiscvaleficationProcedure extends Procedure
     public function handle(ParticipantDiscvaleficationRequest $request): JsonResponse
     {
         $attributes = $request->validated();
-        $event = $this->eventRepository->findById($attributes['event_id']);
+        $event = $this->eventRepository->findByKey($attributes['event_key']);
         return new JsonResponse(
-            data: new TournamentValueResource($this->tournamentValueRepository->removeParticipant($event, $attributes)),
+            data: /*new TournamentValueResource(*/
+                $this->tournamentValueRepository->removeParticipant($event, $attributes),
+            /*),*/
             status: Response::HTTP_CREATED
         );
     }

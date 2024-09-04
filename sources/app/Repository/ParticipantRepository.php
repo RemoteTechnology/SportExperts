@@ -56,4 +56,12 @@ final class ParticipantRepository extends ParticipantIsUserFilter implements LCR
             ? $attributes['participants_A'] : $attributes['participants_B'];
         return $this->model::where(['event_id' => $event->id, ...$data])->delete();
     }
+
+    public function findByKeyIsEvent(array $attributes): Model
+    {
+        return $this->model::where([
+            'event_id'  => $attributes['event_id'],
+            'user_id'   => $attributes['user_id'],
+        ])->first();
+    }
 }

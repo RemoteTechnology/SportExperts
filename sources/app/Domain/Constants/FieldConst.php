@@ -7,6 +7,7 @@ const FIELD_WHO_USER_ID = 'who_user_id';
 const FIELD_EVENT_ID = 'event_id';
 const FIELD_INVITED_USER_ID = 'invited_user_id';
 const FIELD_TOURNAMENT_ID = 'tournament_id';
+const FIELD_TOURNAMENT_ADMIN_ID = 'tournament_admin_id';
 const FIELD_KEY = 'key';
 const FIELD_TEAM_KEY = 'team_key';
 const FIELD_EVENT_KEY = 'event_key';

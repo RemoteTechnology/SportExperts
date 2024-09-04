@@ -44,13 +44,21 @@ export const PROCEDURES = {
     },
     participant: {
         create:                 'ParticipantStoreProcedure',
+        additionally: {
+            drop:               'ParticipantDiscvaleficationProcedure',
+            replace:            'ParticipantКReplacementProcedure',
+            skip:               'ParticipantSkippedProcedure',
+        }
     },
     log: {
         create:                 'LogStoreProcedure',
         list:                   'LogListProcedure',
     },
     tournament: {
-        read:                   'TournamentReadProcedure'
+        read:                   'TournamentReadProcedure',
+        value: {
+            create:             'TournamentValueStoreProcedure'
+        }
     }
 };
 export const REQUEST_METHOD_DEFAULT = 'handle';

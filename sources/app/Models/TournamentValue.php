@@ -28,4 +28,20 @@ class TournamentValue extends Model
         FIELD_UPDATED_AT,
         FIELD_DELETED_AT,
     ];
+
+    /**
+     * @var string[]
+     */
+    protected $appends = ['recorded_in'];
+
+    public function getRecordedInAttribute()
+    {
+        if ($this->participants_A === $this->attributes['participants_key']) {
+            return 'participants_A';
+        }
+        if ($this->participants_B === $this->attributes['participants_key']) {
+            return 'participants_B';
+        }
+        return null;
+    }
 }

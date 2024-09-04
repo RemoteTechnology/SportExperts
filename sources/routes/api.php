@@ -28,6 +28,8 @@ use App\Http\Procedures\V1\Options\OptionReadProcedure;
 use App\Http\Procedures\V1\Options\OptionStoreProcedure;
 use App\Http\Procedures\V1\Options\OptionUpdateProcedure;
 use App\Http\Procedures\V1\Participants\Additionally\ParticipantDiscvaleficationProcedure;
+use App\Http\Procedures\V1\Participants\Additionally\ParticipantSkippedProcedure;
+use App\Http\Procedures\V1\Participants\Additionally\ParticipantКReplacementProcedure;
 use App\Http\Procedures\V1\Participants\Filter\ParticipantOwnerFilterProcedure;
 use App\Http\Procedures\V1\Participants\Filter\ParticipantUsersToEventFilterProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantDestroyProcedure;
@@ -43,6 +45,7 @@ use App\Http\Procedures\V1\Teams\TeamUpdateProcedure;
 use App\Http\Procedures\V1\Tournaments\TournamentDestroyProcedure;
 use App\Http\Procedures\V1\Tournaments\TournamentReadProcedure;
 use App\Http\Procedures\V1\Tournaments\TournamentUpdateProcedure;
+use App\Http\Procedures\V1\Tournaments\Values\TournamentValueStoreProcedure;
 use App\Http\Procedures\V1\Users\ResetProcedure;
 use App\Http\Procedures\V1\Users\UserReadProcedure;
 use App\Http\Procedures\V1\Users\UserRegistrationProcedure;
@@ -201,6 +204,14 @@ Route::prefix('v1')->group(function () {
         Route::rpc(ROUTE_UPDATE, [TournamentUpdateProcedure::class])->name('option.update');
         Route::rpc(ROUTE_DESTROY, [TournamentDestroyProcedure::class])->name('option.destroy');
 //        });
+
+        //// V1 Tournament Value ENDPOINTS
+        Route::prefix('value')->group(function (){
+//        Route::middleware('auth:sanctum')->group(function () {
+            Route::rpc(ROUTE_STORE, [TournamentValueStoreProcedure::class])->name('tournament.value.store');
+//        });
+        });
+        //// END V1 Tournament Value ENDPOINTS
     });
     //// END V1 Tournament ENDPOINTS
 });

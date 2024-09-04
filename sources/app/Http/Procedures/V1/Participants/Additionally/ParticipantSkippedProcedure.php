@@ -9,7 +9,6 @@ use App\Http\Resources\TournamentValues\TournamentValueResource;
 use App\Repository\EventRepository;
 use App\Repository\TournamentValueRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Sajya\Server\Procedure;
 

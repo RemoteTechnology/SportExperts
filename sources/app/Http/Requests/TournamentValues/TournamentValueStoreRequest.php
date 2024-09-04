@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Participants\Additionally;
+namespace App\Http\Requests\TournamentValues;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ParticipantDiscvaleficationRequest extends FormRequest
+class TournamentValueStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class ParticipantDiscvaleficationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_key'     => ['required', 'string'],
-            'user_id'       => ['required', 'numeric'],
+            'event_key'             => ['required', 'string',],
+            'user_id'               => ['required', 'numeric',],
         ];
     }
 }

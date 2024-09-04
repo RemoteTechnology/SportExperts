@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
 use App\Models\Event;
+use App\Models\Participant;
 use App\Models\Tournament;
 use App\Models\TournamentValue;
 use App\Repository\Traits\CreateQueryTrait;
@@ -48,24 +49,33 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
         return $this->model::where($attributes)->first();
     }
 
-    /**
-     * @param Model $event
-     * @param array $attributes
-     * @return array
-     */
-    public function removeParticipant(Model $event, array $attributes): array
+
+    public function removeParticipant(Model $event, array $attributes)
     {
         $tournament = Tournament::where(['event_key' => $event->key])->first();
-        $participants = array_key_exists('participants_A', $attributes) ? 'participants_A' : 'participants_B';
+        $participant = Participant::where([
+            'user_id' => $attributes['user_id'],
+            'event_id' => $event->id
+        ])->first();
+
         $tournamentValues = $this->model::where([
             'tournament_id'     => $tournament->id,
-            $participants       => $attributes[$participants]
-        ])->latest('id')->first();
+            'participants_A'    => $participant->key,
+        ])->orWhere([
+            'tournament_id'     => $tournament->id,
+            'participants_B'    => $participant->key,
+        ])->latest('id')
+        ->get()
+        ->map(function($item) use ($participant) {
+            $item->participants_key = $participant->key;
+            return $item;
+        })
+        ->first();
 
         // Если у "participants_A" есть соперник, меняем "participants_A" на значение из "participants_B"
         // саму колонку "participants_B" затирем
         if (
-            $participants === 'participants_A' &&
+            $tournamentValues->recorded_in === 'participants_A' &&
             !is_null($tournamentValues->participants_A) &&
             !is_null($tournamentValues->participants_B)
         )
@@ -76,7 +86,7 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
         }
         // Если у "participants_A" нет соперника, удаляем запись из таблицы
         elseif (
-            $participants === 'participants_A' &&
+            $tournamentValues->recorded_in === 'participants_A' &&
             !is_null($tournamentValues->participants_A) &&
             is_null($tournamentValues->participants_B)
         )
@@ -85,7 +95,7 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
             $tournamentValueQuery->delete();
         }
         // Если принимаем "participants_B" то тупо его убираем
-        elseif ($participants === 'participants_B')
+        elseif ($tournamentValues->recorded_in === 'participants_B')
         {
             $tournamentValues->participants_B = null;
             $tournamentValues->save();
@@ -96,22 +106,27 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
     /**
      * @param Model $event
      * @param array $attributes
-     * @return array
+     * @return Model
      */
-    public function replaceParticipant(Model $event, array $attributes): array
+    public function replaceParticipant(Model $event, array $attributes): Model
     {
         $tournament = Tournament::where(['event_key' => $event->key])->first();
-        $tournamentValues = DB::select(/** @lang text */ "
-            SELECT * FROM tournament_values AS tv
-            WHERE tv.tournament_id = {$tournament->id} AND
-                tv.participants_A = '{$attributes['participant_key']}' OR
-                tv.participants_B = '{$attributes['participant_key']}'
-            ORDER BY tv.id DESC
-            LIMIT 1;
-        ");
+        $event = Event::where(['key' => $attributes['event_key']])->first();
+        $participant = Participant::where([
+            'user_id' => $attributes['user_id'],
+            'event_id' => $event->id
+        ])->first();
 
-        if ($tournamentValues->participants_A === $attributes['participant_key']) $tournamentValues->participants_A = $attributes['new_participant_key'];
-        if ($tournamentValues->participants_B === $attributes['participant_key']) $tournamentValues->participants_B = $attributes['new_participant_key'];
+        $tournamentValues = TournamentValue::where([
+            'tournament_id' => $tournament->id,
+            'participants_A' => $participant->key
+        ])->orWhere([
+            'tournament_id' => $tournament->id,
+            'participants_B' => $participant->key
+        ])->first();
+
+        if ($tournamentValues->participants_A === $participant->key) $tournamentValues->participants_A = $attributes['new_participant_key'];
+        if ($tournamentValues->participants_B === $participant->key) $tournamentValues->participants_B = $attributes['new_participant_key'];
         $tournamentValues->save();
         return $tournamentValues;
     }

@@ -9,11 +9,18 @@ import Message from 'primevue/message';
 import Card from 'primevue/card';
 import Button from "primevue/button";
 import Dialog from 'primevue/dialog';
+import OrderList from 'primevue/orderlist';
 import LeaderLine from 'leader-line-vue';
 import { createLogOptionRequest } from "../../api/CreateLogOptionRequest";
 import { getUser } from "../../api/UserRequest";
 import { readUserParticipantInvitedRequest } from "../../api/InvitedRequest";
 import { getParticipantsToEventRequest } from "../../api/FilterRequest";
+import { tournamentValueCreateRequest } from "../../api/TournamentValueRequest";
+import {
+    participantUserRemoveAdditionallyRequest,
+    participantUserReplaceAdditionallyRequest,
+    participantUserSkipAdditionallyRequest
+} from "../../api/ParticipantRequest";
 
 export default {
     data() {
@@ -26,6 +33,7 @@ export default {
             eventKey: '',
             tournamentDetails: null,
             user: null,
+            participantList: null,
             participant: {
                 user: null,
                 invite: null,
@@ -38,6 +46,7 @@ export default {
         Message: Message,
         Button: Button,
         Dialog: Dialog,
+        OrderList: OrderList,
     },
     methods: {
         formatDate(birthDate) {
@@ -55,12 +64,13 @@ export default {
             this.getParticipantInfo(userId)
             this.dialog=true;
         },
-        closeDialog(userId) {
+        closeDialog() {
             // TODO: тут может фигня
-            this.user = null;
+            // this.user = null;
             this.dialog = false;
             this.participant.user = null;
             this.participant.invite = null;
+            this.participant.users = null;
         },
         async readTournament() {
             const attributes = {
@@ -113,7 +123,6 @@ export default {
             }
             await getUser(attributes)
                 .then(async (response) => {
-                    console.log(response)
                     this.participant.user = await response.data.result.original;
                 })
                 .catch(async (error) => {
@@ -149,13 +158,20 @@ export default {
                     this.messageError = MESSAGES.NO_DATA;
                 });
         },
-        getListParticipants: async function(eventKey) {
+        getListParticipants: async function(eventKey, mode='card') {
             const attributes = {
                 event_key: eventKey
             };
             await getParticipantsToEventRequest(attributes)
                 .then(async (response) => {
-                    this.participant.users = await response.data.result.original;
+                    if (mode === 'card')
+                    {
+                        this.participant.users = await response.data.result.original;
+                    }
+                    else {
+                        this.participantList = await response.data.result.original;
+                        console.log(this.participantList)
+                    }
                 })
                 .catch(async (error) => {
                     await createLogOptionRequest({
@@ -169,14 +185,100 @@ export default {
                     this.messageError = MESSAGES.NO_DATA;
                 });
         },
+        dropTournamentParticipant: async function()
+        {
+            const attributes = {
+                event_key: this.eventKey,
+                user_id: this.participant.user.id
+            };
+            await participantUserRemoveAdditionallyRequest(attributes)
+                .then(async (response) => {
+                    if (response.data.result.original.id)
+                    {
+                       this.closeDialog();
+                       await this.readTournament();
+                    }
+                })
+                .catch(async (error) => {
+                    await createLogOptionRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'participantUserRemoveAdditionallyRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.NO_DATA;
+                });
+        },
+        replaceToParticipant: async function(dataAttributes)
+        {
+            const attributes = dataAttributes;
+            await participantUserReplaceAdditionallyRequest(attributes)
+                .then((response) => { console.log(response); })
+                .catch(async (error) => {
+                    console.log(error);
+                    await createLogOptionRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'participantUserReplaceAdditionallyRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.NO_DATA;
+                });
+        },
+        skipToParticipant: async function()
+        {
+            const attributes = {
+
+            };
+            await participantUserSkipAdditionallyRequest(attributes)
+                .then((response) => { console.log(response); })
+                .catch(async (error) => {
+                    console.log(error);
+                    await createLogOptionRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'participantUserSkipAdditionallyRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.NO_DATA;
+                });
+        },
         getParticipantInfo: async function(userId) {
             await this.getUserParticipant(userId);
             await this.getUserInvite(this.participant.user.id);
             await this.getListParticipants(this.eventKey);
-        }
+        },
+        createParticipantTournament(userId) {
+            const attributes = {
+                event_key: this.eventKey,
+                user_id: userId,
+            };
+            tournamentValueCreateRequest(attributes)
+                .then((response) => { console.log(response); })
+                .catch(async (error) => {
+                    console.log(error);
+                    await createLogOptionRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'tournamentValueCreateRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.NO_DATA;
+                });
+        },
     },
+
     async mounted() {
         await this.getUrl();
+        await this.getListParticipants(this.eventKey, 'page');
         await this.readTournament();
         await this.$nextTick(() => {
             this.tyingAthlete();
@@ -186,10 +288,6 @@ export default {
 </script>
 
 <template>
-<!--    TODO: Сделать смену игрока из записаных на событие спортсменов (не проигравших)-->
-<!--    TODO: Менять спортсменов проведением линии (после чего сохранять изменения и отрисовывать заново-->
-<!--    TODO: может перетаскиванием (относится к верхнему-->
-<!--    TODO: Сделать дисквалификацию и пропуск на следующий шаг-->
 <!--    TODO: отрисовать шаги-->
 <!--    TODO: добавить админов, сделать им систему прав аля круд-->
     <Dialog v-model:visible="this.dialog"
@@ -220,7 +318,8 @@ export default {
                     <div class="mb-2">
                         <Button label="Дисквалифицировать"
                                 severity="danger"
-                                class="w-100" />
+                                class="w-100"
+                                @click="this.dropTournamentParticipant()"/>
                     </div>
                     <div class="mb-2">
                         <Button label="Пропустить"
@@ -257,7 +356,12 @@ export default {
                     <div class="w-30">
                         <Button label="Заменить"
                                 severity="primary"
-                                class="w-100" />
+                                class="w-100"
+                                @click="this.replaceToParticipant({
+                                    event_key: this.eventKey,
+                                    new_participant_key: item.key,
+                                    user_id: this.participant.invite.user.id,
+                                })"/>
                     </div>
                     <hr class="w-100">
                 </div>
@@ -272,12 +376,42 @@ export default {
         <section>
             <h2 class="mb-2 text-center">{{ this.tournamentDetails.tournament.event.name }}</h2>
         </section>
-        <div class="d-flex">
+        <div class="d-flex d-between">
+            <div class="w-30 d-flex d-end">
+                <Card class="mb-3 w-95 h-40">
+                    <template #content>
+                        <section v-if="this.participantList">
+                            <h3>Записанные спортсмены</h3>
+                            <br>
+                            <OrderList v-model="this.participantList" listStyle="height:auto" dataKey="id">
+                                <template #item="slotProps">
+                                    <section class="d-flex d-between d-align-center">
+                                        <section class="w-70">
+                                            <p>{{ slotProps.item.user.first_name }} {{ slotProps.item.user.last_name }}</p>
+                                            <small>Возраст: {{ slotProps.item.user.age }}
+                                                <span v-for="option in slotProps.item.user.options" :key="option.name">
+                                                    <span v-if="option.name === 'Height'"> | Рост: {{ option.value }} см</span>
+                                                    <span v-if="option.name === 'Weight'"> | Вес: {{ option.value }} кг</span>
+                                                </span>
+                                            </small>
+                                        </section>
+                                        <section class="w-30 d-flex d-end">
+                                            <Button icon="pi pi-arrow-right"
+                                                    aria-label="Success"
+                                                    @click="this.createParticipantTournament(slotProps.item.user.id)"/>
+                                        </section>
+                                    </section>
+                                </template>
+                            </OrderList>
+                        </section>
+                    </template>
+                </Card>
+            </div>
             <div v-if="
                     this.tournamentDetails !== null &&
                     Object.keys(this.tournamentDetails).includes('tournament') &&
                     Object.keys(this.tournamentDetails.tournament).includes('event')
-                " class="w-100">
+                " class="w-70">
                 <section v-if="
                             this.tournamentDetails !== null &&
                             Object.keys(this.tournamentDetails).includes('values') &&

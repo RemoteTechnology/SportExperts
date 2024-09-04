@@ -22,9 +22,9 @@ class ParticipantReplacementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_id'              => ['required', 'numeric'],
+            'event_key'             => ['required', 'string'],
             'new_participant_key'   => ['required', 'string'],
-            'participant_key'       => ['required', 'string'],
+            'user_id'               => ['required', 'numeric'],
         ];
     }
 }
