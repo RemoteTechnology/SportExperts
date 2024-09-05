@@ -46,7 +46,7 @@ class UserRegistrationProcedure extends Procedure
         $inputData = $request->validated();
 //        try {
             $inputData['password'] = Hash::make($inputData['password']);
-            $inputData['role'] = 'admin';
+            $inputData['role'] = key_exists('role', $inputData) ? $inputData['role'] : 'athlete'; //'admin';
 
             if ($user = new UserResource(
                 $this->operation->store($inputData)

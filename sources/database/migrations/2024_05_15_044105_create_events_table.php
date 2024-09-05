@@ -5,6 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 require_once dirname(__DIR__, 2) . '/app/Domain/Constants/EventStatusesConst.php';
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/EntitiesConst.php';
 
 return new class extends Migration
 {
@@ -13,44 +15,48 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
-            $table->id();
-            $table->integer('user_id')
+        Schema::create(TABLE_EVENTS, function (Blueprint $table) {
+            $table->id(FIELD_ID);
+            $table->integer(FIELD_USER_ID)
                 ->nullable(false);
-            $table->uuid('key')
+            $table->uuid(FIELD_KEY)
                 ->unique()
                 ->nullable(false);
-            $table->string('name', 255)
+            $table->string(FIELD_NAME, 255)
                 ->nullable(false);
-            $table->text('description')
+            $table->text(FIELD_DESCRIPTION)
                 ->nullable(false);
-            $table->string('image', 255)
+            $table->string(FIELD_IMAGE, 255)
                 ->nullable(false);
-            $table->string('location', 255)
+            $table->string(FIELD_LOCATION, 255)
                 ->nullable(false);
-            $table->enum('status', [EVENT_ACTIVE, EVENT_NO_ACTIVE, EVENT_ARCHIVE])
+            $table->enum(FIELD_STATUS, [
+                EVENT_ACTIVE,
+                EVENT_NO_ACTIVE,
+                EVENT_ARCHIVE])
                 ->default(EVENT_ACTIVE)
                 ->nullable(false);
-            $table->date("start_date")
+            $table->date(FIELD_START_DATE)
                 ->nullable(false);
-            $table->time("start_time")
+            $table->time(FIELD_START_TIME)
                 ->nullable(false);
-            $table->date("expiration_date");
-            $table->time("expiration_time");
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
-            $table->timestamp('deleted_at')
+            $table->date(FIELD_EXPIRATION_DATE);
+            $table->time(FIELD_EXPIRATION_TIME);
+            $table->timestamp(FIELD_CREATED_AT);
+            $table->timestamp(FIELD_UPDATED_AT);
+            $table->timestamp(FIELD_DELETED_AT)
                 ->nullable();
             // Связь
-            $table->foreign('user_id')
-                ->on('users')
-                ->references('id');
+            $table->foreign(FIELD_USER_ID)
+                ->on(TABLE_USERS)
+                ->references(FIELD_ID)
+                ->onDelete('SET NULL');
             // Индексы
             $table->index([
-                'id',
-                'user_id',
-                'key',
-                'start_date'
+                FIELD_ID,
+                FIELD_USER_ID,
+                FIELD_KEY,
+                FIELD_START_DATE
             ]);
         });
     }
@@ -60,6 +66,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('event');
+        Schema::dropIfExists(TABLE_EVENTS);
     }
 };

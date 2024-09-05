@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Tournaments\Values;
 
+use App\Http\Requests\TournamentValues\TournamentValueReadRequest;
+use App\Http\Resources\TournamentValues\TournamentValueResource;
+use App\Repository\TournamentValueRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Sajya\Server\Procedure;
 
 class TournamentValueReadProcedure extends Procedure
@@ -15,16 +20,26 @@ class TournamentValueReadProcedure extends Procedure
      * @var string
      */
     public static string $name = 'TournamentValueReadProcedure';
+    private TournamentValueRepository $tournamentValueRepository;
+    public function __construct(TournamentValueRepository $tournamentValueRepository)
+    {
+        $this->tournamentValueRepository = $tournamentValueRepository;
+    }
 
     /**
-     * Execute the procedure.
+     * TournamentValueReadProcedure the handle.
      *
-     * @param Request $request
+     * @param TournamentValueReadRequest $request
      *
-     * @return array|string|integer
+     * @return JsonResponse
      */
-    public function handle(Request $request)
+    public function handle(TournamentValueReadRequest $request): JsonResponse
     {
-        // write your code
+        define("ATTRIBUTES", $request->validated());
+        $repository = $this->tournamentValueRepository->findById(ATTRIBUTES['id']);
+        return new JsonResponse(
+            data: new TournamentValueResource($repository),
+            status: Response::HTTP_CREATED
+        );
     }
 }

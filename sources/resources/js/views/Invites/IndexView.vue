@@ -123,15 +123,15 @@ export default {
                                 </div>
                             </template>
                             <Column expander style="width: 5rem" />
-                            <Column field="who_user.last_name" header="Фамилия" sortable></Column>
-                            <Column field="who_user.first_name" header="Имя" sortable></Column>
+                            <Column field="user.last_name" header="Фамилия" sortable></Column>
+                            <Column field="user.first_name" header="Имя" sortable></Column>
                             <Column header="Дата рождения" sortable>
                                 <template #body="slotProps">
-                                    {{ this.formatDate(slotProps.data.who_user.birth_date) }}
+                                    {{ this.formatDate(slotProps.data.user.birth_date) }}
                                 </template>
                             </Column>
-                            <Column field="who_user.email" header="Почта"></Column>
-                            <Column field="who_user.phone" header="Номер телефона"></Column>
+                            <Column field="user.email" header="Почта"></Column>
+                            <Column field="user.phone" header="Номер телефона"></Column>
                             <template #expansion="slotProps">
                                 <h5>Мероприятия на которые записан спортсмен ({{ slotProps.data.events.length }} шт)</h5>
                                 <DataTable stripedRows :value="slotProps.data.events">

@@ -39,7 +39,7 @@ class UserReadProcedure extends Procedure
     {
         $user = $request->validated();
         return new JsonResponse(
-            data: $this->operation->findById((int)$user['id']),
+            data: new UserResource($this->operation->findById((int)$user['id'])),
             status: 201
         );
     }

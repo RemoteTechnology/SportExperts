@@ -3,8 +3,7 @@
 namespace App\Services;
 
 use App\Domain\Abstracts\AbstractLogger;
-use App\Domain\Constants\LogLevelEnum;
-use App\Domain\Interfaces\Services\LoggingServiceInterface;
+use App\Domain\Constants\EnumConstants\LogLevelEnum;
 use App\Repository\LoggingRepository;
 use Illuminate\Support\Str;
 

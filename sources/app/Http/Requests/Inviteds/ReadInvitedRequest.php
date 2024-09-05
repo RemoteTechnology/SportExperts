@@ -22,7 +22,7 @@ class ReadInvitedRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'exists:options,id']
+            'id' => ['required']
         ];
     }
 }

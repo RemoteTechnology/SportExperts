@@ -4,6 +4,9 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/EntitiesConst.php';
+
 return new class extends Migration
 {
     /**
@@ -11,47 +14,47 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('participants', function (Blueprint $table) {
-            $table->id();
-            $table->integer('event_id')
+        Schema::create(TABLE_PARTICIPANTS, function (Blueprint $table) {
+            $table->id(FIELD_ID);
+            $table->integer(FIELD_EVENT_ID)
                 ->nullable();
-            $table->integer('user_id')
+            $table->integer(FIELD_USER_ID)
                 ->nullable(false);
-            $table->integer('invited_user_id')
+            $table->integer(FIELD_INVITED_USER_ID)
                 ->nullable();
-            $table->uuid('team_key')
+            $table->uuid(FIELD_TEAM_KEY)
                 ->nullable();
-            $table->uuid('key')
+            $table->uuid(FIELD_KEY)
                 ->unique()
                 ->nullable(false);
             // TODO: связать с опциями "под какими опциями регается спортсмен на событие"
 
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
-            $table->timestamp('deleted_at')
+            $table->timestamp(FIELD_CREATED_AT);
+            $table->timestamp(FIELD_UPDATED_AT);
+            $table->timestamp(FIELD_DELETED_AT)
                 ->nullable();
             // Связи
-            $table->foreign('event_id')
-                ->on('events')
-                ->references('id');
-            $table->foreign('user_id')
-                ->on('users')
-                ->references('id')
+            $table->foreign(FIELD_EVENT_ID)
+                ->on(TABLE_EVENTS)
+                ->references(FIELD_ID);
+            $table->foreign(FIELD_USER_ID)
+                ->on(TABLE_USERS)
+                ->references(FIELD_ID)
                 ->onDelete("CASCADE");
-            $table->foreign('invited_user_id')
-                ->on('users')
-                ->references('id');
-            $table->foreign('team_key')
-                ->on('teams')
-                ->references('key');
+            $table->foreign(FIELD_INVITED_USER_ID)
+                ->on(TABLE_USERS)
+                ->references(FIELD_ID);
+            $table->foreign(FIELD_TEAM_KEY)
+                ->on(TABLE_TEAMS)
+                ->references(FIELD_KEY);
             // Индексы
             $table->index([
-                'id',
-                'event_id',
-                'user_id',
-                'invited_user_id',
-                'team_key',
-                'key',
+                FIELD_ID,
+                FIELD_EVENT_ID,
+                FIELD_USER_ID,
+                FIELD_INVITED_USER_ID,
+                FIELD_TEAM_KEY,
+                FIELD_KEY,
             ]);
         });
     }
@@ -61,6 +64,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('participants');
+        Schema::dropIfExists(TABLE_PARTICIPANTS);
     }
 };

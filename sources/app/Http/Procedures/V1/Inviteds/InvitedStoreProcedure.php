@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Inviteds;
 
-use App\Domain\Constants\ResponseTypeEnum;
+use App\Domain\Constants\EnumConstants\ResponseTypeEnum;
 use App\Http\Requests\Inviteds\InviteStoreRequest;
 use App\Http\Resources\Inviteds\InvitedResource;
 use App\Repository\InvitedRepository;

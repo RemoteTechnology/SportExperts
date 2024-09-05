@@ -3,6 +3,9 @@
 namespace App\Repository;
 
 use App\Domain\Interfaces\Repositories\LCRUD_OperationInterface;
+use App\Models\Event;
+use App\Models\Participant;
+use App\Models\Tournament;
 use App\Models\TournamentValue;
 use App\Repository\Traits\CreateQueryTrait;
 use App\Repository\Traits\DestroyQueryTrait;
@@ -11,6 +14,7 @@ use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\UpdateQueryTrait;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 final class TournamentValueRepository implements LCRUD_OperationInterface
 {
@@ -43,5 +47,100 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
     public function queryExists(array $attributes): mixed
     {
         return $this->model::where($attributes)->first();
+    }
+
+
+    public function removeParticipant(Model $event, array $attributes)
+    {
+        $tournament = Tournament::where(['event_key' => $event->key])->first();
+        $participant = Participant::where([
+            'user_id' => $attributes['user_id'],
+            'event_id' => $event->id
+        ])->first();
+
+        $tournamentValues = $this->model::where([
+            'tournament_id'     => $tournament->id,
+            'participants_A'    => $participant->key,
+        ])->orWhere([
+            'tournament_id'     => $tournament->id,
+            'participants_B'    => $participant->key,
+        ])->latest('id')
+        ->get()
+        ->map(function($item) use ($participant) {
+            $item->participants_key = $participant->key;
+            return $item;
+        })
+        ->first();
+
+        // Если у "participants_A" есть соперник, меняем "participants_A" на значение из "participants_B"
+        // саму колонку "participants_B" затирем
+        if (
+            $tournamentValues->recorded_in === 'participants_A' &&
+            !is_null($tournamentValues->participants_A) &&
+            !is_null($tournamentValues->participants_B)
+        )
+        {
+            $tournamentValues->participants_A = $tournamentValues->participants_B;
+            $tournamentValues->participants_B = null;
+            $tournamentValues->save();
+        }
+        // Если у "participants_A" нет соперника, удаляем запись из таблицы
+        elseif (
+            $tournamentValues->recorded_in === 'participants_A' &&
+            !is_null($tournamentValues->participants_A) &&
+            is_null($tournamentValues->participants_B)
+        )
+        {
+            $tournamentValueQuery = $tournamentValues;
+            $tournamentValueQuery->delete();
+        }
+        // Если принимаем "participants_B" то тупо его убираем
+        elseif ($tournamentValues->recorded_in === 'participants_B')
+        {
+            $tournamentValues->participants_B = null;
+            $tournamentValues->save();
+        }
+        return $tournamentValues;
+    }
+
+    /**
+     * @param Model $event
+     * @param array $attributes
+     * @return Model
+     */
+    public function replaceParticipant(Model $event, array $attributes): Model
+    {
+        $tournament = Tournament::where(['event_key' => $event->key])->first();
+        $event = Event::where(['key' => $attributes['event_key']])->first();
+        $participant = Participant::where([
+            'user_id' => $attributes['user_id'],
+            'event_id' => $event->id
+        ])->first();
+
+        $tournamentValues = TournamentValue::where([
+            'tournament_id' => $tournament->id,
+            'participants_A' => $participant->key
+        ])->orWhere([
+            'tournament_id' => $tournament->id,
+            'participants_B' => $participant->key
+        ])->first();
+
+        if ($tournamentValues->participants_A === $participant->key) $tournamentValues->participants_A = $attributes['new_participant_key'];
+        if ($tournamentValues->participants_B === $participant->key) $tournamentValues->participants_B = $attributes['new_participant_key'];
+        $tournamentValues->save();
+        return $tournamentValues;
+    }
+
+    public function advanceSkipValue(Model $event, $attributes)
+    {
+        $tournament = Tournament::where(['event_key' => $event->key])->first();
+        $participantColumnName = array_key_exists('participants_A', $attributes) ? 'participants_A' : 'participants_B';
+        $tournamentValue = TournamentValue::where([
+            'tournament_id'         => $tournament->id,
+            $participantColumnName  => $attributes[$participantColumnName]
+        ]);
+        $tournamentValue->participants_passes = $attributes[$participantColumnName];
+        $tournamentValue->save();
+        return $tournamentValue;
     }
 }

@@ -8,13 +8,14 @@ use Illuminate\Support\Facades\DB;
 require_once dirname(__DIR__, 4) . '/Domain/Constants/EventStatusesConst.php';
 
 require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/EntitiesConst.php';
 
 class EventOwnerFilterRepository
 {
     public mixed $table;
     public function __construct()
     {
-        $this->table = DB::table(TABLE_EVENT);
+        $this->table = DB::table(TABLE_EVENTS);
     }
     // TODO: Соеденить в 1 метод и назвать это иначе "поиск"
     private function initQuery(Builder $query, array $attributes): Builder

@@ -104,7 +104,7 @@ export default {
         },
         userReadToEvent: function ()
         {
-            let attributes = `invited_user_id:${window.$cookies.get(IDENTIFIER)}`;
+            let attributes = `user_id:${window.$cookies.get(IDENTIFIER)}`;
             getRecordToEventsRequest(attributes, 'after')
                 .then((response) => { console.log(response); this.events = response.data.result.original; })
                 .catch((error) => {
@@ -143,7 +143,7 @@ export default {
                             request_data: attributes.toString() + ', mode:after, limit:9, startDate:false',
                             message: error.message
                         });
-                        this.messageError = MESSAGES.NO_DATA;
+                        // this.messageError = MESSAGES.NO_DATA;
                     });
                 let attributes2 = {
                     filter: `user_id:${window.$cookies.get(IDENTIFIER)}`,
@@ -165,7 +165,7 @@ export default {
                             request_data: attributes2.toString(),
                             message: error.message
                         });
-                        this.messageError = MESSAGES.NO_DATA;
+                        // this.messageError = MESSAGES.NO_DATA;
                     });
 
                 let attributes3 = {
@@ -188,7 +188,7 @@ export default {
                             request_data: attributes3.toString(),
                             message: error.message
                         });
-                        this.messageError = MESSAGES.NO_DATA;
+                        // this.messageError = MESSAGES.NO_DATA;
                     });
             }
         },
@@ -208,7 +208,7 @@ export default {
                         request_data: attributes.toString(),
                         message: error.message
                     });
-                    this.messageError = MESSAGES.NO_DATA;
+                    // this.messageError = MESSAGES.NO_DATA;
                 });
         },
         getOwnerUser: function ()
@@ -258,7 +258,7 @@ export default {
             let attributes = { key: eventKey };
             removeArchiveRequest(attributes)
                 .then((response) => {
-                    this.messageSuccess = MESSAGES.NO_DATA;
+                    // this.messageSuccess = MESSAGES.NO_DATA;
                     this.getEventOwner();
                 })
                 .catch((error) => {
@@ -368,11 +368,11 @@ export default {
                                     <Image src="images/athlete_default_avatar.png" width="30" />
                                 </template>
                             </Column>
-                            <Column field="who_user.first_name" header="Имя"></Column>
-                            <Column field="who_user.last_name" header="Фамилия"></Column>
-                            <Column v-if="this.who_user" header="">
+                            <Column field="user.first_name" header="Имя"></Column>
+                            <Column field="user.last_name" header="Фамилия"></Column>
+                            <Column v-if="this.user" header="">
                                 <template #body>
-                                    <a :href="this.baseUrl + 'invite/detail?user_id=' + this.who_user.id">
+                                    <a :href="this.baseUrl + 'invite/detail?user_id=' + this.user.id">
                                         <Button type="button" label="Подробнее" severity="secondary"/>
                                     </a>
                                 </template>
@@ -440,7 +440,7 @@ export default {
                                                                 <InlineMessage severity="success">Активное событие</InlineMessage>
                                                             </section>
                                                             <section>
-                                                                <p>Участников: {{ this.participants.length > 0 ? this.participants.length : 0 }}</p>
+                                                                <p>Участников: 11</p>
                                                                 <div class="mb-1">
                                                                     <a :href="this.baseUrl + this.route.EVENT + '/detail?id=' + event.id">
                                                                         <Button label="Подробнее" severity="secondary" outlined class="w-100" />
@@ -508,7 +508,7 @@ export default {
                                                                 <InlineMessage severity="secondary">Событие завершено</InlineMessage>
                                                             </section>
                                                             <section>
-                                                                <p>Участников: {{ this.participants.length > 0 ? this.participants.length : 0 }}</p>
+                                                                <p>Участников: 11</p>
                                                                 <div class="mb-1">
                                                                     <a :href="this.baseUrl + this.route.EVENT + '?id=' + event.id">
                                                                         <Button label="Подробнее" severity="secondary" outlined class="w-100" />
@@ -574,7 +574,7 @@ export default {
                                                                 <InlineMessage severity="warn">В архиве</InlineMessage>
                                                             </section>
                                                             <section>
-                                                                <p>Участников: {{ this.participants.length > 0 ? this.participants.length : 0 }}</p>
+                                                                <p>Участников: 11</p>
                                                                 <div class="mb-1">
                                                                     <a :href="this.baseUrl + this.route.EVENT + '?id=' + event.id">
                                                                         <Button label="Подробнее" severity="secondary" outlined class="w-100" />
@@ -642,7 +642,7 @@ export default {
                         </div>
                         <div class="flex gap-3 mt-2">
                             <br>
-                            <a :href="this.baseUrl + this.route.EVENT + this.route.BASE + this.route.HISTORY + '?key=' + event.key">
+                            <a :href="this.baseUrl + this.route.TOURNAMENT + '?event=' + event.key">
                                 <Button label="Подробнее" severity="secondary" outlined class="w-full" />
                             </a>
                         </div>

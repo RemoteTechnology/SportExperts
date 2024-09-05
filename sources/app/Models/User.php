@@ -8,9 +8,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 2) . '/app/Domain/Constants/EntitiesConst.php';
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    protected $table = TABLE_USERS;
 
     /**
      * The attributes that are mass assignable.
@@ -18,20 +23,20 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'first_name',
-        'first_name_eng',
-        'last_name',
-        'last_name_eng',
-        'birth_date',
-        'gender',
-        'email',
-        'phone',
-        'location',
-        'role',
-        'password',
-        'created_at',
-        'updated_at',
-        'deleted_at',
+        FIELD_FIRST_NAME,
+        FIELD_FIRST_NAME_ENG,
+        FIELD_LAST_NAME,
+        FIELD_LAST_NAME_ENG,
+        FIELD_BIRTH_DATE,
+        FIELD_GENDER,
+        FIELD_EMAIL,
+        FIELD_PHONE,
+        FIELD_LOCATION,
+        FIELD_ROLE,
+        FIELD_PASSWORD,
+        FIELD_CREATED_AT,
+        FIELD_UPDATED_AT,
+        FIELD_DELETED_AT,
     ];
 
     /**
@@ -40,6 +45,6 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        FIELD_PASSWORD,
     ];
 }

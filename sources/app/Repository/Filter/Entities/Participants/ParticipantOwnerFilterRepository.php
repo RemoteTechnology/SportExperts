@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/EntitiesConst.php';
 
 class ParticipantOwnerFilterRepository
 {

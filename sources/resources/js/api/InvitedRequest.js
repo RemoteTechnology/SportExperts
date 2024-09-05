@@ -32,3 +32,12 @@ export async function listInvitedRequest(attributes, inviteQuery = new InviteEnd
     inviteQuery.setParams(attributes);
     return await inviteQuery.execute();
 }
+
+export async function readUserParticipantInvitedRequest(attributes, inviteQuery = new InviteEndpointQuery())
+{
+    inviteQuery.setUrl(`${BASE_URL}api/v1/invite/read/participant`);
+    inviteQuery.setHeaders();
+    inviteQuery.setMethod(`${PROCEDURES.invites.readUserParticipant}@${REQUEST_METHOD_DEFAULT}`);
+    inviteQuery.setParams(attributes);
+    return await inviteQuery.execute();
+}
