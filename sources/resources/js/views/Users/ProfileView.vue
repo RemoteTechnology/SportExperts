@@ -1,5 +1,12 @@
 <script>
-import {BASE_URL, TOKEN, IDENTIFIER, MESSAGES, RESPONSE, ENDPOINTS} from '../../constant';
+import {
+    BASE_URL,
+    TOKEN,
+    IDENTIFIER,
+    MESSAGES,
+    RESPONSE,
+    ENDPOINTS
+} from '../../constant';
 import { getUser } from '../../api/UserRequest';
 import { createLogOptionRequest } from '../../api/CreateLogOptionRequest';
 import {
@@ -37,6 +44,7 @@ export default {
     },
     data() {
         return {
+            noData: MESSAGES.NO_DATA,
             baseUrl: BASE_URL,
             currentDate: new Date(),
             route: ENDPOINTS,
@@ -434,10 +442,25 @@ export default {
                                                                 <small>{{ event.expiration_date }} {{ event.expiration_time }}</small>
                                                             </section>
                                                             <section>
-                                                                <p>
-                                                                    <strong>Статус:</strong>
-                                                                </p>
-                                                                <InlineMessage severity="success">Активное событие</InlineMessage>
+                                                                <section>
+                                                                    <p>
+                                                                        <strong>Статус:</strong>
+                                                                    </p>
+                                                                    <InlineMessage severity="success">Активное событие</InlineMessage>
+                                                                </section>
+                                                                <section v-if="event.admins && event.admins.length > 0">
+                                                                    <p>
+                                                                        <strong>Администраторы:</strong>
+                                                                        <ul>
+                                                                            <li v-for="item in event.admins"
+                                                                                :key="item.id"
+                                                                                class="item-admin">
+                                                                                <i class="pi pi-check-circle" style="font-size: 1rem"></i>
+                                                                                <a href="#">{{ item.first_name }} {{ item.last_name }}</a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </p>
+                                                                </section>
                                                             </section>
                                                             <section>
                                                                 <p>Участников: 11</p>
@@ -502,10 +525,25 @@ export default {
                                                                 <small>{{ event.expiration_date }} {{ event.expiration_time }}</small>
                                                             </section>
                                                             <section>
-                                                                <p>
-                                                                    <strong>Статус:</strong>
-                                                                </p>
-                                                                <InlineMessage severity="secondary">Событие завершено</InlineMessage>
+                                                                <section>
+                                                                    <p>
+                                                                        <strong>Статус:</strong>
+                                                                    </p>
+                                                                    <InlineMessage severity="secondary">Событие завершено</InlineMessage>
+                                                                </section>
+                                                                <section v-if="event.admins && event.admins.length > 0">
+                                                                    <p>
+                                                                        <strong>Администраторы:</strong>
+                                                                        <ul>
+                                                                            <li v-for="item in event.admins"
+                                                                                :key="item.id"
+                                                                                class="item-admin">
+                                                                                <i class="pi pi-check-circle" style="font-size: 1rem"></i>
+                                                                                <a href="#">{{ item.first_name }} {{ item.last_name }}</a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </p>
+                                                                </section>
                                                             </section>
                                                             <section>
                                                                 <p>Участников: 11</p>
@@ -568,10 +606,25 @@ export default {
                                                                 <small>{{ event.expiration_date }} {{ event.expiration_time }}</small>
                                                             </section>
                                                             <section>
-                                                                <p>
-                                                                    <strong>Статус:</strong>
-                                                                </p>
-                                                                <InlineMessage severity="warn">В архиве</InlineMessage>
+                                                                <section>
+                                                                    <p>
+                                                                        <strong>Статус:</strong>
+                                                                    </p>
+                                                                    <InlineMessage severity="warn">В архиве</InlineMessage>
+                                                                </section>
+                                                                <section v-if="event.admins && event.admins.length > 0">
+                                                                    <p>
+                                                                        <strong>Администраторы:</strong>
+                                                                        <ul>
+                                                                            <li v-for="item in event.admins"
+                                                                                :key="item.id"
+                                                                                class="item-admin">
+                                                                                <i class="pi pi-check-circle" style="font-size: 1rem"></i>
+                                                                                <a href="#">{{ item.first_name }} {{ item.last_name }}</a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </p>
+                                                                </section>
                                                             </section>
                                                             <section>
                                                                 <p>Участников: 11</p>
@@ -648,6 +701,9 @@ export default {
                         </div>
                     </template>
                 </Card>
+                <section v-if="this.events.length === 0" class="w-100">
+                    <InlineMessage severity="info" class="w-100 mt-5">{{ this.noData }}</InlineMessage>
+                </section>
                 <!--    <section v-if="this.events && this.events[this.response.data].length > 9" class="mt-5 mb-5">-->
                 <!--    <Paginator :rows="9" :totalRecords="120"></Paginator>-->
                 <!--    </section>-->

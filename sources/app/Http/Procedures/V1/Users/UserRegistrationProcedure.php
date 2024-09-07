@@ -43,13 +43,13 @@ class UserRegistrationProcedure extends Procedure
      */
     public function handle(Request $http, RegistrationUserRequest $request): JsonResponse
     {
-        $inputData = $request->validated();
+        $attributes = $request->validated();
 //        try {
-            $inputData['password'] = Hash::make($inputData['password']);
-            $inputData['role'] = key_exists('role', $inputData) ? $inputData['role'] : 'athlete'; //'admin';
+        $attributes['password'] = Hash::make($attributes['password']);
+        $attributes['role'] = key_exists('role', $attributes) ? $attributes['role'] : 'athlete'; //'admin';
 
             if ($user = new UserResource(
-                $this->operation->store($inputData)
+                $this->operation->store($attributes)
             )) {
                 $this->mailingService->mailNewUser([FIELD_EMAIL => $user->email]);
                 return new JsonResponse(

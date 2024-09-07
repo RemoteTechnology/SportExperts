@@ -8,6 +8,7 @@ use App\Http\Requests\Events\UpdateEventRequest;
 use App\Http\Resources\Events\EventResource;
 use App\Repository\EventRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Sajya\Server\Procedure;
 
 class EventUpdateProcedure extends Procedure
@@ -34,15 +35,15 @@ class EventUpdateProcedure extends Procedure
      */
     public function handle(UpdateEventRequest $request): JsonResponse
     {
-        $event = $request->validated();
+        $attributes = $request->validated();
         return new JsonResponse(
             data: new EventResource(
                 $this->operation->update(
-                    $this->operation->findById((int)$event['id']),
-                    $event
+                    $this->operation->findById((int)$attributes['id']),
+                    $attributes
                 )
             ),
-            status: 201
+            status: Response::HTTP_CREATED
         );
     }
 }

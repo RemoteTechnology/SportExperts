@@ -36,8 +36,8 @@ return new class extends Migration
                 ->on(TABLE_PARTICIPANTS)
                 ->references(FIELD_KEY);
             $table->foreign(FIELD_PARTICIPANTS_PASSES)
-                ->on(TABLE_USERS)
-                ->references(FIELD_ID);
+                ->on(TABLE_PARTICIPANTS)
+                ->references(FIELD_KEY);
             // Индексы
             $table->index([
                 FIELD_ID,

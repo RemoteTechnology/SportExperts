@@ -11,6 +11,9 @@
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
+a {
+    text-decoration: none;
+}
 html, body{
     margin: 0;
     height: 100%;
@@ -56,7 +59,9 @@ ul li{
 .p-1{
     padding: 1em;
 }
-
+.m-card-list{
+    margin: 0.8em 0.6em!important;
+}
 .mt-06{
     margin-top: 0.6em;
 }
@@ -213,4 +218,17 @@ ul li{
     color: #fff;
     font-weight: 900;
     text-align: center;
+}
+
+ul li.item-admin{
+    position: relative;
+    left: -25%;
+    top: -0.3em;
+}
+ul li.item-admin a{
+    position: relative;
+    left: 3%;
+}
+ul li.item-admin i {
+    color: #22c55e;
 }

@@ -7,6 +7,7 @@ namespace App\Http\Procedures\V1\Events;
 use App\Http\Requests\Events\StoreEventRequest;
 use App\Http\Resources\Events\EventResource;
 use App\Repository\EventRepository;
+use App\Repository\TournamentAdminRepository;
 use App\Repository\TournamentRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
@@ -25,10 +26,17 @@ class EventStoreProcedure extends Procedure
 
     private EventRepository $eventRepository;
     private TournamentRepository $tournamentRepository;
+    private TournamentAdminRepository $tournamentAdminRepository;
 
-    public function __construct(EventRepository $eventRepository, TournamentRepository $tournamentRepository) {
+    public function __construct(
+        EventRepository $eventRepository,
+        TournamentRepository $tournamentRepository,
+        TournamentAdminRepository $tournamentAdminRepository
+    )
+    {
         $this->eventRepository = $eventRepository;
         $this->tournamentRepository = $tournamentRepository;
+        $this->tournamentAdminRepository = $tournamentAdminRepository;
     }
 
     /**
@@ -45,11 +53,20 @@ class EventStoreProcedure extends Procedure
         $eventAttributes['key'] = Str::uuid()->toString();
         $event = $this->eventRepository->store($eventAttributes);
 
-        $this->tournamentRepository->store([
-            'key'       => Str::uuid()->toString(),
-            'event_key' => $event->key,
-            'stage'     => 1
-        ]);
+        if ($event) {
+            define("DEFAULT_STAGE", 1);
+            $tournament = $this->tournamentRepository->store([
+                'key'       => Str::uuid()->toString(),
+                'event_key' => $event->key,
+                'stage'     => DEFAULT_STAGE
+            ]);
+
+            if ($tournament) {
+                $tournamentAdmin['tournament_id'] = $tournament->id;
+                $tournamentAdmin['user_id'] = $event->user_id;
+                $this->tournamentAdminRepository->store($tournamentAdmin);
+            }
+        }
 
         return new JsonResponse(
             data: new EventResource($event),

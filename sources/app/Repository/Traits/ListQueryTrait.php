@@ -4,6 +4,9 @@ namespace App\Repository\Traits;
 
 use Illuminate\Database\Eloquent\Collection;
 
+require_once dirname(__DIR__, 2) . '/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 2) . '/Domain/Constants/EventStatusesConst.php';
+
 trait ListQueryTrait
 {
     /**
@@ -15,10 +18,9 @@ trait ListQueryTrait
         return $mode === 'list'
             ? $this->model::all()
             : $this->model
-                ->orderBy('start_date', 'desc')
-                ->orderBy('start_time', 'desc')
-                ->orderByDesc('start_date')
-                ->orderByDesc('start_time')
+                ->where([FIELD_STATUS => EVENT_ACTIVE])
+                ->orderByDesc(FIELD_START_DATE)
+                ->orderByDesc(FIELD_START_TIME)
                 ->paginate(12);
 
     }

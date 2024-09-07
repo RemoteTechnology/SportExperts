@@ -19,8 +19,8 @@ import {createOptionRequest, getOptionRequest} from "../../api/OptionRequest";
 export default {
     data() {
       return {
-          messageSuccess: false,
-          messageError: false,
+          messageSuccess: null,
+          messageError: null,
           route: ENDPOINTS,
           currentDate: new Date(),
           baseUrl: BASE_URL,
@@ -81,7 +81,7 @@ export default {
                 birth_date: this.user.birth_date,
             };
             updateUserRequest(attributes)
-                .then((response) => { if (response.status === 200) { this.messageSuccess = true; } })
+                .then((response) => { if (response.status === 200) { this.messageSuccess = 'Данные сохранены'; } })
                 .catch((error) => {
                     createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -98,7 +98,7 @@ export default {
         {
             let attributes = { id: window.$cookies.get(IDENTIFIER), email: this.user.email };
             updateUserRequest(attributes)
-                .then((response) => { if (response.status === 200) { this.messageSuccess = true; } })
+                .then((response) => { if (response.status === 200) { this.messageSuccess = 'Данные сохранены'; } })
                 .catch((error) => {
                     createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -115,7 +115,7 @@ export default {
         {
             let attributes = { id: window.$cookies.get(IDENTIFIER), phone: this.user.phone };
             updateUserRequest(attributes)
-                .then((response) => { if (response.status === 200) { this.messageSuccess = true; } })
+                .then((response) => { if (response.status === 200) { this.messageSuccess = 'Данные сохранены'; } })
                 .catch((error) => {
                     createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
@@ -184,7 +184,6 @@ export default {
                 }
                 else
                 {
-                    console.log(123)
                     await this.userOptionsCreate(i);
                 }
             }
@@ -219,20 +218,14 @@ export default {
 
 <template>
     <section class="d-flex d-center">
-        <section class="mt-1 mb-2" v-if="this.messageError">
-            <Message severity="error">{{ this.messageError }}</Message>
-        </section>
-        <section class="mt-1 mb-2" v-if="this.messageSuccess">
-            <Message severity="success">{{ this.messageSuccess }}</Message>
-        </section>
         <section class="mt-2 w-30 mb-5">
             <div class="text-center mt-3 mb-3">
                 <h2>Настройки профиля</h2>
-                <section class="mt-1 mb-2" v-if="this.messageSuccess">
-                    <Message severity="success">Данные сохранены!</Message>
-                </section>
                 <section class="mt-1 mb-2" v-if="this.messageError">
                     <Message severity="error">{{ this.messageError }}</Message>
+                </section>
+                <section class="mt-1 mb-2" v-if="this.messageSuccess">
+                    <Message severity="success">{{ this.messageSuccess }}</Message>
                 </section>
             </div>
             <Card>
@@ -372,26 +365,46 @@ export default {
                 <template #content>
                     <h3>Параметры спортсмена</h3>
                     <small>Параметры учитываются в алгоритме жеребьёвки. Их желательно заполнить.</small>
-                    <section class="d-flex d-center">
-                        <div class="form-block w-100">
-                            <label for="name">Рост</label>
-                            <InputText type="number"
-                                       v-model="this.options[1].value"
-                                       class="w-100"
-                                       :value="this.options[1].value"
-                                       required />
-                        </div>
-                    </section>
-                    <section class="d-flex d-center">
-                        <div class="form-block w-100">
+                    <section v-for="item in this.user.options"
+                             :key="item.id"
+                             class="d-flex d-center">
+                        <div v-if="item.name === 'Weight'" class="form-block w-100">
                             <label for="name">Вес</label>
                             <InputText type="number"
                                        v-model="this.options[0].value"
                                        class="w-100"
-                                       :value="this.options[0].value"
+                                       :value="item.value"
+                                       required />
+                        </div>
+                        <div v-else-if="item.name === 'Height'" class="form-block w-100">
+                            <label for="name">Рост</label>
+                            <InputText type="number"
+                                       v-model="this.options[1].value"
+                                       class="w-100"
+                                       :value="item.value"
                                        required />
                         </div>
                     </section>
+<!--                    <section class="d-flex d-center">-->
+<!--                        <div class="form-block w-100">-->
+<!--                            <label for="name">Рост</label>-->
+<!--                            <InputText type="number"-->
+<!--                                       v-model="this.options[1].value"-->
+<!--                                       class="w-100"-->
+<!--                                       :value="this.options[1].value"-->
+<!--                                       required />-->
+<!--                        </div>-->
+<!--                    </section>-->
+<!--                    <section class="d-flex d-center">-->
+<!--                        <div class="form-block w-100">-->
+<!--                            <label for="name">Вес</label>-->
+<!--                            <InputText type="number"-->
+<!--                                       v-model="this.options[0].value"-->
+<!--                                       class="w-100"-->
+<!--                                       :value="this.options[0].value"-->
+<!--                                       required />-->
+<!--                        </div>-->
+<!--                    </section>-->
                     <Button type="button"
                             label="Обновить параметры"
                             class="w-100 mt-3"

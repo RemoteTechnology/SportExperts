@@ -19,6 +19,7 @@ import Card from 'primevue/card';
 import Calendar from 'primevue/calendar';
 import FileUpload from 'primevue/fileupload';
 import {createLogOptionRequest} from "../../api/CreateLogOptionRequest";
+import {deleteOptionRequest} from "../../api/OptionRequest";
 
 export default {
     data() {
@@ -48,6 +49,7 @@ export default {
                 expiration_date: null,
                 expiration_time: null,
             },
+            file: null,
             options: []
         };
     },
@@ -80,6 +82,24 @@ export default {
         },
         removeOption: function (idx)
         {
+            if ('id' in this.options[idx])
+            {
+                const attributes = {
+                    id: this.options[idx].id
+                };
+                deleteOptionRequest(attributes)
+                    .catch((error) => {
+                        createLogOptionRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'deleteOptionRequest',
+                            status: error.code,
+                            request_data: attributes.toString(),
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.ERROR_ERROR;
+                    });
+            }
             this.options.splice(idx, 1);
         },
         onUpload() {
@@ -93,7 +113,7 @@ export default {
             try {
                 let inputFile = await this.onUpload()
                     .then((response) => {
-                        this.event.image = response.data.key;
+                        this.file = response.data.key;
                     })
                     .catch((error) => {
                         createLogOptionRequest({
@@ -116,7 +136,7 @@ export default {
                 user_id: window.$cookies.get(IDENTIFIER),
                 name: this.event.name,
                 description: this.event.description,
-                image: this.event.image,
+                image: this.file,
                 location: this.event.location,
                 start_date: this.event.start_date,
                 start_time: this.event.start_time,
@@ -177,6 +197,7 @@ export default {
         },
         updateEvent: async function()
         {
+            // TODO: смещение даты назад
             let attributes = {
                 id: this.event.id,
                 name: this.event.name,
@@ -189,7 +210,7 @@ export default {
             };
             if (this.$refs.fileInput.files[0])
             {
-                attributes.image = this.event.image.key;
+                attributes.image = this.file
             }
             updateEventRequest(attributes)
                 .then((response) => {
@@ -212,16 +233,16 @@ export default {
         {
             for (let i=0; i < this.options.length; i++)
             {
-                let option = {
-                    event_key: this.event.key,
-                    entity: 'event',
-                    name: this.options[i].name,
-                    value: this.options[i].value,
-                    type: this.options[i].type,
-                };
                 if (Object.hasOwn(this.options[i], 'id'))
                 {
-                    updateEventOptionRequest(option)
+                    let attributes = {
+                        event_key: this.event.key,
+                        entity: 'event',
+                        name: this.options[i].name,
+                        value: this.options[i].value,
+                        type: this.options[i].type,
+                    };
+                    updateEventOptionRequest(attributes)
                         .then((response) => { this.options = response.data.result.original; })
                         .catch((error) => {
                             createLogOptionRequest({
@@ -237,7 +258,14 @@ export default {
                 }
                 else
                 {
-                    createEventOptionRequest(option)
+                    const attributes = {
+                        event_key: this.event.key,
+                        entity: 'event',
+                        name: this.options[i].name,
+                        value: this.options[i].value,
+                        type: 'string',
+                    };
+                    createEventOptionRequest(attributes)
                         .then((response) => { this.options = response.data.result.original; })
                         .catch((error) => {
                             createLogOptionRequest({
@@ -291,11 +319,11 @@ export default {
                     });
             }
         },
-        editorLoad: function ({instance})
-        {
-            const delta = this.$refs.editor.quill.clipboard.convert({ html: this.event.description });
-            this.$refs.editor.quill.setContents(delta, 'silent');
-        }
+        // editorLoad: function ({instance})
+        // {
+        //     const delta = this.$refs.editor.quill.clipboard.convert({ html: this.event.description });
+        //     this.$refs.editor.quill.setContents(delta, 'silent');
+        // }
     },
     beforeMount() {
         this.getUserId();
