@@ -8,6 +8,7 @@ use App\Http\Resources\Participants\ParticipantCollection;
 use App\Http\Resources\Participants\ParticipantResource;
 use App\Repository\ParticipantRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Sajya\Server\Procedure;
 
 class ParticipantListProcedure extends Procedure
@@ -35,7 +36,7 @@ class ParticipantListProcedure extends Procedure
         $participants = new ParticipantCollection($this->operation->list('paginate'));
         return new JsonResponse(
             data: $participants->resource,
-            status: 201
+            status: Response::HTTP_CREATED
         );
     }
 }

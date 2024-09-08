@@ -15,9 +15,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class InvitedResource extends JsonResource
 {
-    private function setParticipants(array &$response): void
+    private function setParticipants(array &$response, int $user_id): void
     {
-        $response['participants'] = Participant::where(['user_id' => $response['user']['id']])->get();
+        $response['participants'] = Participant::where(['user_id' => $user_id])->get();
         $response['events'] = [];
         foreach ($response['participants'] as $participant)
         {
@@ -39,7 +39,7 @@ class InvitedResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array
+    public function toArray(Request $request): mixed
     {
         $response = [
             'id' => $this->id,
@@ -47,11 +47,10 @@ class InvitedResource extends JsonResource
             'who_user' => new UserResource(User::find($this->who_user_id)),
             'user' => new UserResource(User::find($this->user_id)),
         ];
-        $this->setParticipants($response);
-        $this->setParticipants($response);
+        if (!is_null($response['user'])) $this->setParticipants($response, $this->user_id);
         if (key_exists('enable_events', $request->toArray()) && (boolean)$request->toArray()['enable_events'])
         {
-            $this->setParticipants($response);
+            if (!is_null($response['user'])) $this->setParticipants($response, $this->user_id);
         }
         $this->setOptions($response);
         return $response;

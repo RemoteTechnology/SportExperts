@@ -88,7 +88,7 @@ export default {
                     request_data: attributes.toString(),
                     message: error.message
                 });
-                this.messageError = MESSAGES.ERROR_ERROR;
+                this.messageError = MESSAGES.ERROR_ERROR  + ' 1';
             }
         },
         tyingAthlete() {
@@ -229,11 +229,13 @@ export default {
                     this.messageError = MESSAGES.NO_DATA;
                 });
         },
-        skipToParticipant: async function()
+        skipToParticipant: async function(participant)
         {
             const attributes = {
-
+                event_key: this.eventKey,
+                ...participant
             };
+            console.log(attributes)
             await participantUserSkipAdditionallyRequest(attributes)
                 .then((response) => { console.log(response); })
                 .catch(async (error) => {
@@ -260,9 +262,17 @@ export default {
                 user_id: userId,
             };
             tournamentValueCreateRequest(attributes)
-                .then((response) => { console.log(response); })
+                .then(async (response) => {
+                    await this.getListParticipants(this.eventKey, 'page');
+                    await this.readTournament();
+                    await this.$nextTick(() => {
+                        this.tyingAthlete();
+                    });
+
+
+
+                })
                 .catch(async (error) => {
-                    console.log(error);
                     await createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -271,7 +281,6 @@ export default {
                         request_data: attributes.toString(),
                         message: error.message
                     });
-                    this.messageError = MESSAGES.NO_DATA;
                 });
         },
     },
@@ -319,12 +328,13 @@ export default {
                         <Button label="Дисквалифицировать"
                                 severity="danger"
                                 class="w-100"
-                                @click="this.dropTournamentParticipant()"/>
+                                @click="this.dropTournamentParticipant()" />
                     </div>
                     <div class="mb-2">
                         <Button label="Пропустить"
                                 severity="success"
-                                class="w-100" />
+                                class="w-100"
+                                @click="this.skipToParticipant({user_id: this.participant.user.id})" />
                     </div>
                 </div>
             </section>
@@ -398,7 +408,7 @@ export default {
                                         <section class="w-30 d-flex d-end">
                                             <Button icon="pi pi-arrow-right"
                                                     aria-label="Success"
-                                                    @click="this.createParticipantTournament(slotProps.item.user.id)"/>
+                                                    @click="this.createParticipantTournament(slotProps.item.user.id)" />
                                         </section>
                                     </section>
                                 </template>
@@ -420,13 +430,13 @@ export default {
                         id="tid"
                         class="d-flex d-between d-align-center">
                     <section v-for="value in this.tournamentDetails.values"  style="width: 150%;">
-                        <section id="step-tournament">
-                            <Card class="mb-3">
-                                <template #content>
-                                    <strong># 1 ЭТАП</strong>
-                                </template>
-                            </Card>
-                        </section>
+<!--                        <section id="step-tournament">-->
+<!--                            <Card class="mb-3">-->
+<!--                                <template #content>-->
+<!--                                    <strong># 1 ЭТАП</strong>-->
+<!--                                </template>-->
+<!--                            </Card>-->
+<!--                        </section>-->
                         <section id="body-tournament">
                             <Card class="mt-1">
                                 <template #content>

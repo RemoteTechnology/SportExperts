@@ -42,7 +42,7 @@ class ParticipantSkippedProcedure extends Procedure
     public function handle(ParticipantSkippedRequest $request)
     {
         $attributes = $request->validated();
-        $event = $this->eventRepository->findById($attributes['event_id']);
+        $event = $this->eventRepository->findByKey($attributes['event_key']);
 
         return new JsonResponse(
             data: new TournamentValueResource($this->tournamentValueRepository->advanceSkipValue($event, $attributes)),

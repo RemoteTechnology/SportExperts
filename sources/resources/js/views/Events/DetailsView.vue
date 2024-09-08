@@ -209,7 +209,7 @@ export default {
         {
             let attributes = { who_user_id: window.$cookies.get(IDENTIFIER) };
             getInvitedOwnerRequest(attributes)
-                .then((response) => { this.invites = response.data.result.original; })
+                .then((response) => { console.log(response); this.invites = response.data.result.original; })
                 .catch((error) => {
                     console.log(error)
                     createLogOptionRequest({

@@ -6,12 +6,17 @@ namespace App\Http\Procedures\V1\Inviteds;
 
 use App\Http\Requests\Inviteds\InvitedListRequest;
 use App\Http\Resources\Inviteds\InvitedCollection;
+use App\Models\Invite;
 use App\Repository\InvitedRepository;
 use App\Repository\OptionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Sajya\Server\Procedure;
+
+require_once dirname(__DIR__, 4) . '/Domain/Constants/EntitiesConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
 
 class InvitedListProcedure extends Procedure
 {
@@ -22,10 +27,10 @@ class InvitedListProcedure extends Procedure
      */
     public static string $name = 'InvitedListProcedure';
 
-    private InvitedRepository $operation;
+    private InvitedRepository $invitesRepository;
 
-    public function __construct(InvitedRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(InvitedRepository $invitesRepository) {
+        $this->invitesRepository = $invitesRepository;
     }
 
     /**
@@ -37,17 +42,12 @@ class InvitedListProcedure extends Procedure
      */
     public function handle(InvitedListRequest $request): JsonResponse
     {
-//        $invites = new InvitedCollection($this->operation->list('paginate')->where(['who_user_id' => $request->validated()['who_user_id']]));
-        $invites = $request->validated();
-        $invitesList = new InvitedCollection(
-            DB::table('invites')
-                ->select('*')
-                ->where(['who_user_id' => (int)$invites['who_user_id']])
-                ->paginate(12)
-        );
+        $attributes = $request->validated();
+        $invites = Invite::where([FIELD_WHO_USER_ID => (int)$attributes[FIELD_WHO_USER_ID]])->get();
+        $collectData = new InvitedCollection($invites);
         return new JsonResponse(
-            data: $invitesList->collection,
-            status: 201
+            data: $collectData->resource,
+            status: Response::HTTP_CREATED
         );
     }
 }

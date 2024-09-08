@@ -13,15 +13,20 @@ trait ListQueryTrait
      * @param string $mode
      * @return Collection
      */
-    public function list(string $mode='list'): mixed
+    public function list(
+        string $mode='list',
+        bool $status = false,
+        bool $currentDateTime = false
+    ): mixed
     {
-        return $mode === 'list'
-            ? $this->model::all()
-            : $this->model
-                ->where([FIELD_STATUS => EVENT_ACTIVE])
-                ->orderByDesc(FIELD_START_DATE)
-                ->orderByDesc(FIELD_START_TIME)
-                ->paginate(12);
+        if ($mode === 'list')
+        {
+            return $this->model::all();
+        }
+
+        if ($status) $this->model->where([FIELD_STATUS => EVENT_ACTIVE]);
+        if ($currentDateTime)  $this->model->orderByDesc(FIELD_START_DATE)->orderByDesc(FIELD_START_TIME);
+        return $this->model->paginate(12);
 
     }
 }
