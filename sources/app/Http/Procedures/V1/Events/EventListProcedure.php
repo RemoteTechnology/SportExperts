@@ -32,7 +32,8 @@ class EventListProcedure extends Procedure
      */
     public function handle(): JsonResponse
     {
-        $events = new EventCollection($this->operation->list('paginate'));
+        define('DEFAULT_MODE', 'paginate');
+        $events = new EventCollection($this->operation->list(DEFAULT_MODE, true, true));
         return new JsonResponse(
             data: $events->resource,
             status: 201

@@ -114,9 +114,9 @@ export default {
         eventList: async function ()
         {
             await getEventListRequest()
-                .then((response) => { this.events = response.data.result.original; })
-                .catch((error) => {
-                    createLogOptionRequest({
+                .then(async (response) => { this.events = await response.data.result.original; })
+                .catch(async (error) => {
+                    await createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'getUser',
@@ -269,11 +269,11 @@ export default {
         <section class="mt-1 mb-2" v-if="this.messageSuccess">
             <Message severity="success">{{ this.messageSuccess }}</Message>
         </section>
-        <section class="container d-flex d-between d-flex-wrap">
+        <section class="container d-flex d-flex-wrap">
             <Card v-for="event in this.events[this.response.data]"
                   v-key="event"
                   style="overflow: hidden"
-                  class="mb-3 w-22">
+                  class="mb-3 m-card-list w-22">
                 <template #header>
                     <div :style="
                             'background-size: cover;' +

@@ -22,9 +22,8 @@ class ParticipantSkippedRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_id'              => ['required', 'numeric'],
-            'participants_A'        => ['nullable', 'string'],
-            'participants_B'        => ['nullable', 'string']
+            'event_key'     => ['required', 'string'],
+            'user_id'       => ['nullable', 'numeric']
         ];
     }
 }

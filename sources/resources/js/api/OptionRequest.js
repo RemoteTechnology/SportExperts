@@ -32,3 +32,12 @@ export async function getOptionRequest(attributes, optionQuery = new OptionEndpo
     optionQuery.setParams(attributes);
     return await optionQuery.execute();
 }
+
+export async function deleteOptionRequest(attributes, optionQuery = new OptionEndpointQuery())
+{
+    optionQuery.setUrl(`${BASE_URL}api/v1/option/destroy`);
+    optionQuery.setHeaders();
+    optionQuery.setMethod(`${PROCEDURES.option.delete}@${REQUEST_METHOD_DEFAULT}`);
+    optionQuery.setParams(attributes);
+    return await optionQuery.execute();
+}

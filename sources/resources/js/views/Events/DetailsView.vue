@@ -25,6 +25,8 @@ export default {
             route: ENDPOINTS,
             messageError: null,
             messageSuccess: null,
+            messageInviteDialogSuccess: null,
+            messageInviteDialogError: null,
             user: null,
             eventId: null,
             event: null,
@@ -71,22 +73,25 @@ export default {
         },
         userIdentifier: async function ()
         {
-            let attributes = {id: window.$cookies.get(IDENTIFIER)};
-            await getUser(attributes)
-                .then((response) => {
-                    this.user = response.data.result.original;
-                })
-                .catch((error) => {
-                    createLogOptionRequest({
-                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                        method: 'getUserRequest',
-                        status: error.code,
-                        request_data: attributes.toString(),
-                        message: error.message
+            if (window.$cookies.get(IDENTIFIER))
+            {
+                let attributes = {id: window.$cookies.get(IDENTIFIER)};
+                await getUser(attributes)
+                    .then((response) => {
+                        this.user = response.data.result.original;
+                    })
+                    .catch((error) => {
+                        createLogOptionRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'getUserRequest',
+                            status: error.code,
+                            request_data: attributes.toString(),
+                            message: error.message
+                        });
+                        this.messageError = MESSAGES.LOADING_ERROR + ' 1';
                     });
-                    this.messageError = MESSAGES.LOADING_ERROR;
-                });
+            }
         },
         getUrl: function ()
         {
@@ -108,7 +113,7 @@ export default {
                         request_data: attributes.toString(),
                         message: error.message
                     });
-                    this.messageError = MESSAGES.LOADING_ERROR;
+                    this.messageError = MESSAGES.LOADING_ERROR + ' 2';
                 });
         },
         search(event)
@@ -117,7 +122,6 @@ export default {
         },
         recordToInvitedUser: async function ()
         {
-            // Параметры user_id и invited_user_id перепутаны, надо смириться с этим и однажды вспомнить...
             let attributes = {
                 event_id: this.eventId,
                 user_id: window.$cookies.get(IDENTIFIER),
@@ -150,7 +154,7 @@ export default {
 
             await addNotificationUserInviteEventRequest(attributes)
                 .then((response) => {
-                    this.messageSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
+                    this.messageInviteDialogSuccess = response.data.result.original ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
                     this.invitedEmail = '';
                 })
                 .catch((error) => {
@@ -162,7 +166,7 @@ export default {
                         request_data: attributes.toString(),
                         message: error.message
                     });
-                    this.messageError = MESSAGES.ERROR_ERROR;
+                    this.messageInviteDialogError = MESSAGES.ERROR_ERROR;
                 });
         },
         inviteToEvent: async function ()
@@ -205,7 +209,7 @@ export default {
         {
             let attributes = { who_user_id: window.$cookies.get(IDENTIFIER) };
             getInvitedOwnerRequest(attributes)
-                .then((response) => { this.invites = response.data.result.original; })
+                .then((response) => { console.log(response); this.invites = response.data.result.original; })
                 .catch((error) => {
                     console.log(error)
                     createLogOptionRequest({
@@ -216,7 +220,7 @@ export default {
                         request_data: attributes.toString(),
                         message: error.message
                     });
-                    this.messageError = MESSAGES.LOADING_ERROR;
+                    this.messageError = MESSAGES.LOADING_ERROR + ' 3';
                 });
         }
     },
@@ -241,6 +245,12 @@ export default {
             header="Пригласить участника"
             :style="{ width: '50rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <section class="mt-1 mb-2" v-if="this.messageInviteDialogError">
+            <Message severity="error">{{ this.messageInviteDialogError }}</Message>
+        </section>
+        <section class="mt-1 mb-2" v-if="this.messageInviteDialogSuccess">
+            <Message severity="success">{{ this.messageInviteDialogSuccess }}</Message>
+        </section>
         <div v-if="this.invites.length > 0" class="mb-3">
             <label class="font-semibold w-6rem">Выберите спортсмена из списка</label>
             <Listbox v-model="this.selectedInvite"
@@ -281,12 +291,20 @@ export default {
                 <div class="mt-3">
                     <h3>ИНФОРМАЦИЯ</h3>
                     <br>
-                    <p style="
+<!--                    <p style="-->
+<!--                        white-space: break-spaces;-->
+<!--                        line-height: 120%;-->
+<!--                        color: #323232;-->
+<!--                        width: 90%;-->
+<!--                    ">{{ this.stripHtmlTags(this.event.description) }}</p>-->
+
+                    <p v-html="this.event.description"
+                        style="
                         white-space: break-spaces;
                         line-height: 120%;
                         color: #323232;
                         width: 90%;
-                    ">{{ this.stripHtmlTags(this.event.description) }}</p>
+                    "></p>
                 </div>
             </div>
             <div class="w-50">

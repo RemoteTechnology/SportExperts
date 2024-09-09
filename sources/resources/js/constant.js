@@ -41,6 +41,7 @@ export const PROCEDURES = {
         create:                 'OptionStoreProcedure',
         read:                   'OptionReadProcedure',
         update:                 'OptionUpdateProcedure',
+        delete:                 'OptionDestroyProcedure',
     },
     participant: {
         create:                 'ParticipantStoreProcedure',
