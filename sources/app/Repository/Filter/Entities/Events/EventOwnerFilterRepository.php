@@ -33,7 +33,7 @@ class EventOwnerFilterRepository
         if ($datetimeNow)
         {
             date_default_timezone_set('Europe/Moscow');
-            return $event->where(['start_date' => date('Y-m-d')]);
+            return $event->where([FIELD_START_DATE => date('Y-m-d')]);
         }
         return $event;
     }
@@ -46,8 +46,8 @@ class EventOwnerFilterRepository
         {
             $events->where(['status' => $status]);
         }
-        $events->orderBy('start_date', 'desc');
-        $events->orderBy('start_time', 'desc');
+        $events->orderBy(FIELD_START_DATE, 'desc');
+        $events->orderBy(FIELD_START_TIME, 'desc');
         return $events->paginate($limit);
     }
 }

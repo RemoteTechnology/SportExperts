@@ -4,6 +4,8 @@ namespace App\Http\Requests\Participants;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class StoreParticipantReqest extends FormRequest
 {
     /**
@@ -22,10 +24,10 @@ class StoreParticipantReqest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_id'          => ['required', 'numeric', 'exists:events,id'],
-            'user_id'           => ['required', 'numeric', 'exists:users,id'],
-            'invited_user_id'   => ['required', 'exists:users,id'],
-            'team_key'          => ['nullable', 'exists:teams,key'],
+            FIELD_ID                => ['required', 'numeric', 'exists:events,id'],
+            FIELD_USER_ID           => ['required', 'numeric', 'exists:users,id'],
+            FIELD_INVITED_USER_ID   => ['required', 'exists:users,id'],
+            FIELD_TEAM_KEY          => ['nullable', 'exists:teams,key'],
         ];
     }
 }

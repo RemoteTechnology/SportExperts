@@ -9,15 +9,14 @@ use App\Http\Requests\Filter\ParticipantFilterRequest;
 use App\Http\Resources\Events\EventCollection;
 use App\Repository\Filter\Entities\Events\EventOwnerFilterRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
 
 class EventOwnerFilterProcedure extends AbstractFilter
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'EventOwnerFilterProcedure';
+    public static string $name = PROCEDURE_EVENT_FILTER_EVENT_OWNER;
     private EventOwnerFilterRepository $filterRepository;
 
     public function __construct(EventOwnerFilterRepository $filterRepository)
@@ -26,25 +25,26 @@ class EventOwnerFilterProcedure extends AbstractFilter
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param ParticipantFilterRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(ParticipantFilterRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $events = new EventCollection($this->filterRepository->filter(
-            $this->formatDate($data),
-            $data['limit'],
-            key_exists('start_date', $data) ? $data['start_date'] : false,
-            key_exists('status', $data) ? $data['status'] : null,
-        ));
+        define('ATTRIBUTES', $request->validated());
+        $format = $this->formatDate(ATTRIBUTES);
+        $repository = $this->filterRepository->filter(
+            $format,
+            ATTRIBUTES[FIELD_LIMIT],
+            key_exists(FIELD_START_DATE, ATTRIBUTES) ? ATTRIBUTES[FIELD_START_DATE] : false,
+            key_exists(FIELD_STATUS, ATTRIBUTES) ? ATTRIBUTES[FIELD_STATUS] : null,
+        );
+        $collectData = new EventCollection($repository);
 
         return new JsonResponse(
-            data: $events->resource,
-            status: 201
+            data: [
+                FIELD_ATTRIBUTES => $collectData->resource
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

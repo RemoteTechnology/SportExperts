@@ -13,3 +13,11 @@ export async function tournamentValueCreateRequest(attributes, tournamentValueQu
     tournamentValueQuery.setParams(attributes);
     return await tournamentValueQuery.execute();
 }
+
+export async function getFreeParticipantsRequest(attributes, tournamentValueQuery = new TournamentValueEndpointQuery()) {
+    tournamentValueQuery.setUrl(`${BASE_URL}api/v1/tournament/value/filter`);
+    tournamentValueQuery.setHeaders();
+    tournamentValueQuery.setMethod(`${PROCEDURES.tournament.value.filter.free}@${REQUEST_METHOD_DEFAULT}`);
+    tournamentValueQuery.setParams(attributes);
+    return await tournamentValueQuery.execute();
+}

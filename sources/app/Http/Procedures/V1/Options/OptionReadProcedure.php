@@ -4,62 +4,69 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Options;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Options\ReadOptionRequest;
 use App\Http\Resources\Options\OptionResource;
 use App\Repository\OptionRepository;
 use Illuminate\Http\JsonResponse;
-use Sajya\Server\Procedure;
+use Illuminate\Http\Response;
 
-class OptionReadProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class OptionReadProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'OptionReadProcedure';
+    public static string $name = PROCEDURE_OPTION_READ;
+    private OptionRepository $optionRepository;
 
-    private OptionRepository $operation;
-
-    public function __construct(OptionRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(OptionRepository $optionRepository) {
+        $this->optionRepository = $optionRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param ReadOptionRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(ReadOptionRequest $request): JsonResponse
     {
-        $option = $request->validated();
-        if (key_exists('user_id', $option))
+        define('ATTRIBUTES', $request->validated());
+        if (key_exists(FIELD_USER_ID, ATTRIBUTES))
         {
+            $repository = $this->optionRepository->findByUserId((int)ATTRIBUTES[FIELD_USER_ID]);
+
             return new JsonResponse(
-                data: $this->operation->findByUserId((int)$option['user_id']),
-                status: 201
+                data: [
+                    FIELD_ID => self::identifier(),
+                    FIELD_ATTRIBUTES => $repository,
+                    ...self::meta($request, ATTRIBUTES)
+                ],
+                status: Response::HTTP_CREATED
             );
         }
-        elseif (key_exists('event_key', $option))
+        elseif (key_exists(FIELD_EVENT_KEY, ATTRIBUTES))
         {
+            $repository = $this->optionRepository->findByEventKey(ATTRIBUTES[FIELD_EVENT_KEY]);
+
             return new JsonResponse(
-                data: new OptionResource(
-                // Поиск по ключу события
-                    $this->operation->findByEventKey($option['event_key'])
-                ),
-                status: 201
+                data: [
+                    FIELD_ID => self::identifier(),
+                    FIELD_ATTRIBUTES => new OptionResource($repository),
+                    ...self::meta($request, ATTRIBUTES)
+                ],
+                status: Response::HTTP_CREATED
             );
         }
         else
         {
+            $repository = $this->optionRepository->findById(ATTRIBUTES[FIELD_ID]);
+
             return new JsonResponse(
-                // Поиск по ID записи
-                data: new OptionResource(
-                    $this->operation->findById($option['id'])
-                ),
-                status: 201
+                data: [
+                    FIELD_ID => self::identifier(),
+                    FIELD_ATTRIBUTES => new OptionResource($repository),
+                    ...self::meta($request, ATTRIBUTES)
+                ],
+                status: Response::HTTP_CREATED
             );
         }
     }

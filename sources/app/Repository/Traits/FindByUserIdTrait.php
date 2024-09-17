@@ -5,6 +5,8 @@ namespace App\Repository\Traits;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+require_once dirname(__DIR__, 2) . '/Domain/Constants/FieldConst.php';
+
 trait FindByUserIdTrait
 {
     /**
@@ -13,6 +15,6 @@ trait FindByUserIdTrait
      */
     public function findByUserId(int $user_id): Model|Collection
     {
-        return $this->model::where(['user_id' => $user_id])->get();
+        return $this->model::where([FIELD_USER_ID => $user_id])->get();
     }
 }

@@ -14,8 +14,10 @@ use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\UpdateQueryTrait;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+
+require_once dirname(__DIR__, ) . '/Domain/Constants/EntitiesConst.php';
+require_once dirname(__DIR__, ) . '/Domain/Constants/FieldConst.php';
 
 final class TournamentValueRepository implements LCRUD_OperationInterface
 {
@@ -36,9 +38,10 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
      * @param int $tournamentId
      * @return Collection
      */
-    public function findByTournamentValue(int $tournamentId): Collection
+    public function findByTournamentValue(Collection $tournaments): Collection
     {
-        return $this->model::where(['tournament_id' => $tournamentId])->get();
+
+        return $this->model::where([FIELD_TOURNAMENT_ID => $tournaments])->get();
     }
 
     /**
@@ -52,18 +55,18 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
 
     private function searchParticipant(array $attributes, Model $event)
     {
-        $tournament = Tournament::where(['event_key' => $event->key])->first();
+        $tournament = Tournament::where([FIELD_EVENT_KEY => $event->key])->first();
         $participant = Participant::where([
-            'user_id' => $attributes['user_id'],
-            'event_id' => $event->id
+            FIELD_USER_ID   => $attributes[FIELD_USER_ID],
+            FIELD_EVENT_ID  => $event->id
         ])->first();
         return $this->model::where([
-            'tournament_id'     => $tournament->id,
-            'participants_A'    => $participant->key,
+            FIELD_TOURNAMENT_ID     => $tournament->id,
+            FIELD_PARTICIPANTS_A    => $participant->key,
         ])->orWhere([
-            'tournament_id'     => $tournament->id,
-            'participants_B'    => $participant->key,
-        ])->latest('id')
+            FIELD_TOURNAMENT_ID     => $tournament->id,
+            FIELD_PARTICIPANTS_B    => $participant->key,
+        ])->latest(FIELD_ID)
             ->get()
             ->map(function($item) use ($participant) {
                 $item->participants_key = $participant->key;
@@ -78,7 +81,7 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
         // Если у "participants_A" есть соперник, меняем "participants_A" на значение из "participants_B"
         // саму колонку "participants_B" затирем
         if (
-            $tournamentValues->recorded_in === 'participants_A' &&
+            $tournamentValues->recorded_in === FIELD_PARTICIPANTS_A &&
             !is_null($tournamentValues->participants_A) &&
             !is_null($tournamentValues->participants_B)
         )
@@ -89,7 +92,7 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
         }
         // Если у "participants_A" нет соперника, удаляем запись из таблицы
         elseif (
-            $tournamentValues->recorded_in === 'participants_A' &&
+            $tournamentValues->recorded_in === FIELD_PARTICIPANTS_A &&
             !is_null($tournamentValues->participants_A) &&
             is_null($tournamentValues->participants_B)
         )
@@ -98,7 +101,7 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
             $tournamentValueQuery->delete();
         }
         // Если принимаем "participants_B" то тупо его убираем
-        elseif ($tournamentValues->recorded_in === 'participants_B')
+        elseif ($tournamentValues->recorded_in === FIELD_PARTICIPANTS_B)
         {
             $tournamentValues->participants_B = null;
             $tournamentValues->save();
@@ -113,19 +116,19 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
      */
     public function replaceParticipant(Model $event, array $attributes): Model
     {
-        $tournament = Tournament::where(['event_key' => $event->key])->first();
-        $event = Event::where(['key' => $attributes['event_key']])->first();
+        $tournament = Tournament::where([FIELD_EVENT_KEY => $event->key])->first();
+        $event = Event::where([FIELD_KEY => $attributes[FIELD_EVENT_KEY]])->first();
         $participant = Participant::where([
-            'user_id' => $attributes['user_id'],
-            'event_id' => $event->id
+            FIELD_USER_ID => $attributes[FIELD_USER_ID],
+            FIELD_EVENT_ID => $event->id
         ])->first();
 
         $tournamentValues = TournamentValue::where([
-            'tournament_id' => $tournament->id,
-            'participants_A' => $participant->key
+            FIELD_TOURNAMENT_ID => $tournament->id,
+            FIELD_PARTICIPANTS_A => $participant->key
         ])->orWhere([
-            'tournament_id' => $tournament->id,
-            'participants_B' => $participant->key
+            FIELD_TOURNAMENT_ID => $tournament->id,
+            FIELD_PARTICIPANTS_A => $participant->key
         ])->first();
 
         if ($tournamentValues->participants_A === $participant->key) $tournamentValues->participants_A = $attributes['new_participant_key'];
@@ -141,16 +144,37 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
      */
     public function advanceSkipValue(Model $event, $attributes): mixed
     {
-        $tournament = Tournament::where(['event_key' => $event->key])->first();
+        $tournament = Tournament::where([FIELD_EVENT_KEY => $event->key])->first();
         $tournamentValues = $this->searchParticipant($attributes, $event);
         $value = DB::table(TABLE_TOURNAMENT_VALUES)
             ->where([
-            'tournament_id'                 => $tournament->id,
+            FIELD_TOURNAMENT_ID                 => $tournament->id,
             $tournamentValues->recorded_in  => $tournamentValues[$tournamentValues->recorded_in]
         ]);
         $value->update([
-            'participants_passes' => $tournamentValues[$tournamentValues->recorded_in]
+            FIELD_PARTICIPANTS_PASSES => $tournamentValues[$tournamentValues->recorded_in]
         ]);
         return $value->first();
+    }
+
+    /**
+     * @param Model $event
+     * @param array $attributes
+     * @return mixed
+     */
+    public function freeParticipants(Model $event, array $attributes)
+    {
+        $tableParticipants = TABLE_PARTICIPANTS;
+        $tableTournamentValues = TABLE_TOURNAMENT_VALUES;
+        $participantsA = FIELD_PARTICIPANTS_A;
+        $participantsB = FIELD_PARTICIPANTS_B;
+        $tournament = Tournament::where(['event_key' => $event->key])->first();
+        return DB::select(/** @lang text */ "
+            SELECT * FROM {$tableParticipants} AS p
+            INNER JOIN {$tableTournamentValues} AS tv
+                    ON p.key = tv.\"{$participantsA}\"
+            WHERE tv.tournament_id = {$tournament->id} AND
+                  tv.\"{$participantsB}\" IS NULL;
+        ");
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Requests\Participants\Additionally;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
 class ParticipantSkippedRequest extends FormRequest
 {
     /**
@@ -22,8 +24,8 @@ class ParticipantSkippedRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_key'     => ['required', 'string'],
-            'user_id'       => ['nullable', 'numeric']
+            FIELD_EVENT_KEY     => ['required', 'string'],
+            FIELD_USER_ID       => ['nullable', 'numeric']
         ];
     }
 }

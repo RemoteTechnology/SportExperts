@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Participants\Filter;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Filter\ParticipantsUserToEventFilterRequest;
 use App\Http\Resources\Participants\ParticipantCollection;
 use App\Repository\ParticipantRepository;
@@ -11,14 +12,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Sajya\Server\Procedure;
 
-class ParticipantUsersToEventFilterProcedure extends Procedure
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
+
+class ParticipantUsersToEventFilterProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'ParticipantUsersToEventFilterProcedure';
+    public static string $name = PROCEDURE_PARTICIPANT_FILTER_PARTICIPANT_USER_TO_EVENT;
     private ParticipantRepository $participantRepository;
 
     public function __construct(ParticipantRepository $participantRepository)
@@ -27,21 +26,21 @@ class ParticipantUsersToEventFilterProcedure extends Procedure
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param ParticipantsUserToEventFilterRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(ParticipantsUserToEventFilterRequest $request)
     {
-        $attributes = $request->validated();
-        $participants = new ParticipantCollection(
-            $this->participantRepository->findByEventKey($attributes['event_key'])
-        );
+        define('ATTRIBUTES', $request->validated());
+        $repository = $this->participantRepository->findByEventKey(ATTRIBUTES[FIELD_EVENT_KEY]);
+        $collectData = new ParticipantCollection($repository);
+
         return new JsonResponse(
-            data: $participants->resource,
-//            data: $this->participantRepository->findByEventKey($attributes['event_key']),
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => $collectData->resource,
+                ...self::meta($request, ATTRIBUTES)
+            ],
             status: Response::HTTP_CREATED
         );
     }

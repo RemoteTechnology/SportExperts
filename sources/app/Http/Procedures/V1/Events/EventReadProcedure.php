@@ -4,42 +4,47 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Events;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Events\EventReadRequest;
 use App\Http\Resources\Events\EventResource;
 use App\Repository\EventRepository;
 use Illuminate\Http\JsonResponse;
-use Sajya\Server\Procedure;
+use Illuminate\Http\Response;
 
-class EventReadProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class EventReadProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'EventReadProcedure';
+    public static string $name = PROCEDURE_EVENT_READ;
+    private EventRepository $eventRepository;
 
-    private EventRepository $operation;
-
-    public function __construct(EventRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(EventRepository $eventRepository) {
+        $this->eventRepository = $eventRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param EventReadRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(EventReadRequest $request): JsonResponse
     {
-        $event = $request->validated();
+        define('ATTRIBUTES', $request->validated());
+        if (key_exists(FIELD_KEY, ATTRIBUTES))
+        {
+            $repository = $this->eventRepository->findByKey(ATTRIBUTES[FIELD_KEY]);
+        }
+        else
+        {
+            $repository = $this->eventRepository->findById((int)ATTRIBUTES[FIELD_ID]);
+        }
         return new JsonResponse(
-            data: new EventResource(
-                $this->operation->findById((int)$event['id'])
-            ),
-            status: 201
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new EventResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

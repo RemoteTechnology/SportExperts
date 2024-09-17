@@ -4,6 +4,8 @@ namespace App\Http\Requests\Events;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class StoreEventRequest extends FormRequest
 {
     /**
@@ -22,16 +24,16 @@ class StoreEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id'           => ['required', 'numeric', 'exists:users,id'],
-            'name'              => ['required', 'string', 'min:5', 'max:255'],
-            'description'       => ['required', 'string'],
-            'image'             => ['required', 'string', 'max:255', 'exists:files,key'],
-            'location'          => ['required', 'string', 'max:255'],
-            'status'            => ['nullable', 'string'],
-            'start_date'        => ['required'],
-            'start_time'        => ['required'],
-            'expiration_date'   => ['required'],
-            'expiration_time'   => ['required'],
+            FIELD_USER_ID           => ['required', 'numeric', 'exists:users,id'],
+            FIELD_NAME              => ['required', 'string', 'min:5', 'max:255'],
+            FIELD_DESCRIPTION       => ['required', 'string'],
+            FIELD_IMAGE             => ['required', 'string', 'max:255', 'exists:files,key'],
+            FIELD_LOCATION          => ['required', 'string', 'max:255'],
+            FIELD_STATUS            => ['nullable', 'string'],
+            FIELD_START_DATE        => ['required'],
+            FIELD_START_TIME        => ['required'],
+            FIELD_EXPIRATION_DATE   => ['required'],
+            FIELD_EXPIRATION_TIME   => ['required'],
         ];
     }
 }

@@ -15,12 +15,13 @@ import { createLogOptionRequest } from "../../api/CreateLogOptionRequest";
 import { getUser } from "../../api/UserRequest";
 import { readUserParticipantInvitedRequest } from "../../api/InvitedRequest";
 import { getParticipantsToEventRequest } from "../../api/FilterRequest";
-import { tournamentValueCreateRequest } from "../../api/TournamentValueRequest";
+import {getFreeParticipantsRequest, tournamentValueCreateRequest} from "../../api/TournamentValueRequest";
 import {
     participantUserRemoveAdditionallyRequest,
     participantUserReplaceAdditionallyRequest,
     participantUserSkipAdditionallyRequest
 } from "../../api/ParticipantRequest";
+import {getKeyEventRequest} from "../../api/EventRequest";
 
 export default {
     data() {
@@ -31,7 +32,9 @@ export default {
             messageError: null,
             baseUrl: BASE_URL,
             eventKey: '',
-            tournamentDetails: null,
+            event: null,
+            values: null,
+            tournamentFree: null,
             user: null,
             participantList: null,
             participant: {
@@ -60,6 +63,26 @@ export default {
             const urlParams = new URLSearchParams(window.location.search);
             this.eventKey = urlParams.get('event');
         },
+        getEvent: async function(eventKey) {
+            const attributes = { key: eventKey };
+            getKeyEventRequest(attributes)
+                .then(async (response) => {
+                    console.log(response)
+                    this.event = await response.data.result.original;
+                })
+                .catch(async (error) => {
+                    console.log(error)
+                    await createLogOptionRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getKeyEventRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.ERROR_ERROR;
+                });
+        },
         openDialog(userId) {
             this.getParticipantInfo(userId)
             this.dialog=true;
@@ -76,48 +99,47 @@ export default {
             const attributes = {
                 event_key: this.eventKey,
             };
-            try {
-                const response = await tournamentReadRequest(attributes);
-                this.tournamentDetails = response.data.result.original;
-            } catch (error) {
-                await createLogOptionRequest({
-                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                    method: 'tournamentReadRequest',
-                    status: error.code,
-                    request_data: attributes.toString(),
-                    message: error.message
+            await tournamentReadRequest(attributes)
+                .then(async (response) => {
+                    this.values = await response.data.result.original;
+                })
+                .catch(async (error) => {
+                    await createLogOptionRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'tournamentReadRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.ERROR_ERROR;
                 });
-                this.messageError = MESSAGES.ERROR_ERROR  + ' 1';
-            }
         },
         tyingAthlete() {
-            if (this.tournamentDetails && this.tournamentDetails.values) {
-                this.tournamentDetails.values.forEach((value) => {
-
-                    if (
-                        document.getElementById(value.participants_A.key) &&
-                        document.getElementById(value.participants_B.key)
-                    )
-                    {
-                        let line = new LeaderLine.setLine(
-                            document.getElementById(value.participants_A.key),
-                            document.getElementById(value.participants_B.key),
-                            {
-                                color: "#5c5c5c",
-                                path: "arc",
-                                endPlug: "behind",
-                            }
-                        );
-                        line.setOptions({ startSocket: 'top', endSocket: 'right' });
-                    } else {
-                        console.error(`Not found for: ${value.participants_A.key} or ${value.participants_B.key}`);
-                    }
+            for (let key in this.values.attributes)
+            {
+                this.values.attributes[key].forEach(async (value) => {
+                    await value.tournament_values.forEach((participant) => {
+                        try {
+                            let line = new LeaderLine.setLine(
+                                document.getElementById(participant.participants_A.key),
+                                document.getElementById(participant.participants_B.key),
+                                {
+                                    color: "#5c5c5c",
+                                    path: "arc",
+                                    endPlug: "behind",
+                                }
+                            );
+                            line.setOptions({ startSocket: 'top', endSocket: 'right' });
+                        } catch (e)
+                        {
+                            console.log('Message Error: ' + e.message)
+                        }
+                    });
                 });
             }
         },
         getUserParticipant: async function(id) {
-            // TODO: возможно user_id и invited_user_id перепутаны
             const attributes = {
                 id: id
             }
@@ -126,7 +148,6 @@ export default {
                     this.participant.user = await response.data.result.original;
                 })
                 .catch(async (error) => {
-                    console.log(error)
                     await createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -158,6 +179,26 @@ export default {
                     this.messageError = MESSAGES.NO_DATA;
                 });
         },
+        getFreeParticipantList: async function() {
+            const attributes = {
+                event_key: this.eventKey
+            };
+            getFreeParticipantsRequest(attributes)
+                .then(async (response) => {
+                    this.tournamentFree = await response.data.result.original;
+                })
+                .catch(async (error) => {
+                    await createLogOptionRequest({
+                        current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                        current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                        method: 'getFreeParticipantsRequest',
+                        status: error.code,
+                        request_data: attributes.toString(),
+                        message: error.message
+                    });
+                    this.messageError = MESSAGES.NO_DATA;
+                });
+        },
         getListParticipants: async function(eventKey, mode='card') {
             const attributes = {
                 event_key: eventKey
@@ -170,7 +211,6 @@ export default {
                     }
                     else {
                         this.participantList = await response.data.result.original;
-                        console.log(this.participantList)
                     }
                 })
                 .catch(async (error) => {
@@ -215,9 +255,7 @@ export default {
         {
             const attributes = dataAttributes;
             await participantUserReplaceAdditionallyRequest(attributes)
-                .then((response) => { console.log(response); })
                 .catch(async (error) => {
-                    console.log(error);
                     await createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -235,11 +273,8 @@ export default {
                 event_key: this.eventKey,
                 ...participant
             };
-            console.log(attributes)
             await participantUserSkipAdditionallyRequest(attributes)
-                .then((response) => { console.log(response); })
                 .catch(async (error) => {
-                    console.log(error);
                     await createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -287,8 +322,10 @@ export default {
 
     async mounted() {
         await this.getUrl();
+        await this.getEvent(this.eventKey,);
         await this.getListParticipants(this.eventKey, 'page');
         await this.readTournament();
+        await this.getFreeParticipantList();
         await this.$nextTick(() => {
             this.tyingAthlete();
         });
@@ -383,17 +420,17 @@ export default {
             <section class="mt-1 mb-2" v-if="this.messageError !== null">
             <Message severity="error">{{ this.messageError }}</Message>
         </section>
-        <section>
-            <h2 class="mb-2 text-center">{{ this.tournamentDetails.tournament.event.name }}</h2>
+        <section v-if="this.event">
+            <h2 class="mb-2 text-center">{{ this.event.name }}</h2>
         </section>
-        <div class="d-flex d-between">
+        <div v-if="this.values != null && Object.keys(this.values).includes('attributes')" class="d-flex d-between">
             <div class="w-30 d-flex d-end">
                 <Card class="mb-3 w-95 h-40">
                     <template #content>
                         <section v-if="this.participantList">
-                            <h3>Записанные спортсмены</h3>
+                            <h3>Свободные спортсмены</h3>
                             <br>
-                            <OrderList v-model="this.participantList" listStyle="height:auto" dataKey="id">
+                            <OrderList v-model="this.tournamentFree" listStyle="height:auto" dataKey="id">
                                 <template #item="slotProps">
                                     <section class="d-flex d-between d-align-center">
                                         <section class="w-70">
@@ -417,55 +454,50 @@ export default {
                     </template>
                 </Card>
             </div>
-            <div v-if="
-                    this.tournamentDetails !== null &&
-                    Object.keys(this.tournamentDetails).includes('tournament') &&
-                    Object.keys(this.tournamentDetails.tournament).includes('event')
-                " class="w-70">
-                <section v-if="
-                            this.tournamentDetails !== null &&
-                            Object.keys(this.tournamentDetails).includes('values') &&
-                            this.tournamentDetails.values.length > 0
-                        "
-                        id="tid"
-                        class="d-flex d-between d-align-center">
-                    <section v-for="value in this.tournamentDetails.values"  style="width: 150%;">
-<!--                        <section id="step-tournament">-->
-<!--                            <Card class="mb-3">-->
-<!--                                <template #content>-->
-<!--                                    <strong># 1 ЭТАП</strong>-->
-<!--                                </template>-->
-<!--                            </Card>-->
-<!--                        </section>-->
-                        <section id="body-tournament">
-                            <Card class="mt-1">
-                                <template #content>
-                                    <section id="athlete-card" class="d-flex d-between">
-                                        <span>{{ value.users[0].first_name }} {{ value.users[0].last_name }}</span>
-                                        <Button icon="pi pi-cog" severity="info" @click="this.openDialog(value.users[0].id)" />
-                                    </section>
-                                    <span class="flag"  :id="value.participants_A.key"></span>
-                                    <small>Команда</small>
-                                </template>
-                            </Card>
-                            <Card class="mt-1">
-                                <template #content v-if="value.users[1] !== null">
-                                    <section id="athlete-card" class="d-flex d-between">
-                                        <span>{{ value.users[1].first_name }} {{ value.users[1].last_name }}</span>
-                                        <Button icon="pi pi-cog" severity="info" @click="this.openDialog(value.users[1].id)" />
-                                    </section>
-                                    <span class="flag" :id="value.participants_B.key"></span>
-                                    <small>Команда</small>
-                                </template>
-                                <template #content v-else>
-                                    <span style="color: #bd3131">
-                                        <i>(Нет соперника)</i>
-                                    </span>
-                                </template>
-                            </Card>
+            <div v-for="attribute in this.values.attributes" class="w-70">
+                <template v-for="tournament in attribute" :key="tournament.id">
+                    <section id="tid" class="d-flex d-between d-align-center">
+                        <section style="width: 150%;">
+                            <section id="step-tournament">
+                                <Card class="mb-3">
+                                    <template #content>
+                                        <strong># {{ tournament.stage }} ЭТАП</strong>
+                                    </template>
+                                </Card>
+                            </section>
+                            <template v-for="value in tournament.tournament_values">
+                                <section id="body-tournament">
+                                    <Card class="mt-1">
+                                        <template #content>
+                                            <section id="athlete-card" class="d-flex d-between">
+                                                <span>{{ value.users[0].first_name }} {{ value.users[0].last_name }}</span>
+                                                <Button icon="pi pi-cog" severity="info" @click="this.openDialog(value.users[0].id)" />
+                                            </section>
+                                            <span class="flag"  :id="value.participants_A.key"></span>
+                                            <small>Команда</small>
+                                        </template>
+                                    </Card>
+                                    <Card class="mt-1">
+                                        <template #content v-if="value.users[1] !== null">
+                                            <section id="athlete-card" class="d-flex d-between">
+                                                <span>{{ value.users[1].first_name }} {{ value.users[1].last_name }}</span>
+                                                <Button icon="pi pi-cog" severity="info" @click="this.openDialog(value.users[1].id)" />
+                                            </section>
+                                            <span class="flag" :id="value.participants_B.key"></span>
+                                            <small>Команда</small>
+                                        </template>
+                                        <template #content v-else>
+                                            <span style="color: #bd3131">
+                                                <i>(Нет соперника)</i>
+                                            </span>
+                                        </template>
+                                    </Card>
+                                </section>
+                            </template>
+
                         </section>
                     </section>
-                </section>
+                </template>
             </div>
         </div>
     </section>

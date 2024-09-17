@@ -4,38 +4,39 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Participants;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Resources\Participants\ParticipantCollection;
-use App\Http\Resources\Participants\ParticipantResource;
 use App\Repository\ParticipantRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Sajya\Server\Procedure;
 
-class ParticipantListProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class ParticipantListProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'ParticipantListProcedure';
+    public static string $name = PROCEDURE_PARTICIPANT_LIST;
+    private ParticipantRepository $participantRepository;
 
-    private ParticipantRepository $operation;
-
-    public function __construct(ParticipantRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(ParticipantRepository $participantRepository) {
+        $this->participantRepository = $participantRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @return JsonResponse
      */
-    public function handle(): JsonResponse
+    public function handle(Request $request): JsonResponse
     {
-        $participants = new ParticipantCollection($this->operation->list('paginate'));
+        $repository = $this->participantRepository->list(FIELD_PAGINATE);
+        $collectData = new ParticipantCollection($repository);
+
         return new JsonResponse(
-            data: $participants->resource,
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => $collectData->resource,
+                ...self::meta($request, [])
+            ],
             status: Response::HTTP_CREATED
         );
     }

@@ -4,38 +4,40 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Options;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Resources\Options\OptionCollection;
-use App\Http\Resources\Options\OptionResource;
 use App\Repository\OptionRepository;
 use Illuminate\Http\JsonResponse;
-use Sajya\Server\Procedure;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
-class OptionListProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class OptionListProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'OptionListProcedure';
+    public static string $name = PROCEDURE_OPTION_LIST;
+    private OptionRepository $optionRepository;
 
-    private OptionRepository $operation;
-
-    public function __construct(OptionRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(OptionRepository $optionRepository) {
+        $this->optionRepository = $optionRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @return JsonResponse
      */
-    public function handle(): JsonResponse
+    public function handle(Request $request): JsonResponse
     {
-        $options = new OptionCollection($this->operation->list('paginate'));
+        $repository = $this->optionRepository->list(FIELD_PAGINATE);
+        $collectData = new OptionCollection($repository);
+
         return new JsonResponse(
-            data: $options->resource,
-            status: 201
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => $collectData->resource,
+                ...self::meta($request, [])
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

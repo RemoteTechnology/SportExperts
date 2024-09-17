@@ -4,6 +4,8 @@ namespace App\Http\Requests\TournamentValues;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class TournamentValueStoreRequest extends FormRequest
 {
     /**
@@ -22,8 +24,8 @@ class TournamentValueStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_key'             => ['required', 'string',],
-            'user_id'               => ['required', 'numeric',],
+            FIELD_EVENT_KEY     => ['required', 'string',],
+            FIELD_USER_ID       => ['required', 'numeric',],
         ];
     }
 }

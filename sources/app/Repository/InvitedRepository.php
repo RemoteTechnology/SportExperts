@@ -12,6 +12,8 @@ use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\UpdateQueryTrait;
 use Illuminate\Database\Eloquent\Model;
 
+require_once dirname(__DIR__) . '/Domain/Constants/FieldConst.php';
+
 final class InvitedRepository extends InviteUserFilter implements
     InvitedRepositoryInterface
 {
@@ -33,6 +35,6 @@ final class InvitedRepository extends InviteUserFilter implements
      */
     public function findByUserId(array $attributes): Model
     {
-        return $this->model::where(['user_id' => $attributes['user_id']])->first();
+        return $this->model::where([FIELD_USER_ID => $attributes[FIELD_USER_ID]])->first();
     }
 }

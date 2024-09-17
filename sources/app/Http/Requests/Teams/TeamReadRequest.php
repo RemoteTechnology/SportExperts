@@ -4,6 +4,8 @@ namespace App\Http\Requests\Teams;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class TeamReadRequest extends FormRequest
 {
     /**
@@ -22,7 +24,7 @@ class TeamReadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'exists:teams,id'],
+            FIELD_ID => ['required', 'exists:teams,id'],
         ];
     }
 }

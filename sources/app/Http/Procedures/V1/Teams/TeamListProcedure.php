@@ -4,39 +4,43 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Teams;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Resources\Teams\TeamCollection;
 use App\Http\Resources\Teams\TeamResource;
 use App\Models\Team;
 use App\Repository\TeamRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Sajya\Server\Procedure;
 
-class TeamListProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class TeamListProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'TeamListProcedure';
+    public static string $name = PROCEDURE_TEAM_LIST;
+    private TeamRepository $teamRepository;
 
-    private TeamRepository $operation;
-
-    public function __construct(TeamRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(TeamRepository $teamRepository) {
+        $this->teamRepository = $teamRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @return JsonResponse
      */
-    public function handle(): JsonResponse
+    public function handle(Request $request): JsonResponse
     {
-        $teams = new TeamCollection($this->operation->list('paginate'));
+        $repository = $this->teamRepository->list(FIELD_PAGINATE);
+        $collectData = new TeamCollection($repository);
+
         return new JsonResponse(
-            data: $teams->resource,
-            status: 201
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => $collectData->resource,
+                ...self::meta($request, [])
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

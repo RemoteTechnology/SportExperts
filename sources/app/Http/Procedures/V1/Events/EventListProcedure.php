@@ -4,39 +4,40 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Events;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Resources\Events\EventCollection;
-use App\Http\Resources\Events\EventResource;
 use App\Repository\EventRepository;
 use Illuminate\Http\JsonResponse;
-use Sajya\Server\Procedure;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
-class EventListProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class EventListProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'EventListProcedure';
+    public static string $name = PROCEDURE_EVENT_LIST;
+    private EventRepository $eventRepository;
 
-    private EventRepository $operation;
-
-    public function __construct(EventRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(EventRepository $eventRepository) {
+        $this->eventRepository = $eventRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @return JsonResponse
      */
-    public function handle(): JsonResponse
+    public function handle(Request $request): JsonResponse
     {
-        define('DEFAULT_MODE', 'paginate');
-        $events = new EventCollection($this->operation->list(DEFAULT_MODE, true, true));
+        $repository = $this->eventRepository->list(FIELD_PAGINATE, true, true);
+        $collectData = new EventCollection($repository);
+
         return new JsonResponse(
-            data: $events->resource,
-            status: 201
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => $collectData->resource,
+                ...self::meta($request, [])
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

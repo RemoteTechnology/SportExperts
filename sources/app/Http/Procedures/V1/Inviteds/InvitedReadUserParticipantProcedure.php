@@ -4,21 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Inviteds;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Inviteds\InvitedReadUserParticipantRequest;
 use App\Http\Resources\Inviteds\InvitedResource;
 use App\Repository\InvitedRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Sajya\Server\Procedure;
 
-class InvitedReadUserParticipantProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+
+class InvitedReadUserParticipantProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'InvitedReadUserParticipantProcedure';
+    public static string $name = PROCEDURE_INVITE_READ_USER;
     private InvitedRepository $invitedRepository;
 
     public function __construct(InvitedRepository $invitedRepository)
@@ -27,19 +24,20 @@ class InvitedReadUserParticipantProcedure extends Procedure
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param InvitedReadUserParticipantRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(InvitedReadUserParticipantRequest $request): JsonResponse
     {
-        $invites = $request->validated();
+        define('ATTRIBUTES', $request->validated());
+        $repository = $this->invitedRepository->findByUserId(ATTRIBUTES);
+
         return new JsonResponse(
-            data: new InvitedResource(
-                $this->invitedRepository->findByUserId($invites)
-            ),
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new InvitedResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
             status: Response::HTTP_CREATED
         );
     }

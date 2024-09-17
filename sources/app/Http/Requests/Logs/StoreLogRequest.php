@@ -4,6 +4,8 @@ namespace App\Http\Requests\Logs;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class StoreLogRequest extends FormRequest
 {
     /**
@@ -22,12 +24,12 @@ class StoreLogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'current_date' => ['required',  'string'],
-            'current_time' => ['required',  'string'],
-            'method' => ['required',  'string'],
-            'status' => ['required'],
-            'request_data' => ['required', 'string'],
-            'message' => ['required',  'string'],
+            FIELD_CURRENT_DATE  => ['required',  'string'],
+            FIELD_CURRENT_TIME  => ['required',  'string'],
+            FIELD_METHOD        => ['required',  'string'],
+            FIELD_STATUS        => ['required'],
+            FIELD_REQUEST_DATA  => ['required', 'string'],
+            FIELD_MESSAGE       => ['required',  'string'],
         ];
     }
 }

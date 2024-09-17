@@ -4,42 +4,42 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Participants;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Participants\ReadParticipantRequest;
 use App\Http\Resources\Participants\ParticipantResource;
 use App\Repository\ParticipantRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Sajya\Server\Procedure;
 
-class ParticipantReadProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class ParticipantReadProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'ParticipantReadProcedure';
+    public static string $name = PROCEDURE_PARTICIPANT_READ;
+    private ParticipantRepository $participantRepository;
 
-    private ParticipantRepository $operation;
-
-    public function __construct(ParticipantRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(ParticipantRepository $participantRepository) {
+        $this->participantRepository = $participantRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param ReadParticipantRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(ReadParticipantRequest $request): JsonResponse
     {
-        $participant = $request->validated();
+        define('ATTRIBUTES', $request->validated());
+        $repository = $this->participantRepository->findById(ATTRIBUTES[FIELD_ID]);
+
         return new JsonResponse(
-            data: new ParticipantResource(
-                $this->operation->findById($participant['id'])
-            ),
-            status: 201
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new ParticipantResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Tournaments\History;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\TournamentHistory\TournamentHistoryUpdateRequest;
 use App\Http\Resources\TournamentHistory\TournamentHistoryResource;
 use App\Repository\TournamentHistoryActionRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Sajya\Server\Procedure;
 
-class TournamentHistoryUpdateProcedure extends Procedure
+class TournamentHistoryUpdateProcedure extends AbstractProcedure
 {
     /**
      * The name of the procedure that is used for referencing.
@@ -40,7 +39,11 @@ class TournamentHistoryUpdateProcedure extends Procedure
         $repository = $this->tournamentHistoryActionRepository->update($entity, ATTRIBUTES);
 
         return new JsonResponse(
-            data: new TournamentHistoryResource($repository),
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new TournamentHistoryResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
             status: Response::HTTP_CREATED
         );
     }

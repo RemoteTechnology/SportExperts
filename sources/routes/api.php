@@ -27,7 +27,7 @@ use App\Http\Procedures\V1\Options\OptionListProcedure;
 use App\Http\Procedures\V1\Options\OptionReadProcedure;
 use App\Http\Procedures\V1\Options\OptionStoreProcedure;
 use App\Http\Procedures\V1\Options\OptionUpdateProcedure;
-use App\Http\Procedures\V1\Participants\Additionally\ParticipantDiscvaleficationProcedure;
+use App\Http\Procedures\V1\Participants\Additionally\ParticipantDisqualificationProcedure;
 use App\Http\Procedures\V1\Participants\Additionally\ParticipantSkippedProcedure;
 use App\Http\Procedures\V1\Participants\Additionally\ParticipantКReplacementProcedure;
 use App\Http\Procedures\V1\Participants\Filter\ParticipantOwnerFilterProcedure;
@@ -42,11 +42,10 @@ use App\Http\Procedures\V1\Teams\TeamListProcedure;
 use App\Http\Procedures\V1\Teams\TeamReadProcedure;
 use App\Http\Procedures\V1\Teams\TeamStoreProcedure;
 use App\Http\Procedures\V1\Teams\TeamUpdateProcedure;
-use App\Http\Procedures\V1\Tournaments\TournamentDestroyProcedure;
 use App\Http\Procedures\V1\Tournaments\TournamentReadProcedure;
-use App\Http\Procedures\V1\Tournaments\TournamentUpdateProcedure;
+use App\Http\Procedures\V1\Tournaments\Values\Filter\TournamentValueFreeParticipantsFilterProcedure;
 use App\Http\Procedures\V1\Tournaments\Values\TournamentValueStoreProcedure;
-use App\Http\Procedures\V1\Users\ResetProcedure;
+use App\Http\Procedures\V1\Users\UserResetProcedure;
 use App\Http\Procedures\V1\Users\UserReadProcedure;
 use App\Http\Procedures\V1\Users\UserRegistrationProcedure;
 use App\Http\Procedures\V1\Users\UserUpdateProcedure;
@@ -88,10 +87,10 @@ Route::prefix('v1')->group(function () {
     //// V1 FILE ENDPOINTS
     Route::prefix('file')->group(function () {
         Route::get(ROUTE_DEFAULT, operation(FileReadController::class))->name('v1.file.read');
-//        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware('auth:sanctum')->group(function () {
             Route::post(ROUTE_DEFAULT, operation(FileUploadController::class))->name('v1.file.uploaded');
             Route::delete(ROUTE_DEFAULT, operation(FileDestroyController::class))->name('v1.file.delete');
-//        });
+        });
     });
     //// END V1 FILE ENDPOINTS
 
@@ -111,11 +110,11 @@ Route::prefix('v1')->group(function () {
         //TODO: передавать роль для приглашенных спортсменов
         Route::rpc(ROUTE_DEFAULT . 'registration', [UserRegistrationProcedure::class])->name('v1.user.registration');
         Route::rpc(ROUTE_READ, [UserReadProcedure::class])->name('v1.user.read');
-        Route::rpc('reset', [ResetProcedure::class])->name('v1.user.reset');
-//        Route::middleware('auth:sanctum')->group(function () {
+        Route::rpc('reset', [UserResetProcedure::class])->name('v1.user.reset');
+        Route::middleware('auth:sanctum')->group(function () {
             Route::rpc(ROUTE_UPDATE, [UserUpdateProcedure::class])->name('v1.user.update');
             Route::rpc(ROUTE_DEFAULT . 'logout', [LogoutProcedure::class])->name('v1.user.logout');
-//        });
+        });
     });
     //// END V1 USER ENDPOINTS
 
@@ -123,11 +122,11 @@ Route::prefix('v1')->group(function () {
     Route::prefix('team')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [TeamListProcedure::class])->name('team.list');
         Route::rpc(ROUTE_READ, [TeamReadProcedure::class])->name('team.read');
-//        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware('auth:sanctum')->group(function () {
             Route::rpc(ROUTE_STORE, [TeamStoreProcedure::class])->name('team.store');
             Route::rpc(ROUTE_UPDATE, [TeamUpdateProcedure::class])->name('team.update');
             Route::rpc(ROUTE_DESTROY, [TeamDestroyProcedure::class])->name('team.destroy');
-//        });
+        });
     });
     //// END V1 TEAM ENDPOINTS
 
@@ -139,11 +138,11 @@ Route::prefix('v1')->group(function () {
         });
         Route::rpc(ROUTE_DEFAULT, [EventListProcedure::class])->name('event.list');
         Route::rpc(ROUTE_READ, [EventReadProcedure::class])->name('event.read');
-//        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware('auth:sanctum')->group(function () {
             Route::rpc(ROUTE_STORE, [EventStoreProcedure::class])->name('event.store');
             Route::rpc(ROUTE_UPDATE, [EventUpdateProcedure::class])->name('event.update');
             Route::rpc(ROUTE_DESTROY, [EventDestroyProcedure::class])->name('event.destroy');
-//        });
+        });
         Route::prefix(ROUTE_FILTER)->group(function () {
             Route::rpc(ROUTE_DEFAULT . '/participant/to/events', [EventDateFilterProcedure::class])->name('event.to.events.filter');
             Route::rpc(ROUTE_DEFAULT . '/my/events', [EventOwnerFilterProcedure::class])->name('event.my.events.filter');
@@ -155,14 +154,14 @@ Route::prefix('v1')->group(function () {
     Route::prefix('participant')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [ParticipantListProcedure::class])->name('participant.list');
         Route::rpc(ROUTE_READ, [ParticipantReadProcedure::class])->name('participant.read');
-//        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware('auth:sanctum')->group(function () {
             Route::rpc(ROUTE_STORE, [ParticipantStoreProcedure::class])->name('participant.store');
             Route::rpc(ROUTE_UPDATE, [ParticipantUpdateProcedure::class])->name('participant.update');
             Route::rpc(ROUTE_DESTROY, [ParticipantDestroyProcedure::class])->name('participant.destroy');
-//        });
+        });
         // TODO: эти процедуры мало чем относятся к "participant"
         Route::prefix('additionally')->group(function () {
-            Route::rpc(ROUTE_DEFAULT . 'drop', [ParticipantDiscvaleficationProcedure::class])->name('participant.additionally.drop');
+            Route::rpc(ROUTE_DEFAULT . 'drop', [ParticipantDisqualificationProcedure::class])->name('participant.additionally.drop');
             Route::rpc(ROUTE_DEFAULT . 'replace', [ParticipantКReplacementProcedure::class])->name('participant.additionally.replace');
             Route::rpc(ROUTE_DEFAULT . 'skip', [ParticipantSkippedProcedure::class])->name('participant.additionally.skip');
         });
@@ -177,11 +176,11 @@ Route::prefix('v1')->group(function () {
     Route::prefix('option')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [OptionListProcedure::class])->name('option.list');
         Route::rpc(ROUTE_READ, [OptionReadProcedure::class])->name('option.read');
-//        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware('auth:sanctum')->group(function () {
             Route::rpc(ROUTE_STORE, [OptionStoreProcedure::class])->name('option.store');
             Route::rpc(ROUTE_UPDATE, [OptionUpdateProcedure::class])->name('option.update');
             Route::rpc(ROUTE_DESTROY, [OptionDestroyProcedure::class])->name('option.destroy');
-//        });
+        });
     });
     //// END V1 Option ENDPOINTS
 
@@ -190,26 +189,25 @@ Route::prefix('v1')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [InvitedListProcedure::class])->name('invite.list');
         Route::rpc(ROUTE_READ, [InvitedReadProcedure::class])->name('invite.read');
         Route::rpc(ROUTE_READ . '/participant', [InvitedReadUserParticipantProcedure::class])->name('invite.read.participant');
-//        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware('auth:sanctum')->group(function () {
             Route::rpc(ROUTE_STORE, [InvitedStoreProcedure::class])->name('invite.store');
             Route::rpc(ROUTE_DEFAULT . 'notification', [NotificationProcedure::class])->name('invite.notification');
-//        });
+        });
     });
     //// END V1 Invite ENDPOINTS
 
     //// V1 Tournament ENDPOINTS
     Route::prefix('tournament')->group(function () {
         Route::rpc(ROUTE_READ, [TournamentReadProcedure::class])->name('tournament.read');
-//        Route::middleware('auth:sanctum')->group(function () {
-        Route::rpc(ROUTE_UPDATE, [TournamentUpdateProcedure::class])->name('option.update');
-        Route::rpc(ROUTE_DESTROY, [TournamentDestroyProcedure::class])->name('option.destroy');
-//        });
 
         //// V1 Tournament Value ENDPOINTS
         Route::prefix('value')->group(function (){
-//        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware('auth:sanctum')->group(function () {
             Route::rpc(ROUTE_STORE, [TournamentValueStoreProcedure::class])->name('tournament.value.store');
-//        });
+            Route::prefix('filter')->group(function(){
+                Route::rpc(ROUTE_DEFAULT, [TournamentValueFreeParticipantsFilterProcedure::class])->name('tournament.value.filter');
+            });
+        });
         });
         //// END V1 Tournament Value ENDPOINTS
     });

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Tournaments\History;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\TournamentHistory\TournamentHistoryReadRequest;
 use App\Http\Resources\TournamentHistory\TournamentHistoryResource;
 use App\Repository\TournamentHistoryActionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Sajya\Server\Procedure;
 
 require_once dirname(__DIR__, 5) . '/Domain/Constants/ErrorMessageConst.php';
 
-class TournamentHistoryDestroyProcedure extends Procedure
+class TournamentHistoryDestroyProcedure extends AbstractProcedure
 {
     /**
      * The name of the procedure that is used for referencing.
@@ -41,12 +41,20 @@ class TournamentHistoryDestroyProcedure extends Procedure
         if ($this->tournamentHistoryActionRepository->destroy($entity))
         {
             return new JsonResponse(
-                data: new TournamentHistoryResource($entity),
+                data: [
+                    new TournamentHistoryResource($entity)
+                ],
                 status: Response::HTTP_CREATED
             );
         }
         return new JsonResponse(
-            data: MESSAGE_NOT_DESTROY,
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => [
+                    FIELD_MESSAGE => MESSAGE_NOT_DESTROY
+                ],
+                ...self::meta($request, ATTRIBUTES)
+            ],
             status: Response::HTTP_CREATED
         );
     }

@@ -4,6 +4,8 @@ namespace App\Http\Requests\Options;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class UpdateOptionRequest extends FormRequest
 {
     /**
@@ -22,13 +24,13 @@ class UpdateOptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'                => ['required', 'numeric', 'exists:options,id'],
-            'event_key'         => ['required', 'exists:event,key'],
-            'participant_key'   => ['required', 'exists:participants,key'],
-            'entity'            => ['required', 'string'],
-            'name'              => ['required', 'string', 'min:2', 'max:255'],
-            'value'             => ['required', 'string', 'min:2', 'max:255'],
-            'type'              => ['required', 'string'],
+            FIELD_ID                => ['required', 'numeric', 'exists:options,id'],
+            FIELD_EVENT_KEY         => ['required', 'exists:event,key'],
+            FIELD_PARTICIPANT_KEY   => ['required', 'exists:participants,key'],
+            FIELD_ENTITY            => ['required', 'string'],
+            FIELD_NAME              => ['required', 'string', 'min:2', 'max:255'],
+            FIELD_VALUE             => ['required', 'string', 'min:2', 'max:255'],
+            FIELD_TYPE              => ['required', 'string'],
         ];
     }
 }

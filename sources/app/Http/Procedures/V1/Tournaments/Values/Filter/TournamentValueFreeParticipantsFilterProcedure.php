@@ -2,22 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Procedures\V1\Participants\Additionally;
+namespace App\Http\Procedures\V1\Tournaments\Values\Filter;
 
 use App\Domain\Abstracts\AbstractProcedure;
-use App\Http\Requests\Participants\Additionally\ParticipantSkippedRequest;
-use App\Http\Resources\TournamentValues\TournamentValueResource;
+use App\Http\Requests\Filter\TournamentValueFreeParticipantsFilterRequest;
+use App\Http\Resources\Participants\ParticipantCollection;
+use App\Http\Resources\TournamentValues\TournamentValueCollection;
 use App\Repository\EventRepository;
 use App\Repository\TournamentValueRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Sajya\Server\Procedure;
 
-require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
-require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 6) . '/Domain/Constants/FieldConst.php';
 
-class ParticipantSkippedProcedure extends AbstractProcedure
+class TournamentValueFreeParticipantsFilterProcedure extends AbstractProcedure
 {
-    public static string $name = PROCEDURE_PARTICIPANT_SKIPPED;
+    public static string $name = 'TournamentValueFreeParticipantsFilterProcedure';
     private EventRepository $eventRepository;
     private TournamentValueRepository $tournamentValueRepository;
 
@@ -29,22 +30,21 @@ class ParticipantSkippedProcedure extends AbstractProcedure
         $this->eventRepository = $eventRepository;
         $this->tournamentValueRepository = $tournamentValueRepository;
     }
-
     /**
-     * @param ParticipantSkippedRequest $request
+     * @param TournamentValueFreeParticipantsFilterRequest $request
      * @return JsonResponse
      */
-    public function handle(ParticipantSkippedRequest $request)
+    public function handle(TournamentValueFreeParticipantsFilterRequest $request): JsonResponse
     {
-        define('ATTRIBUTES', $request->validated());
+        define("ATTRIBUTES", $request->validated());
         $event = $this->eventRepository->findByKey(ATTRIBUTES[FIELD_EVENT_KEY]);
-        $tournament = $this->tournamentValueRepository->advanceSkipValue($event, ATTRIBUTES);
-        $repository = $this->tournamentValueRepository->advanceSkipValue($tournament, ATTRIBUTES);
+        $repository = $this->tournamentValueRepository->freeParticipants($event, ATTRIBUTES);
+        $collectData = new ParticipantCollection($repository);
 
         return new JsonResponse(
             data: [
                 FIELD_ID => self::identifier(),
-                FIELD_ATTRIBUTES => new TournamentValueResource($repository),
+                FIELD_ATTRIBUTES =>  $collectData->resource,
                 ...self::meta($request, ATTRIBUTES)
             ],
             status: Response::HTTP_CREATED

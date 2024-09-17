@@ -4,6 +4,8 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class LoginByEmailRequest extends FormRequest
 {
     /**
@@ -22,8 +24,21 @@ class LoginByEmailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'     => ['required', 'min:8', 'max:255', 'exists:users,email'],
-            'password'  => ['required', 'max:30'],
+            FIELD_EMAIL     => ['required', 'min:8', 'max:255', 'exists:users,email'],
+            FIELD_PASSWORD  => ['required', 'max:30'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            FIELD_EMAIL . '.required'           => 'Электронная почта - это обязательное поле!',
+            FIELD_EMAIL . '.min'                => 'Электронная почта не может быть меньше :min-ми символов!',
+            FIELD_EMAIL . '.max'                => 'Электронная почта не может быть больше :max символов!',
+            FIELD_EMAIL . '.exists'             => 'Не правильно введён адрес электронной почты!',
+
+            FIELD_PASSWORD . '.required'        => 'Пароль - это обязательное поле!',
+            FIELD_PASSWORD . '.max'             => 'Пароль не может быть больше :max-х символов!',
         ];
     }
 }

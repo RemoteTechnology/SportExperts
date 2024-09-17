@@ -20,12 +20,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Js;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class EventResource extends JsonResource
 {
     private function getParticipantCollection(int $eventId): array
     {
         $participants = [];
-        foreach (Participant::where(['event_id' => $this->id])->get() as $value)
+        foreach (Participant::where([FIELD_EVENT_ID => $this->id])->get() as $value)
         {
             $participants[] = User::find($value->user_id);
         }
@@ -52,26 +54,26 @@ class EventResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $tournament = Tournament::where(['event_key' => $this->key])->first();
-        $admins = $this->getTournamentAdminUsers(TournamentAdmin::where(['tournament_id' => $tournament->id])->get());
+        $tournament = Tournament::where([FIELD_EVENT_KEY => $this->key])->first();
+        $admins = $this->getTournamentAdminUsers(TournamentAdmin::where([FIELD_TOURNAMENT_ID => $tournament->id])->get());
         return [
-            'id' => $this->id,
-            'key' => $this->key,
-            'name' => $this->name,
-            'description' => $this->description,
-            'start_date' => $this->start_date,
-            'start_time' => $this->start_time,
-            'expiration_date' => $this->expiration_date,
-            'expiration_time' => $this->expiration_time,
-            'location' => $this->location,
-            'status' => $this->status,
-            'owner' => new UserResource(User::find($this->user_id)),
-            'admins' => $admins,
-            'image' => new FileResource(File::where(['key' => $this->image])->first()),
-            'options' => Option::where(['event_key' => $this->key])->get(),
-            'participants' => $this->getParticipantCollection($this->id),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            FIELD_ID                => $this->id,
+            FIELD_KEY               => $this->key,
+            FIELD_NAME              => $this->name,
+            FIELD_DESCRIPTION       => $this->description,
+            FIELD_START_DATE        => $this->start_date,
+            FIELD_START_TIME        => $this->start_time,
+            FIELD_EXPIRATION_DATE   => $this->expiration_date,
+            FIELD_EXPIRATION_TIME   => $this->expiration_time,
+            FIELD_LOCATION          => $this->location,
+            FIELD_STATUS            => $this->status,
+            FIELD_OWNER             => new UserResource(User::find($this->user_id)),
+            FIELD_ADMINS            => $admins,
+            FIELD_IMAGE             => new FileResource(File::where([FIELD_KEY => $this->image])->first()),
+            FIELD_OPTIONS           => Option::where([FIELD_EVENT_KEY => $this->key])->get(),
+            FIELD_PARTICIPANTS      => $this->getParticipantCollection($this->id),
+            FIELD_CREATED_AT        => $this->created_at,
+            FIELD_UPDATED_AT        => $this->updated_at,
         ];
     }
 }

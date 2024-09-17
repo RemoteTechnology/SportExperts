@@ -9,6 +9,8 @@ use App\Models\Participant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class OptionResource extends JsonResource
 {
     /**
@@ -19,15 +21,15 @@ class OptionResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'event_key' => $this->event_key,
-            'participant_key' => $this->participant_key,
-            'entity' => $this->entity,
-            'name' => $this->name,
-            'value' => $this->value,
-            'type' => $this->type,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            FIELD_ID                => $this->id,
+            FIELD_EVENT_KEY         => $this->event_key,
+            FIELD_PARTICIPANT_KEY   => $this->participant_key,
+            FIELD_ENTITY            => $this->entity,
+            FIELD_NAME              => $this->name,
+            FIELD_VALUE             => $this->value,
+            FIELD_TYPE              => $this->type,
+            FIELD_CREATED_AT        => $this->created_at,
+            FIELD_UPDATED_AT        => $this->updated_at,
         ];
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Requests\Inviteds;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class NotificationRequest extends FormRequest
 {
     /**
@@ -22,9 +24,9 @@ class NotificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'             => ['required', 'string'],
-            'invite_user_id'    => ['required', 'numeric'],
-            'event_id'          => ['required', 'numeric'],
+            FIELD_EMAIL             => ['required', 'string', 'exists:users,email'],
+            FIELD_INVITED_USER_ID   => ['required', 'numeric', 'exists:users,id'],
+            FIELD_EVENT_ID          => ['required', 'numeric', 'exists:events,id'],
         ];
     }
 }

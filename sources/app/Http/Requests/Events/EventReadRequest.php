@@ -4,6 +4,8 @@ namespace App\Http\Requests\Events;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class EventReadRequest extends FormRequest
 {
     /**
@@ -22,7 +24,8 @@ class EventReadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required'],
+            FIELD_ID    => ['nullable', 'numeric', 'exists:events,id'],
+            FIELD_KEY   => ['nullable', 'string', 'exists:events,key'],
         ];
     }
 }

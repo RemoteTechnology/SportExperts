@@ -4,43 +4,39 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Users;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Users\ReadUserRequest;
 use App\Http\Resources\Users\UserResource;
 use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
-use Sajya\Server\Procedure;
+use Illuminate\Http\Response;
 
-class UserReadProcedure extends Procedure
+class UserReadProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'UserReadProcedure';
-    private UserRepository $operation;
+    public static string $name = PROCEDURE_USER_READ;
+    private UserRepository $userRepository;
 
-    /**
-     * @param UserRepository $operation
-     */
-    public function __construct(UserRepository $operation)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->operation = $operation;
+        $this->userRepository = $userRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param ReadUserRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(ReadUserRequest $request): JsonResponse
     {
-        $user = $request->validated();
+        define('ATTRIBUTES', $request->validated());
+        $repository = $this->userRepository->findById((int)ATTRIBUTES[FIELD_ID]);
+
         return new JsonResponse(
-            data: new UserResource($this->operation->findById((int)$user['id'])),
-            status: 201
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new UserResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

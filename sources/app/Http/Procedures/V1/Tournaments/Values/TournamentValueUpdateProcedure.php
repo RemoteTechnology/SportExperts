@@ -4,21 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Tournaments\Values;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\TournamentValues\TournamentValueUpdateRequest;
 use App\Http\Resources\TournamentValues\TournamentValueResource;
 use App\Repository\TournamentValueRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Sajya\Server\Procedure;
 
-class TournamentValueUpdateProcedure extends Procedure
+class TournamentValueUpdateProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
     public static string $name = 'TournamentValueUpdateProcedure';
     private TournamentValueRepository $tournamentValueRepository;
     public function __construct(TournamentValueRepository $tournamentValueRepository)
@@ -27,10 +21,7 @@ class TournamentValueUpdateProcedure extends Procedure
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param TournamentValueUpdateRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(TournamentValueUpdateRequest $request): JsonResponse
@@ -40,7 +31,11 @@ class TournamentValueUpdateProcedure extends Procedure
         $repository = $this->tournamentValueRepository->update($entity, ATTRIBUTES);
 
         return new JsonResponse(
-            data: new TournamentValueResource($repository),
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new TournamentValueResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
             status: Response::HTTP_CREATED
         );
     }

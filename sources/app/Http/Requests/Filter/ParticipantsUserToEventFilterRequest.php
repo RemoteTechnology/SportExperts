@@ -4,6 +4,8 @@ namespace App\Http\Requests\Filter;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class ParticipantsUserToEventFilterRequest extends FormRequest
 {
     /**
@@ -22,7 +24,7 @@ class ParticipantsUserToEventFilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'event_key' => ['required']
+            FIELD_EVENT_KEY => ['required']
         ];
     }
 }
