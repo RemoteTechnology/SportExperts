@@ -8,36 +8,36 @@ use App\Domain\Abstracts\AbstractFilter;
 use App\Http\Requests\Filter\ParticipantFilterRequest;
 use App\Repository\Filter\Entities\Participants\ParticipantOwnerFilterRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
 
 class ParticipantOwnerFilterProcedure extends AbstractFilter
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'ParticipantOwnerFilterProcedure';
-
+    public static string $name = PROCEDURE_PARTICIPANT_FILTER_PARTICIPANT_OWNER;
     private ParticipantOwnerFilterRepository $filterRepository;
 
     public function __construct(ParticipantOwnerFilterRepository $filterRepository)
     {
         $this->filterRepository = $filterRepository;
     }
+
     /**
-     * Execute the procedure.
-     *
      * @param ParticipantFilterRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(ParticipantFilterRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        define('ATTRIBUTES', $request->validated());
+        $format = $this->formatDate(ATTRIBUTES);
+        $repository = $this->filterRepository->filter($format, ATTRIBUTES[FIELD_LIMIT]);
 
         return new JsonResponse(
-            data: $this->filterRepository->filter($this->formatDate($data), $data['limit']),
-            status: 201
+            data: [
+                FIELD_ATTRIBUTES => $repository
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

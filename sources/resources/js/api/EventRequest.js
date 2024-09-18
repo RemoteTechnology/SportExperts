@@ -60,5 +60,9 @@ export async function updateEventOptionRequest(attributes, eventQuery = new Even
 }
 export async function getKeyEventRequest(attributes, eventQuery = new EventEndpointQuery())
 {
-    // TODO: сделать выборку записи по ключу
+    eventQuery.setUrl(`${BASE_URL}api/v1/event/read`);
+    eventQuery.setHeaders();
+    eventQuery.setMethod(`${PROCEDURES.event.read}@${REQUEST_METHOD_DEFAULT}`);
+    eventQuery.setParams(attributes);
+    return await eventQuery.execute();
 }

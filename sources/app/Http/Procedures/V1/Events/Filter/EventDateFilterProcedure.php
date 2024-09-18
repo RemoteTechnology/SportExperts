@@ -5,63 +5,71 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Events\Filter;
 
 use App\Domain\Abstracts\AbstractFilter;
+use App\Domain\Abstracts\AbstractProcedure;
+use App\Domain\Constants\EnumConstants\FilterDateModeEnum;
 use App\Http\Requests\Filter\ParticipantFilterRequest;
 use App\Http\Resources\Events\EventCollection;
 use App\Repository\Filter\Entities\Events\EventToParticipantFilterRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
 
 class EventDateFilterProcedure extends AbstractFilter
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'EventDateFilterProcedure';
-
+    public static string $name = PROCEDURE_EVENT_FILTER_DATE;
     private EventToParticipantFilterRepository $filterRepository;
+
     public function __construct(EventToParticipantFilterRepository $filterRepository)
     {
         $this->filterRepository = $filterRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param ParticipantFilterRequest $request
-     *
      * @return JsonResponse
      */
-    public function handle(ParticipantFilterRequest $request)//: JsonResponse
+    public function handle(ParticipantFilterRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        define('ATTRIBUTES', $request->validated());
 
-        if ($data['mode'] === 'after')
+        if (ATTRIBUTES[FIELD_MODE] === FilterDateModeEnum::AFTER)
         {
-            $query = $this->filterRepository->filterAfterDate($this->formatDate($data), $data['limit'])->all()['data'];
-            $events = new EventCollection($query);
+            $format = $this->formatDate(ATTRIBUTES);
+            $repository = $this->filterRepository->filterAfterDate($format, ATTRIBUTES[FIELD_LIMIT]);
+            $collectData = new EventCollection($repository->all()[FIELD_DATA]);
+
             return new JsonResponse(
-                data: $events->resource,
-                status: 201
+                data: [
+                    FIELD_ATTRIBUTES => $collectData->resource,
+                ],
+                status: Response::HTTP_CREATED
             );
         }
-        elseif ($data['mode'] === 'before')
+        elseif (ATTRIBUTES[FIELD_MODE] === FilterDateModeEnum::BEFORE)
         {
-            $query = $this->filterRepository->filterBeforeDate($this->formatDate($data), $data['limit'])->all()['data'];
-            $events = new EventCollection($query);
+            $format = $this->formatDate(ATTRIBUTES);
+            $repository = $this->filterRepository->filterBeforeDate($format, ATTRIBUTES[FIELD_LIMIT]);
+            $collectData = new EventCollection($repository->all()[FIELD_DATA]);
+
             return new JsonResponse(
-                data: $events->resource,
-                status: 201
+                data: [
+                    FIELD_ATTRIBUTES => $collectData->resource
+                ],
+                status: Response::HTTP_CREATED
             );
         }
-        else
-        {
-            $query = $this->filterRepository->filterDate($this->formatDate($data), $data['limit'])->all()['data'];
-            $events = new EventCollection($query);
-            return new JsonResponse(
-                data: $events->resource,
-                status: 201
-            );
-        }
+
+        $format = $this->formatDate(ATTRIBUTES);
+        $repository = $this->filterRepository->filterDate($format, ATTRIBUTES[FIELD_LIMIT]);
+        $collectData = new EventCollection($repository);
+
+        return new JsonResponse(
+            data: [
+                FIELD_ATTRIBUTES => $collectData->resource
+            ],
+            status: Response::HTTP_CREATED
+        );
     }
 }

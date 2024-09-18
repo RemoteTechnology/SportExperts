@@ -4,69 +4,51 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Users;
 
+use App\Domain\Abstracts\AbstractProcedure;
+use App\Domain\Constants\EnumConstants\RoleEnum;
 use App\Http\Requests\Users\RegistrationUserRequest;
 use App\Http\Resources\Users\UserResource;
 use App\Repository\UserRepository;
-use App\Services\LoggingService;
 use App\Services\MailingService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use Sajya\Server\Procedure;
 
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
 require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
 
-class UserRegistrationProcedure extends Procedure
+class UserRegistrationProcedure extends AbstractProcedure
 {
-    public static string $name = 'UserRegistrationProcedure';
-    /**
-     * @var UserRepository
-     */
-    private UserRepository $operation;
-//    private LoggingService $loggingService;
+    public static string $name = PROCEDURE_USER_REGISTRATION;
+    private UserRepository $userRepository;
     private MailingService $mailingService;
 
-    /**
-     * @param UserRepository $operation
-     */
-    public function __construct(UserRepository $operation, MailingService $mailingService)//, LoggingService $loggingService)
+    public function __construct(UserRepository $userRepository, MailingService $mailingService)
     {
-        $this->operation = $operation;
-//        $this->loggingService = $loggingService;
+        $this->userRepository = $userRepository;
         $this->mailingService = $mailingService;
     }
 
     /**
-     * @param Request $http
      * @param RegistrationUserRequest $request
      * @return JsonResponse
      */
-    public function handle(Request $http, RegistrationUserRequest $request): JsonResponse
+    public function handle(RegistrationUserRequest $request): JsonResponse
     {
         $attributes = $request->validated();
-//        try {
-        $attributes['password'] = Hash::make($attributes['password']);
-        $attributes['role'] = key_exists('role', $attributes) ? $attributes['role'] : 'athlete'; //'admin';
+        $attributes[FIELD_PASSWORD] = Hash::make($attributes[FIELD_PASSWORD]);
+        $attributes[FIELD_ROLE] = key_exists(FIELD_ROLE, $attributes) ? $attributes[FIELD_ROLE] : RoleEnum::ATHLETE;
+        $repository = $this->userRepository->store($attributes);
+        $this->mailingService->mailNewUser([FIELD_EMAIL => $attributes[FIELD_EMAIL]]);
+        unset($attributes[FIELD_PASSWORD]);
 
-            if ($user = new UserResource(
-                $this->operation->store($attributes)
-            )) {
-                $this->mailingService->mailNewUser([FIELD_EMAIL => $user->email]);
-                return new JsonResponse(
-                    data: $user,
-                    status: 201
-                );
-            }
-//        }
-//        catch (Exception $e)
-//        {
-//            $this->loggingService->write(LogLevelEnum::Error, [
-//                'action'        => self::$name,
-//                'description'   => $e->getMessage(),
-//                'input_data'    => $inputData,
-//                'slug'          => $http->url(),
-//            ]);
-//        }
-//        return new JsonResponse();
+        return new JsonResponse(
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new UserResource($repository),
+                ...self::meta($request, $attributes)
+            ],
+            status: Response::HTTP_CREATED
+        );
     }
 }

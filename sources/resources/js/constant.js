@@ -8,7 +8,7 @@ export const PROCEDURES = {
         registration:           'UserRegistrationProcedure',
         read:                   'UserReadProcedure',
         update:                 'UserUpdateProcedure',
-        reset:                  'ResetProcedure',
+        reset:                  'UserResetProcedure',
     },
     invites: {
         list:                   'InvitedListProcedure',
@@ -46,7 +46,7 @@ export const PROCEDURES = {
     participant: {
         create:                 'ParticipantStoreProcedure',
         additionally: {
-            drop:               'ParticipantDiscvaleficationProcedure',
+            drop:               'ParticipantDisqualificationProcedure',
             replace:            'ParticipantКReplacementProcedure',
             skip:               'ParticipantSkippedProcedure',
         }
@@ -58,7 +58,10 @@ export const PROCEDURES = {
     tournament: {
         read:                   'TournamentReadProcedure',
         value: {
-            create:             'TournamentValueStoreProcedure'
+            create:             'TournamentValueStoreProcedure',
+            filter: {
+                free:           'TournamentValueFreeParticipantsFilterProcedure'
+            }
         }
     }
 };

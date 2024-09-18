@@ -4,6 +4,8 @@ namespace App\Http\Requests\Filter;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class ParticipantFilterRequest extends FormRequest
 {
     /**
@@ -22,11 +24,11 @@ class ParticipantFilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'filter'        => ['required', 'string'],
-            'mode'          => ['nullable', 'string'],
-            'limit'         => ['nullable', 'numeric'],
-            'start_date'    => ['nullable'],
-            'status'        => ['nullable']
+            FIELD_FILTER        => ['required', 'string'],
+            FIELD_MODE          => ['nullable', 'string'],
+            FIELD_LIMIT         => ['nullable', 'numeric'],
+            FIELD_START_DATE    => ['nullable'],
+            FIELD_STATUS        => ['nullable']
         ];
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Requests\Inviteds;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class InvitedListRequest extends FormRequest
 {
     /**
@@ -22,8 +24,8 @@ class InvitedListRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'who_user_id'       => ['nullable'],
-            'enable_events'     => ['nullable']
+            FIELD_WHO_USER_ID   => ['nullable'],
+            FIELD_ENABLE_EVENT  => ['nullable']
         ];
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Requests\Options;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class ReadOptionRequest extends FormRequest
 {
     /**
@@ -22,9 +24,9 @@ class ReadOptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'        => ['nullable', 'numeric', 'exists:options,id'],
-            'user_id'   => ['nullable', 'numeric', 'exists:options,user_id'],
-            'event_key' => ['nullable', 'string', 'exists:options,event_key'],
+            FIELD_ID        => ['nullable', 'numeric', 'exists:options,id'],
+            FIELD_USER_ID   => ['nullable', 'numeric', 'exists:options,user_id'],
+            FIELD_EVENT_KEY => ['nullable', 'string', 'exists:options,event_key'],
         ];
     }
 }

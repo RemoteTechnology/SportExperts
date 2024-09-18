@@ -4,6 +4,8 @@ namespace App\Repository\Filter;
 
 use Illuminate\Database\Eloquent\Model;
 
+require_once dirname(__DIR__, 2) . '/Domain/Constants/FieldConst.php';
+
 trait GetKeyQueryTrait
 {
     /**
@@ -12,6 +14,6 @@ trait GetKeyQueryTrait
      */
     public function getKey(string $key): mixed
     {
-        return $this->model::where('key', $key)->first();
+        return $this->model::where(FIELD_KEY, $key)->first();
     }
 }

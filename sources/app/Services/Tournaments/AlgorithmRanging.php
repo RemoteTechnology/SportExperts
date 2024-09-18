@@ -15,6 +15,8 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+require_once dirname(__DIR__, 2) . '/Domain/Constants/FieldConst.php';
+
 class AlgorithmRanging extends AbstractAlgorithmRanging
 {
     const WEIGHT_DISCREPANCY = 5;
@@ -43,10 +45,10 @@ class AlgorithmRanging extends AbstractAlgorithmRanging
     private function addTournamentValue(Model $participant, Model|null $tournament): Model
     {
         return $this->tournamentValueRepository->store([
-            'tournament_id' => $tournament->id,
-            'participants_A' => $participant->key,
-            'participants_B' => null,
-            'participants_passes' => null,
+            FIELD_TOURNAMENT_ID         => $tournament->id,
+            FIELD_PARTICIPANTS_A        => $participant->key,
+            FIELD_PARTICIPANTS_B        => null,
+            FIELD_PARTICIPANTS_PASSES   => null,
         ]);
     }
 
@@ -58,8 +60,14 @@ class AlgorithmRanging extends AbstractAlgorithmRanging
     public function addRivalExists(Collection $participants, Model $participant, Model $tournament)
     {
         // Параметры текущего спортсмена
-        $athleteWeight = $this->optionRepository->queryExists(['user_id' => $participant->user_id, 'name' => 'Weight']);
-        $athleteHeight = $this->optionRepository->queryExists(['user_id' => $participant->user_id, 'name' => 'Height']);
+        $athleteWeight = $this->optionRepository->queryExists([
+            FIELD_USER_ID => $participant->user_id,
+            FIELD_NAME => 'Weight'
+        ]);
+        $athleteHeight = $this->optionRepository->queryExists([
+            FIELD_USER_ID => $participant->user_id,
+            FIELD_NAME => 'Height'
+        ]);
         $athleteAge = Carbon::parse($this->userRepository->findById($participant->user_id)->birth_date);
 
         foreach ($participants as $item)
@@ -67,8 +75,14 @@ class AlgorithmRanging extends AbstractAlgorithmRanging
             if ($participant->key !== $item->key)
             {
                 // Параметры соперника
-                $participantWeight = $this->optionRepository->queryExists(['user_id' => $item->user_id, 'name' => 'Weight']);
-                $participantHeight = $this->optionRepository->queryExists(['user_id' => $item->user_id, 'name' => 'Height']);
+                $participantWeight = $this->optionRepository->queryExists([
+                    FIELD_USER_ID => $item->user_id,
+                    FIELD_NAME => 'Weight'
+                ]);
+                $participantHeight = $this->optionRepository->queryExists([
+                    FIELD_USER_ID => $item->user_id,
+                    FIELD_NAME => 'Height'
+                ]);
                 $participantAge = Carbon::parse($this->userRepository->findById($item->user_id)->birth_date);
 
                 $weight = abs((int)$athleteWeight->value - (int)$participantWeight->value);
@@ -78,9 +92,9 @@ class AlgorithmRanging extends AbstractAlgorithmRanging
 
                 if (($weight <= self::WEIGHT_DISCREPANCY) && ($height <= self::HEIGHT_DISCREPANCY) && ($age <= self::AGE_DISCREPANCY))
                 {
-                    $tournamentValue = $this->tournamentValueRepository->queryExists(['participants_A' => $item->key]);
+                    $tournamentValue = $this->tournamentValueRepository->queryExists([FIELD_PARTICIPANTS_A => $item->key]);
                     return $this->tournamentValueRepository->update($tournamentValue, [
-                        'participants_B' => $participant->key
+                        FIELD_PARTICIPANTS_B => $participant->key
                     ]);
                 }
             }

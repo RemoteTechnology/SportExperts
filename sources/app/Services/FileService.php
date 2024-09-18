@@ -6,6 +6,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+require_once dirname(__DIR__) . '/Domain/Constants/FieldConst.php';
+
 class FileService
 {
     /**
@@ -24,11 +26,11 @@ class FileService
     public function get(UploadedFile $file): array
     {
         return [
-            'key' => Str::uuid()->toString(),
-            'name' => $file->hashName(),
-            'mime' => $file->getClientMimeType(),
-            'size' => $file->getSize(),
-            'extension' => $file->getExtension(),
+            FIELD_KEY       => Str::uuid()->toString(),
+            FIELD_NAME      => $file->hashName(),
+            FIELD_MIME      => $file->getClientMimeType(),
+            FIELD_SIZE      => $file->getSize(),
+            FIELD_EXTENSION => $file->getExtension(),
         ];
     }
 

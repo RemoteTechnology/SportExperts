@@ -4,44 +4,42 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Events\Archive;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Archives\ArchiveRequest;
 use App\Http\Resources\Events\EventResource;
 use App\Repository\EventRepository;
 use Illuminate\Http\JsonResponse;
-use Sajya\Server\Procedure;
+use Illuminate\Http\Response;
 
 require_once dirname(__DIR__, 5) . '/Domain/Constants/EventStatusesConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
 
-class ArchiveStoreProcedure extends Procedure
+class ArchiveStoreProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'ArchiveStoreProcedure';
-    public EventRepository $repository;
+    public static string $name = PROCEDURE_EVENT_ARCHIVE_STORE;
+    public EventRepository $eventRepository;
 
-    public function __construct(EventRepository $repository)
+    public function __construct(EventRepository $eventRepository)
     {
-        $this->repository = $repository;
+        $this->eventRepository = $eventRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param ArchiveRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(ArchiveRequest $request): JsonResponse
     {
-        $archive = $request->validated();
+        define('ATTRIBUTES', $request->validated());
+        $repository = $this->eventRepository->updateStatus(ATTRIBUTES, EVENT_ARCHIVE);
+
         return new JsonResponse(
-            data: new EventResource(
-                $this->repository->updateStatus($archive, EVENT_ARCHIVE)
-            ),
-            status: 201
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new EventResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class ResetRequest extends FormRequest
 {
     /**
@@ -22,7 +24,16 @@ class ResetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'=> ['nullable', 'min:8', 'max:255', 'exists:users,email'],
+            FIELD_EMAIL => ['nullable', 'min:8', 'max:255', 'exists:users,email'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            FIELD_EMAIL . '.min'        => 'Электронная почта не может быть меньше :min-ми символов!',
+            FIELD_EMAIL . '.max'        => 'Электронная почта не может быть больше :max символов!',
+            FIELD_EMAIL . '.exists'     => 'Такого пользователя в системе не существует!',
         ];
     }
 }

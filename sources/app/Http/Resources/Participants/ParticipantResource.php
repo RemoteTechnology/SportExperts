@@ -11,6 +11,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 3) . '/Domain/Constants/EntitiesConst.php';
+
 class ParticipantResource extends JsonResource
 {
     /**
@@ -21,14 +24,14 @@ class ParticipantResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'key' => $this->key,
-            'event' => new EventResource(Event::find($this->event_id)),
-            'user' => new UserResource(User::find($this->user_id)),
-            'team' => new TeamResource(Team::where(['key' => $this->team_key])->first()),
-            'invited_user' => new UserResource(User::find($this->invited_user_id)),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            FIELD_ID            => $this->id,
+            FIELD_KEY           => $this->key,
+            TABLE_EVENTS        => new EventResource(Event::find($this->event_id)),
+            TABLE_USERS         => new UserResource(User::find($this->user_id)),
+            TABLE_TEAMS         => new TeamResource(Team::where([FIELD_KEY => $this->team_key])->first()),
+            TABLE_INVITES       => new UserResource(User::find($this->invited_user_id)),
+            FIELD_CREATED_AT    => $this->created_at,
+            FIELD_UPDATED_AT    => $this->updated_at,
         ];
     }
 }

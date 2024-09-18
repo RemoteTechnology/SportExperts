@@ -4,6 +4,8 @@ namespace App\Http\Requests\Inviteds;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class InvitedReadUserParticipantRequest extends FormRequest
 {
     /**
@@ -22,7 +24,7 @@ class InvitedReadUserParticipantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'numeric', 'exists:users,id', 'exists:invites,user_id']
+            FIELD_USER_ID => ['required', 'numeric', 'exists:users,id', 'exists:invites,user_id']
         ];
     }
 }

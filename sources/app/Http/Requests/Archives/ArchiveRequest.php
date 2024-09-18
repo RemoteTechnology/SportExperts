@@ -4,6 +4,8 @@ namespace App\Http\Requests\Archives;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class ArchiveRequest extends FormRequest
 {
     /**
@@ -22,7 +24,7 @@ class ArchiveRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'key'       => ['required'],
+            FIELD_KEY => ['required', 'exists:events,key'],
         ];
     }
 }

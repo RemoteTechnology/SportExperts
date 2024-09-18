@@ -4,37 +4,40 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Options;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Options\StoreOptionRequest;
 use App\Http\Resources\Options\OptionResource;
 use App\Repository\OptionRepository;
 use Illuminate\Http\JsonResponse;
-use Sajya\Server\Procedure;
+use Illuminate\Http\Response;
 
-class OptionStoreProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+
+class OptionStoreProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'OptionStoreProcedure';
-
+    public static string $name = PROCEDURE_OPTION_STORE;
     private OptionRepository $operation;
 
     public function __construct(OptionRepository $operation) {
         $this->operation = $operation;
     }
 
-
+    /**
+     * @param StoreOptionRequest $request
+     * @return JsonResponse
+     */
     public function handle(StoreOptionRequest $request)
     {
+        define('ATTRIBUTES', $request->validated());
+        $repository = $this->operation->store(ATTRIBUTES);
+
         return new JsonResponse(
-            data: new OptionResource(
-                $this->operation->store(
-                    $request->validated()
-                )
-            ),
-            status: 201
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new OptionResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

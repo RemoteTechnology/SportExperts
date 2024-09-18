@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Tournaments\Values;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\TournamentValues\TournamentValueStoreRequest;
 use App\Http\Resources\TournamentValues\TournamentValueResource;
 use App\Repository\EventRepository;
@@ -11,17 +12,10 @@ use App\Repository\ParticipantRepository;
 use App\Repository\TournamentRepository;
 use App\Repository\TournamentValueRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Sajya\Server\Procedure;
 
-class TournamentValueStoreProcedure extends Procedure
+class TournamentValueStoreProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
     public static string $name = 'TournamentValueStoreProcedure';
     private EventRepository $eventRepository;
     private ParticipantRepository $participantRepository;
@@ -41,10 +35,7 @@ class TournamentValueStoreProcedure extends Procedure
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param TournamentValueStoreRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(TournamentValueStoreRequest $request): JsonResponse
@@ -59,8 +50,14 @@ class TournamentValueStoreProcedure extends Procedure
         $attributes['tournament_id'] = $tournament->id;
         $attributes['participants_A'] = $participant->key;
         $attributes['participants_B'] = null;
+
+        $repository = $this->tournamentValueRepository->store($attributes);
         return new JsonResponse(
-            data: new TournamentValueResource($this->tournamentValueRepository->store($attributes)),
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new TournamentValueResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
             status: Response::HTTP_CREATED
         );
     }

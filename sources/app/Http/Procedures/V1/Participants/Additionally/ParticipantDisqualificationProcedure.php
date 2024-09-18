@@ -4,22 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Participants\Additionally;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Participants\Additionally\ParticipantDiscvaleficationRequest;
-use App\Http\Resources\TournamentValues\TournamentValueResource;
 use App\Repository\EventRepository;
 use App\Repository\TournamentValueRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Sajya\Server\Procedure;
 
-class ParticipantDiscvaleficationProcedure extends Procedure
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
+
+class ParticipantDisqualificationProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'ParticipantDiscvaleficationProcedure';
+    public static string $name = PROCEDURE_PARTICIPANT_DISQUALIFICATION;
     private EventRepository $eventRepository;
     private TournamentValueRepository $tournamentValueRepository;
 
@@ -33,19 +30,22 @@ class ParticipantDiscvaleficationProcedure extends Procedure
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param ParticipantDiscvaleficationRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(ParticipantDiscvaleficationRequest $request): JsonResponse
     {
-        $attributes = $request->validated();
-        $event = $this->eventRepository->findByKey($attributes['event_key']);
+        define('ATTRIBUTES', $request->validated());
+        $event = $this->eventRepository->findByKey(ATTRIBUTES[FIELD_EVENT_KEY]);
+        $repository = $this->tournamentValueRepository->removeParticipant($event, ATTRIBUTES);
+
         return new JsonResponse(
             data: /*new TournamentValueResource(*/
-                $this->tournamentValueRepository->removeParticipant($event, $attributes),
+            [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => $repository,
+                ...self::meta($request, ATTRIBUTES)
+            ],
             /*),*/
             status: Response::HTTP_CREATED
         );

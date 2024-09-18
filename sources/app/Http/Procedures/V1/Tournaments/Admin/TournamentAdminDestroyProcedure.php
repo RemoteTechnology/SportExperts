@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Tournaments\Admin;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\TournamentAdmin\TournamentAdminReadRequest;
 use App\Http\Resources\TournamentAdmin\TournamentAdminResource;
 use App\Repository\TournamentAdminRepository;
@@ -13,7 +14,7 @@ use Sajya\Server\Procedure;
 
 require_once dirname(__DIR__, 5) . '/Domain/Constants/ErrorMessageConst.php';
 
-class TournamentAdminDestroyProcedure extends Procedure
+class TournamentAdminDestroyProcedure extends AbstractProcedure
 {
     /**
      * The name of the procedure that is used for referencing.
@@ -41,13 +42,23 @@ class TournamentAdminDestroyProcedure extends Procedure
         if ($this->tournamentAdminRepository->destroy($entity))
         {
             return new JsonResponse(
-                data: new TournamentAdminResource($entity),
+                data: [
+                    FIELD_ID => self::identifier(),
+                    FIELD_ATTRIBUTES => new TournamentAdminResource($entity),
+                    ...self::meta($request, ATTRIBUTES)
+                ],
                 status: Response::HTTP_CREATED
             );
         }
 
         return new JsonResponse(
-            data: MESSAGE_NOT_DESTROY,
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => [
+                    FIELD_MESSAGE => MESSAGE_NOT_DESTROY
+                ],
+                ...self::meta($request, ATTRIBUTES)
+            ],
             status: Response::HTTP_CREATED
         );
     }

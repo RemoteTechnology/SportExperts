@@ -7,6 +7,8 @@ use App\Domain\Constants\EnumConstants\LogLevelEnum;
 use App\Repository\LoggingRepository;
 use Illuminate\Support\Str;
 
+require_once dirname(__DIR__) . '/Domain/Constants/FieldConst.php';
+
 class LoggingService extends AbstractLogger //  implements LoggingServiceInterface
 {
     protected LoggingRepository $repository;
@@ -21,7 +23,7 @@ class LoggingService extends AbstractLogger //  implements LoggingServiceInterfa
     }
     public function write(LogLevelEnum $level, mixed $values):void
     {
-        $values['key'] = Str::uuid()->toString();
+        $values[FIELD_KEY] = Str::uuid()->toString();
         $values['level'] = $level;
         $this->repository->store($values);
     }

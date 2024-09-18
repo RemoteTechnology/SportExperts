@@ -4,45 +4,42 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Options;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Options\UpdateOptionRequest;
 use App\Http\Resources\Options\OptionResource;
 use App\Repository\OptionRepository;
 use Illuminate\Http\JsonResponse;
-use Sajya\Server\Procedure;
+use Illuminate\Http\Response;
 
-class OptionUpdateProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class OptionUpdateProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'OptionUpdateProcedure';
+    public static string $name = PROCEDURE_OPTION_UPDATE;
+    private OptionRepository $optionRepository;
 
-    private OptionRepository $operation;
-
-    public function __construct(OptionRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(OptionRepository $optionRepository) {
+        $this->optionRepository = $optionRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param UpdateOptionRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(UpdateOptionRequest $request): JsonResponse
     {
-        $option = $request->validated();
+        define('ATTRIBUTES', $request->validated());
+        $option = $this->optionRepository->findById(ATTRIBUTES[FIELD_ID]);
+        $repository = $this->optionRepository->update($option, ATTRIBUTES);
+
         return new JsonResponse(
-            data: new OptionResource(
-                $this->operation->update(
-                    $this->operation->findById($option['id']),
-                    $option
-                )
-            ),
-            status: 201
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new OptionResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

@@ -4,42 +4,42 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Events;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Domain\Interfaces\Repositories\Entities\EventRepositoryInterface;
+use App\Http\Requests\Events\EventReadRequest;
 use App\Http\Resources\Events\EventResource;
 use Illuminate\Http\JsonResponse;
-use Sajya\Server\Procedure;
+use Illuminate\Http\Response;
 
-class EventDestroyProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class EventDestroyProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'EventDestroyProcedure';
+    public static string $name = PROCEDURE_EVENT_DESTROY;
+    private EventRepositoryInterface $eventRepository;
 
-    private EventRepositoryInterface $operation;
-
-    public function __construct(EventRepositoryInterface $operation) {
-        $this->operation = $operation;
+    public function __construct(EventRepositoryInterface $eventRepository) {
+        $this->eventRepository = $eventRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
-     * @param int $id
-     *
+     * @param EventReadRequest $request
      * @return JsonResponse
      */
-    public function handle(int $id): JsonResponse
+    public function handle(EventReadRequest $request): JsonResponse
     {
+        define("ATTRIBUTES", $request->validated());
+        $event =  $this->eventRepository->findById(ATTRIBUTES[FIELD_ID]);
+        $repository = $this->eventRepository->destroy($event);
+
         return new JsonResponse(
-            data:  new EventResource(
-                $this->operation->destroy(
-                    $this->operation->findById($id)
-                )
-            ),
-            status: 200
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new EventResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Tournaments\Admin;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\TournamentAdmin\TournamentAdminReadRequest;
 use App\Http\Resources\TournamentAdmin\TournamentAdminResource;
 use App\Repository\TournamentAdminRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Sajya\Server\Procedure;
 
-class TournamentAdminReadProcedure extends Procedure
+class TournamentAdminReadProcedure extends AbstractProcedure
 {
     /**
      * The name of the procedure that is used for referencing.
@@ -39,7 +38,11 @@ class TournamentAdminReadProcedure extends Procedure
         $repository = $this->tournamentAdminRepository->findById(ATTRIBUTES['id']);
 
         return new JsonResponse(
-            data: new TournamentAdminResource($repository),
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new TournamentAdminResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
             status: Response::HTTP_CREATED
         );
     }

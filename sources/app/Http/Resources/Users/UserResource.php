@@ -2,10 +2,14 @@
 
 namespace App\Http\Resources\Users;
 
+use App\Domain\Constants\EnumConstants\RoleEnum;
 use App\Models\Option;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+
+require_once dirname(__DIR__, 3) . '/Domain/Constants/EntitiesConst.php';
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
 
 class UserResource extends JsonResource
 {
@@ -17,27 +21,27 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         $user = [
-            'id' => $this->id,
-            'first_name' => $this->first_name,
-            'first_name_eng' => $this->first_name_eng,
-            'last_name' => $this->last_name,
-            'last_name_eng' => $this->last_name_eng,
-            'birth_date' => $this->birth_date,
-            'gender' => $this->gender,
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'location' => $this->location,
-            'role' => $this->role,
+            FIELD_ID                => $this->id,
+            FIELD_FIRST_NAME        => $this->first_name,
+            FIELD_FIRST_NAME_ENG    => $this->first_name_eng,
+            FIELD_LAST_NAME         => $this->last_name,
+            FIELD_LAST_NAME_ENG     => $this->last_name_eng,
+            FIELD_BIRTH_DATE        => $this->birth_date,
+            FIELD_GENDER            => $this->gender,
+            FIELD_EMAIL             => $this->email,
+            FIELD_PHONE             => $this->phone,
+            FIELD_LOCATION          => $this->location,
+            FIELD_ROLE              => $this->role,
         ];
 
-        if ($this->role === 'athlete')
+        if ($this->role === RoleEnum::ATHLETE)
         {
-            $user['options'] = Option::where(['user_id' => $this->id])->get();
-            $user['age'] = !is_null($user['birth_date']) ? Carbon::parse($user['birth_date'])->age : null;
+            $user[TABLE_OPTIONS] = Option::where([FIELD_USER_ID => $this->id])->get();
+            $user[FIELD_AGE] = !is_null($user[FIELD_BIRTH_DATE]) ? Carbon::parse($user[FIELD_BIRTH_DATE])->age : null;
         }
 
-        $user['created_at'] = $this->created_at;
-        $user['updated_at'] = $this->updated_at;
+        $user[FIELD_CREATED_AT] = $this->created_at;
+        $user[FIELD_UPDATED_AT] = $this->updated_at;
         return $user;
     }
 }

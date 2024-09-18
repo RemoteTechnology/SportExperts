@@ -4,44 +4,43 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Teams;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Teams\StoreTeamRequest;
 use App\Http\Resources\Teams\TeamResource;
 use App\Repository\TeamRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Str;
-use Sajya\Server\Procedure;
 
-class TeamStoreProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class TeamStoreProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'TeamStoreProcedure';
+    public static string $name = PROCEDURE_TEAM_STORE;
+    private TeamRepository $teamRepository;
 
-    private TeamRepository $operation;
-
-    public function __construct(TeamRepository $operation) {
-        $this->operation = $operation;
+    public function __construct(TeamRepository $teamRepository) {
+        $this->teamRepository = $teamRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param StoreTeamRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(StoreTeamRequest $request): JsonResponse
     {
-        $team = $request->validated();
-        $team['key'] = Str::uuid()->toString();
+        $attributes = $request->validated();
+        $attributes[FIELD_KEY] = Str::uuid()->toString();
+        $repository = $this->teamRepository->store($attributes);
+
         return new JsonResponse(
-            data: new TeamResource(
-                $this->operation->store($team)
-            ),
-            status: 201
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new TeamResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

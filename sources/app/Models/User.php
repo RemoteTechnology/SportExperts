@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -47,4 +48,10 @@ class User extends Authenticatable
     protected $hidden = [
         FIELD_PASSWORD,
     ];
+
+    public function setBirthDateAttribute($value)
+    {
+        // Преобразуем формат "DD.MM.YYYY" в "YYYY-MM-DD"
+        $this->attributes[FIELD_BIRTH_DATE] = Carbon::createFromFormat('d.m.Y', $value)->format('Y-m-d');
+    }
 }

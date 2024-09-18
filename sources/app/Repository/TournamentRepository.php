@@ -10,7 +10,10 @@ use App\Repository\Traits\GetByKeyTrait;
 use App\Repository\Traits\ListQueryTrait;
 use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\UpdateQueryTrait;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+
+require_once dirname(__DIR__) . '/Domain/Constants/FieldConst.php';
 
 final class TournamentRepository implements LCRUD_OperationInterface
 {
@@ -29,10 +32,10 @@ final class TournamentRepository implements LCRUD_OperationInterface
 
     /**
      * @param string $eventKey
-     * @return Model|null
+     * @return Collection
      */
-    public function findByTournamentKey(string $eventKey): Model|null
+    public function findByTournamentKey(string $eventKey): Collection
     {
-        return $this->model::where(['event_key' => $eventKey])->first();
+        return $this->model::where([FIELD_EVENT_KEY => $eventKey])->get();
     }
 }

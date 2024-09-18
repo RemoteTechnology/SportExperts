@@ -4,56 +4,46 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Tournaments;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Tournaments\TournamentReadRequest;
 use App\Http\Resources\Tournaments\TournamentResource;
-use App\Http\Resources\TournamentValues\TournamentValueCollection;
 use App\Repository\TournamentRepository;
-use App\Repository\TournamentValueRepository;
-use App\Services\GridTournamentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Sajya\Server\Procedure;
 
-class TournamentReadProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class TournamentReadProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'TournamentReadProcedure';
-
+    public static string $name = PROCEDURE_TOURNAMENT_READ;
     private TournamentRepository $tournamentRepository;
-    private TournamentValueRepository $tournamentValueRepository;
 
-    public function __construct(
-        TournamentRepository $tournamentRepository,
-        TournamentValueRepository $tournamentValueRepository
-    )
+    public function __construct(TournamentRepository $tournamentRepository)
     {
         $this->tournamentRepository = $tournamentRepository;
-        $this->tournamentValueRepository = $tournamentValueRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param TournamentReadRequest $request
-     *
      * @return JsonResponse
      */
-    public function handle(TournamentReadRequest $request)
+    public function handle(TournamentReadRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $tournament = $this->tournamentRepository->findByTournamentKey($data['event_key']);
-        $values = new TournamentValueCollection(
-            $this->tournamentValueRepository->findByTournamentValue($tournament->id)
-        );
+        define('ATTRIBUTES', $request->validated());
+        $tournamentRepository = $this->tournamentRepository->findByTournamentKey(ATTRIBUTES[FIELD_EVENT_KEY]);
+        $tournamentRepository->sortBy(FIELD_STAGE);
+
+        $tournaments = [];
+        foreach ($tournamentRepository as $item) {
+            $tournaments[$item[FIELD_STAGE]][] = new TournamentResource($item);
+        }
 
         return new JsonResponse(
             data: [
-                'tournament'    => new TournamentResource($tournament),
-                'values'        => $values->resource,
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => $tournaments,
+                ...self::meta($request, ATTRIBUTES)
             ],
             status: Response::HTTP_CREATED
         );

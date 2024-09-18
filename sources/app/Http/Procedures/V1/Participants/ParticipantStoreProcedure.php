@@ -4,32 +4,28 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Participants;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Participants\StoreParticipantReqest;
 use App\Repository\EventRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\TournamentRepository;
-use App\Repository\TournamentValueRepository;
 use App\Services\Tournaments\AlgorithmRanging;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Sajya\Server\Procedure;
 
 require_once dirname(__DIR__, 4) . '/Domain/Constants/ParticipantMessageConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
 
-class ParticipantStoreProcedure extends Procedure
+class ParticipantStoreProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'ParticipantStoreProcedure';
-
+    public static string $name = PROCEDURE_PARTICIPANT_STORE;
     private AlgorithmRanging $algorithmRanging;
     private ParticipantRepository $participantRepository;
     private EventRepository $eventRepository;
     private TournamentRepository $tournament;
-    private TournamentValueRepository $tournamentValue;
 
     public function __construct(
         ParticipantRepository $participantRepository,
@@ -45,40 +41,46 @@ class ParticipantStoreProcedure extends Procedure
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param StoreParticipantReqest $request
-     *
      * @return JsonResponse
      */
     public function handle(StoreParticipantReqest $request): JsonResponse
     {
-        $participant = $request->validated();
-        $participant['event_id']            = (integer)$participant['event_id'];
-        $participant['user_id']             = (integer)$participant['user_id'];
-        $participant['invited_user_id']     = (integer)$participant['invited_user_id'];
-        $participant['key']                 = Str::uuid()->toString();
-        // TODO: пока оставить так, но потом сделать как в InvitedStoreProcedure:44!
-        foreach ($this->participantRepository->userList($participant['event_id']) as $value)
+        $attributes = $request->validated();
+        $attributes[FIELD_EVENT_ID]            = (integer)$attributes[FIELD_EVENT_ID];
+        $attributes[FIELD_USER_ID]             = (integer)$attributes[FIELD_USER_ID];
+        $attributes[FIELD_INVITED_USER_ID]     = (integer)$attributes[FIELD_INVITED_USER_ID];
+        $attributes[FIELD_KEY]                 = Str::uuid()->toString();
+
+        $users = $this->participantRepository->userList($attributes[FIELD_EVENT_ID]);
+
+        foreach ($users as $value)
         {
-            if ($value->user_id === $participant['user_id'])
+            if ($value->user_id === $attributes[FIELD_USER_ID])
             {
                 return new JsonResponse(
-                    data: ALREADY_PARTICIPANT,
-                    status: 201
+                    data: [
+                        FIELD_ID => self::identifier(),
+                        FIELD_ATTRIBUTES => ALREADY_PARTICIPANT,
+                        ...self::meta($request, $attributes)
+                    ],
+                    status: Response::HTTP_CREATED
                 );
             }
         }
 
-        $participantStore                   = $this->participantRepository->store($participant);
-        $event                              = $this->eventRepository->findById((integer)$participant['event_id']);
+        $participantStore                   = $this->participantRepository->store($attributes);
+        $event                              = $this->eventRepository->findById((integer)$attributes[FIELD_EVENT_ID]);
         $tournament                         = $this->tournament->findByTournamentKey($event->key);
 
-        $this->algorithmRanging->ranging($event, $tournament, $this->participantRepository, $participantStore);
+        $this->algorithmRanging->ranging($event, $tournament[0], $this->participantRepository, $participantStore);
 
         return new JsonResponse(
-            data: $participantStore->toArray(),
-            status: 201
+            data: [
+                FIELD_MESSAGE => $participantStore->toArray(),
+                ...self::meta($request, $attributes)
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

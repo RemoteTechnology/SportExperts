@@ -15,6 +15,8 @@ use App\Repository\Traits\UpdateQueryTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+require_once dirname(__DIR__) . '/Domain/Constants/FieldConst.php';
+
 final class ParticipantRepository extends ParticipantIsUserFilter implements LCRUD_OperationInterface
 {
     use ListQueryTrait;
@@ -31,9 +33,13 @@ final class ParticipantRepository extends ParticipantIsUserFilter implements LCR
         $this->model = $model;
     }
 
+    /**
+     * @param int $eventId
+     * @return mixed
+     */
     public function findByEventId(int $eventId)
     {
-        return $this->model->where(['event_id' => $eventId])->get();
+        return $this->model->where([FIELD_EVENT_ID => $eventId])->get();
     }
 
     /**
@@ -50,18 +56,27 @@ final class ParticipantRepository extends ParticipantIsUserFilter implements LCR
         ");
     }
 
-    public function removeUser(Model $event, array $attributes)
+    /**
+     * @param Model $event
+     * @param array $attributes
+     * @return bool
+     */
+    public function removeUser(Model $event, array $attributes): bool
     {
-        $data['key'] = array_key_exists('participants_A', $attributes)
-            ? $attributes['participants_A'] : $attributes['participants_B'];
-        return $this->model::where(['event_id' => $event->id, ...$data])->delete();
+        $data[FIELD_KEY] = array_key_exists(FIELD_PARTICIPANTS_A, $attributes)
+            ? $attributes[FIELD_PARTICIPANTS_A] : $attributes[FIELD_PARTICIPANTS_B];
+        return $this->model::where([FIELD_EVENT_ID => $event->id, ...$data])->delete();
     }
 
+    /**
+     * @param array $attributes
+     * @return Model
+     */
     public function findByKeyIsEvent(array $attributes): Model
     {
         return $this->model::where([
-            'event_id'  => $attributes['event_id'],
-            'user_id'   => $attributes['user_id'],
+            FIELD_EVENT_ID  => $attributes[FIELD_EVENT_ID],
+            FIELD_USER_ID   => $attributes[FIELD_USER_ID],
         ])->first();
     }
 }

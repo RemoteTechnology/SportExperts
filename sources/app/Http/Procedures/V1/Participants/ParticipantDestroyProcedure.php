@@ -4,42 +4,39 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Participants;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Domain\Interfaces\Repositories\Entities\ParticipantRepositoryInterface;
+use App\Http\Requests\Participants\ReadParticipantRequest;
 use App\Http\Resources\Participants\ParticipantResource;
 use Illuminate\Http\JsonResponse;
-use Sajya\Server\Procedure;
+use Illuminate\Http\Response;
 
-class ParticipantDestroyProcedure extends Procedure
+class ParticipantDestroyProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'ParticipantDestroyProcedure';
+    public static string $name = PROCEDURE_PARTICIPANT_DESTROY;
+    private ParticipantRepositoryInterface $participantRepository;
 
-    private ParticipantRepositoryInterface $operation;
-
-    public function __construct(ParticipantRepositoryInterface $operation) {
-        $this->operation = $operation;
+    public function __construct(ParticipantRepositoryInterface $participantRepository) {
+        $this->participantRepository = $participantRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
-     * @param int $id
-     *
+     * @param ReadParticipantRequest $request
      * @return JsonResponse
      */
-    public function handle(int $id): JsonResponse
+    public function handle(ReadParticipantRequest $request): JsonResponse
     {
+        define('ATTRIBUTES', $request->validated());
+        $participant = $this->participantRepository->findById(ATTRIBUTES[FIELD_ID]);
+        $repository = $this->participantRepository->destroy($participant);
+
         return new JsonResponse(
-            data: new ParticipantResource(
-                $this->operation->destroy(
-                    $this->operation->findById($id)
-                )
-            ),
-            status: 200
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new ParticipantResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

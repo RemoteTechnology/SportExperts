@@ -4,46 +4,43 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures\V1\Users;
 
+use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Users\UpdateUserRequest;
 use App\Http\Resources\Users\UserResource;
 use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Sajya\Server\Procedure;
+use Illuminate\Http\Response;
 
-class UserUpdateProcedure extends Procedure
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
+class UserUpdateProcedure extends AbstractProcedure
 {
-    /**
-     * The name of the procedure that is used for referencing.
-     *
-     * @var string
-     */
-    public static string $name = 'UserUpdateProcedure';
-    private UserRepository $repository;
+    public static string $name = PROCEDURE_USER_UPDATE;
+    private UserRepository $userRepository;
 
-    public function __construct(UserRepository $repository)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->repository = $repository;
+        $this->userRepository = $userRepository;
     }
 
     /**
-     * Execute the procedure.
-     *
      * @param UpdateUserRequest $request
-     *
      * @return JsonResponse
      */
     public function handle(UpdateUserRequest $request): JsonResponse
     {
-        $user = $request->validated();
+        define('ATTRIBUTES', $request->validated());
+        $user = $this->userRepository->findById((int)ATTRIBUTES[FIELD_ID]);
+        $repository = $this->userRepository->update($user, ATTRIBUTES);
+
         return new JsonResponse(
-            data: new UserResource(
-                $this->repository->update(
-                    $this->repository->findById((int)$user['id']),
-                    $user
-                )
-            ),
-            status: 201
+            data: [
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => new UserResource($repository),
+                ...self::meta($request, ATTRIBUTES)
+            ],
+            status: Response::HTTP_CREATED
         );
     }
 }

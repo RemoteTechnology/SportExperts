@@ -4,6 +4,8 @@ namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class ReadUserRequest extends FormRequest
 {
     /**
@@ -22,7 +24,15 @@ class ReadUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'exists:users,id']
+            FIELD_ID => ['required', 'exists:users,id']
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            FIELD_ID . '.required'  => 'ID - это обязательное поле!',
+            FIELD_ID . '.exists'    => 'Такого пользователя в системе не существует!',
         ];
     }
 }
