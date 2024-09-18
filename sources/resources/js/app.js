@@ -28,6 +28,7 @@ app.use(VueCookies, {
     sameSite: 'Lax' ,
     partitioned: false
 });
+
 // Use Layouts
 import HeaderComponent from './layouts/HeaderComponent.vue';
 app.component('header-component', HeaderComponent);
