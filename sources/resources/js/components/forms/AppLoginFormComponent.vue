@@ -88,7 +88,3 @@
         </div>
     </AppFormWrapperComponent>
 </template>
-
-<style scoped>
-
-</style>

@@ -1,4 +1,4 @@
-export const API_URL = 'http://localhost:8080/';
+export const API_URL = import.meta.env.BASE_URL;
 export const ENDPOINTS = {
     API: {
         LIST: 'list',

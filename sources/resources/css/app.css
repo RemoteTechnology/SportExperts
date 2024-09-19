@@ -232,3 +232,6 @@ ul li.item-admin a{
 ul li.item-admin i {
     color: #22c55e;
 }
+.p-icon-field-right>.p-inputtext{
+    width: 100%!important;
+}

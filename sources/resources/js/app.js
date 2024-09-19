@@ -37,13 +37,13 @@ app.component('header-component', HeaderComponent);
 import HomeView from './views/HomeView.vue';
 app.component('home-view', HomeView);
 
-import RegistrationView from './views/Users/RegistrationView.vue';
+import RegistrationView from './views/Users/RegistrationPage.vue';
 app.component('registration-view', RegistrationView);
 
-import LoginView from './views/Users/LoginView.vue';
+import LoginView from './views/Users/LoginPage.vue';
 app.component('login-view', LoginView);
 
-import RecoveryView from './views/Users/RecoveryView.vue';
+import RecoveryView from './views/Users/RecoveryPage.vue';
 app.component('recovery-view', RecoveryView);
 
 import ProfileView from './views/Users/ProfileView.vue';
