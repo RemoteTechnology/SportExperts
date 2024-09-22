@@ -7,7 +7,7 @@ namespace App\Http\Procedures\V1\Inviteds;
 use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Inviteds\InvitedListRequest;
 use App\Http\Resources\Inviteds\InvitedCollection;
-use App\Models\Invite;
+use App\Models\InviteModel;
 use App\Repository\InvitedRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -33,7 +33,7 @@ class InvitedListProcedure extends AbstractProcedure
     public function handle(InvitedListRequest $request): JsonResponse
     {
         define('ATTRIBUTES', $request->validated());
-        $repository = Invite::where([FIELD_WHO_USER_ID => (int)ATTRIBUTES[FIELD_WHO_USER_ID]])->get();
+        $repository = InviteModel::where([FIELD_WHO_USER_ID => (int)ATTRIBUTES[FIELD_WHO_USER_ID]])->get();
         $collectData = new InvitedCollection($repository);
 
         return new JsonResponse(

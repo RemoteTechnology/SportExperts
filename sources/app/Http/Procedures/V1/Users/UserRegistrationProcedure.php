@@ -43,10 +43,10 @@ class UserRegistrationProcedure extends AbstractProcedure
         unset($attributes[FIELD_PASSWORD]);
 
         return new JsonResponse(
-            data: [
-                FIELD_ID => self::identifier(),
-                FIELD_ATTRIBUTES => new UserResource($repository),
-                ...self::meta($request, $attributes)
+             data: [
+                 FIELD_ID => self::identifier(),
+                 FIELD_ATTRIBUTES => new UserResource($repository),
+                 ...self::meta($request, $attributes)
             ],
             status: Response::HTTP_CREATED
         );

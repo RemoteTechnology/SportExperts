@@ -3,7 +3,7 @@
  * @constructor
  * @augments RequestBuilder
  */
-export class Base
+export class BaseModel
 {
     constructor()
     {

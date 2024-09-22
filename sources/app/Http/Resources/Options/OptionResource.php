@@ -30,6 +30,7 @@ class OptionResource extends JsonResource
             FIELD_TYPE              => $this->type,
             FIELD_CREATED_AT        => $this->created_at,
             FIELD_UPDATED_AT        => $this->updated_at,
+            FIELD_DELETED_AT        => $this->deleted_at,
         ];
     }
 }

@@ -59,6 +59,9 @@ ul li{
 .p-1{
     padding: 1em;
 }
+.p-2{
+    padding: 2em;
+}
 .m-card-list{
     margin: 0.8em 0.6em!important;
 }

@@ -22,12 +22,21 @@
         },
         methods: {
             resetNotification: async function() {
-                let attributes = {
+                const attributes = {
                     email: this.email
                 };
+                if (!attributes.email)
+                {
+                    this.$emit('messageErrorEmit', MESSAGES.NO_VALID_DATA);
+                    return;
+                }
                 await resetToPasswordRequest(attributes)
-                    .then((response) => { this.messageSuccess = MESSAGES.SEND_NOTIFICATION; })
+                    .then(async (response) => {
+                        console.log(response);
+                        await this.$emit('messageSuccessEmit', MESSAGES.SEND_NOTIFICATION);
+                    })
                     .catch(async (error) => {
+                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -36,7 +45,7 @@
                             request_data: attributes.toString(),
                             message: error.message
                         });
-                        this.messageError = MESSAGES.NO_VALID_DATA;
+                        this.$emit('messageErrorEmit', MESSAGES.NO_VALID_DATA);
                     });
             }
         }

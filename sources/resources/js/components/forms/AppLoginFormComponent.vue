@@ -34,8 +34,10 @@
                 };
                 await authorizationRequest(attributes)
                     .then(async (response) => {
+                        console.log(response);
                         try {
-                            const attributes = response.data.result.original.attributes;
+                            const data = response.data.result.original;
+                            const attributes = data.attributes;
                             await window.$cookies.set(TOKEN, attributes.token);
                             await window.$cookies.set(IDENTIFIER, attributes.user.id);
                             window.location = this.baseUrl + ENDPOINTS.PROFILE;
@@ -46,6 +48,7 @@
                         }
                     })
                     .catch(async (error) => {
+                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,

@@ -184,7 +184,7 @@ Route::prefix('v1')->group(function () {
     });
     //// END V1 Option ENDPOINTS
 
-    //// V1 Invite ENDPOINTS
+    //// V1 InviteModel ENDPOINTS
     Route::prefix('invite')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [InvitedListProcedure::class])->name('invite.list');
         Route::rpc(ROUTE_READ, [InvitedReadProcedure::class])->name('invite.read');
@@ -194,7 +194,7 @@ Route::prefix('v1')->group(function () {
             Route::rpc(ROUTE_DEFAULT . 'notification', [NotificationProcedure::class])->name('invite.notification');
         });
     });
-    //// END V1 Invite ENDPOINTS
+    //// END V1 InviteModel ENDPOINTS
 
     //// V1 Tournament ENDPOINTS
     Route::prefix('tournament')->group(function () {

@@ -59,10 +59,11 @@
         <AppPageTitleComponent
             v-if="!this.urlKey"
             :title="this.pageTitle"
-            :subTitle="this.pageSubTitle"
+            :subTitle="this.subTitle"
             :baseUrl="this.webUrl"
             :endPoint="this.route.LOGIN" />
         <AppRegistrationFormComponent
+            :baseUrl="this.webUrl"
             :eventId="this.eventId"
             :inviteUserId="this.inviteUserId"
             :urlKey="this.urlKey"

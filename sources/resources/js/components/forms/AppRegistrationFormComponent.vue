@@ -6,12 +6,13 @@
     import FloatLabel from "primevue/floatlabel";
     import Password from "primevue/password";
     import { registrationRequest } from "../../api/UserRequest";
-    import { User } from "../../models/User";
+    import { UserModel } from "../../models/UserModel";
     import { createLogOptionRequest } from "../../api/CreateLogOptionRequest";
     import { createInvitedRequest } from "../../api/InvitedRequest";
     import { createOptionRequest } from "../../api/OptionRequest";
     import { eventRecordRequest } from "../../api/ParticipantRequest";
-    import { ENDPOINTS, MESSAGES } from "../../constant";
+    import { MESSAGES } from "../../common/messages";
+    import { ENDPOINTS } from "../../common/route/api";
     import AppFormWrapperComponent from "../wrappers/AppFormWrapperComponent.vue";
 
     export default {
@@ -44,6 +45,7 @@
             };
         },
         props: {
+            baseUrl: String,
             eventId: Number,
             inviteUserId: Number,
             urlKey: String,
@@ -61,6 +63,13 @@
             translationFirstName: function (event) { this.user.firstNameEng = this.translation(this.user.firstName) },
             translationLastName: function (event) { this.user.lastNameEng = this.translation(this.user.lastName) },
             translation: function (argField) { return argField.split('').map(char => this.symbols[char] || char).join(''); },
+            dateFormat: async function(dateStr) {
+                const dateObj = await new Date(dateStr);
+                const day = String(dateObj.getDate()).padStart(2, '0');
+                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const year = dateObj.getFullYear();
+                return `${day}.${month}.${year}`;
+            },
             getAttributes: async function() {
                 let attributes = {
                     first_name: await this.user.firstName,
@@ -71,7 +80,7 @@
                     password: await this.user.password,
                 };
                 if (this.user.birthDate) {
-                    attributes.birth_date = await this.user.birthDate;
+                    attributes.birth_date = await this.dateFormat(this.user.birthDate);
                 }
                 if (this.user.email) {
                     attributes.email = await this.user.email;
@@ -79,11 +88,17 @@
                 if (this.user.phone) {
                     attributes.phone = await this.user.phone;
                 }
+                return attributes;
             },
             eventRecord: async function(attributesRecord) {
                 await eventRecordRequest(attributesRecord)
-                    .then(async (response) => { this.participants = await response.data.result.original; })
+                    .then(async (response) => {
+                        console.log(response);
+                        const data = response.data.result.original;
+                        this.participants = await data.attributes;
+                    })
                     .catch(async(error) => {
+                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -122,13 +137,13 @@
             },
             signUp: async function () {
                 if (this.user.password && this.user.passwordDouble && this.user.password === this.user.passwordDouble) {
-                    let attributes = await this.getAttributes();
+                    const attributes = await this.getAttributes();
                     if (this.urlKey)  {
-                        await registrationRequest(attributes)
+                         registrationRequest(attributes)
                             .then(async (response) => {
                                 await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
                                 const data = response.data.result.original;
-                                this.userModel = await Object.assign(new User(), data.attributes)
+                                this.userModel = await Object.assign(new UserModel(), data.attributes)
                             })
                             .catch(async (error) => {
                                 await createLogOptionRequest({
@@ -165,36 +180,40 @@
                                 type: "string",
                             }
                         ];
-                        await this.createInvite(attributesInvite);
+                         this.createInvite(attributesInvite);
                         let i = 0;
                         while(i < attributesOptions.length) {
-                            await this.createOption(attributesOptions[i]);
+                             this.createOption(attributesOptions[i]);
                             i++;
                         }
-                        await this.eventRecord(attributesRecord);
-                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                        this.eventRecord(attributesRecord);
+                       // window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                        return;
                     }
-                    else
-                    {
-                        await registrationRequest(attributes)
-                            .then(async (response) => {
-                                await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
-                                this.userModel = Object.assign(new User(), response.data.result.original);
-                                window.location = this.baseUrl + ENDPOINTS.LOGIN;
+
+                    registrationRequest(attributes)
+                        .then(async (response) => {
+                            console.log(response)
+                            const data = response.data.result.original;
+                            await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
+                            this.userModel = Object.assign(new UserModel(), data.attributes);
+                            window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                        })
+                        .catch(async (error) => {
+                            console.log(error)
+                            await createLogOptionRequest({
+                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                                method: 'registrationRequest',
+                                status: error.code,
+                                request_data: attributes.toString(),
+                                message: error.message
                             })
-                            .catch(async (error) => {
-                                await createLogOptionRequest({
-                                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                                    method: 'registrationRequest',
-                                    status: error.code,
-                                    request_data: attributes.toString(),
-                                    message: error.message
-                                })
-                            });
-                    }
+                        });
+                    console.log(this.baseUrl + ENDPOINTS.LOGIN)
+                } else {
+                    this.$emit('messageErrorEmit', MESSAGES.PASSWORD_DOUBLE);
                 }
-                await this.$emit('messageErrorEmit', MESSAGES.PASSWORD_DOUBLE);
             },
         }
     }
