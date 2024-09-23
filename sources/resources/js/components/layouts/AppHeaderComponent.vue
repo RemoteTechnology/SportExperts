@@ -1,5 +1,5 @@
 <script>
-import {BASE_URL, TOKEN, IDENTIFIER, ENDPOINTS} from '../constant';
+import {BASE_URL, TOKEN, IDENTIFIER, ENDPOINTS} from '../../constant';
 import Menubar from 'primevue/menubar';
 import Image from 'primevue/image';
 import Button from 'primevue/button';

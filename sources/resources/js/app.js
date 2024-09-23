@@ -29,8 +29,8 @@ app.use(VueCookies, {
 });
 
 // Use Layouts
-import HeaderComponent from './layouts/HeaderComponent.vue';
-app.component('header-component', HeaderComponent);
+import HeaderComponent from './components/layouts/AppHeaderComponent.vue';
+app.component('app-header-component', HeaderComponent);
 
 import AppFooterComponent from './components/layouts/AppFooterComponent.vue';
 app.component('app-footer-component', AppFooterComponent);
@@ -46,10 +46,10 @@ app.component('login-view', LoginView);
 import RecoveryView from './pages/Users/RecoveryPage.vue';
 app.component('recovery-view', RecoveryView);
 
-import ProfileView from './pages/Users/ProfileView.vue';
+import ProfileView from './pages/Users/ProfilePage.vue';
 app.component('profile-view', ProfileView);
 
-import Settings from './pages/Users/SettingsView.vue';
+import Settings from './pages/Users/SettingsPage.vue';
 app.component('settings-view', Settings);
 
 import InvitedView from './pages/Participants/InvitedView.vue';

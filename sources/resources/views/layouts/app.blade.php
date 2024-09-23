@@ -23,7 +23,7 @@
     ])
 </head>
 <body id="app">
-    <header-component></header-component>
+    <app-header-component></app-header-component>
     <main class="wrapper">
         @yield('content')
     </main>

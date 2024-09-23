@@ -12,6 +12,7 @@ use App\Http\Resources\Events\EventCollection;
 use App\Repository\Filter\Entities\Events\EventToParticipantFilterRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use PHPUnit\Exception;
 
 require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
 require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
@@ -63,11 +64,21 @@ class EventDateFilterProcedure extends AbstractFilter
 
         $format = $this->formatDate(ATTRIBUTES);
         $repository = $this->filterRepository->filterDate($format, ATTRIBUTES[FIELD_LIMIT]);
-        $collectData = new EventCollection($repository);
+
+        if (empty($repository) && count($repository) >= 1) {
+            $collectData = new EventCollection($repository);
+
+            return new JsonResponse(
+                data: [
+                    FIELD_ATTRIBUTES => $collectData->resource
+                ],
+                status: Response::HTTP_CREATED
+            );
+        }
 
         return new JsonResponse(
             data: [
-                FIELD_ATTRIBUTES => $collectData->resource
+                FIELD_ATTRIBUTES => []
             ],
             status: Response::HTTP_CREATED
         );
