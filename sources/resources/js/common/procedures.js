@@ -1,4 +1,4 @@
-export const PROCEDURES= {
+export const PROCEDURE= {
     users: {
         registration:           'UserRegistrationProcedure',
         read:                   'UserReadProcedure',

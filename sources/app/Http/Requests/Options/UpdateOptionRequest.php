@@ -25,8 +25,8 @@ class UpdateOptionRequest extends FormRequest
     {
         return [
             FIELD_ID                => ['required', 'numeric', 'exists:options,id'],
-            FIELD_EVENT_KEY         => ['required', 'exists:event,key'],
-            FIELD_PARTICIPANT_KEY   => ['required', 'exists:participants,key'],
+            FIELD_EVENT_KEY         => ['nullable', 'exists:event,key'],
+            FIELD_PARTICIPANT_KEY   => ['nullable', 'exists:participants,key'],
             FIELD_ENTITY            => ['required', 'string'],
             FIELD_NAME              => ['required', 'string', 'min:2', 'max:255'],
             FIELD_VALUE             => ['required', 'string', 'min:2', 'max:255'],

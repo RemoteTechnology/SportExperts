@@ -2,7 +2,7 @@ import {
     BASE_URL,
     JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
-    PROCEDURES
+    PROCEDURES, TOKEN
 } from '../constant';
 import { OptionEndpointQuery } from './query/OptionEndpointQuery';
 
@@ -10,6 +10,7 @@ export async function createOptionRequest(attributes, optionQuery = new OptionEn
 {
     optionQuery.setUrl(`${BASE_URL}api/v1/option/store`);
     optionQuery.setHeaders();
+    optionQuery.isAuth(`Bearer ${window.$cookies.get(TOKEN)}`);
     optionQuery.setMethod(`${PROCEDURES.option.create}@${REQUEST_METHOD_DEFAULT}`);
     optionQuery.setParams(attributes);
     return await optionQuery.execute();
@@ -19,6 +20,7 @@ export async function updateOptionRequest(attributes, optionQuery = new OptionEn
 {
     optionQuery.setUrl(`${BASE_URL}api/v1/option/update`);
     optionQuery.setHeaders();
+    optionQuery.isAuth(`Bearer ${window.$cookies.get(TOKEN)}`);
     optionQuery.setMethod(`${PROCEDURES.option.update}@${REQUEST_METHOD_DEFAULT}`);
     optionQuery.setParams(attributes);
     return await optionQuery.execute();

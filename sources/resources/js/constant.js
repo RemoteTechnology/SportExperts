@@ -5,64 +5,64 @@ export const REQUEST_METHOD_DEFAULT = 'handle';
 export const TOKEN = 'user_personal_access_token';
 export const IDENTIFIER = 'user_identifier';
 // Процедуры
-export const PROCEDURES = {
+export const PROCEDURES= {
     users: {
-        registration:           'UserRegistrationProcedure',
-        read:                   'UserReadProcedure',
-        update:                 'UserUpdateProcedure',
-        reset:                  'UserResetProcedure',
+        registration: 'UserRegistrationProcedure',
+        read: 'UserReadProcedure',
+        update: 'UserUpdateProcedure',
+        reset: 'UserResetProcedure',
     },
     invites: {
-        list:                   'InvitedListProcedure',
-        create:                 'InvitedStoreProcedure',
-        read:                   'InvitedReadProcedure',
-        readUserParticipant:        'InvitedReadUserParticipantProcedure',
-        notification:           'NotificationProcedure',
+        list: 'InvitedListProcedure',
+        create: 'InvitedStoreProcedure',
+        read: 'InvitedReadProcedure',
+        readUserParticipant: 'InvitedReadUserParticipantProcedure',
+        notification: 'NotificationProcedure',
     },
     auth: {
-        login:                  'AuthByEmailProcedure',
+        login: 'AuthByEmailProcedure',
     },
     filter: {
-        userRecord:             'EventDateFilterProcedure',
-        ownerParticipantList:   'ParticipantOwnerFilterProcedure',
-        ownerEventsList:        'EventOwnerFilterProcedure',
-        participantUsers:       'ParticipantUsersToEventFilterProcedure',
+        userRecord: 'EventDateFilterProcedure',
+        ownerParticipantList: 'ParticipantOwnerFilterProcedure',
+        ownerEventsList: 'EventOwnerFilterProcedure',
+        participantUsers: 'ParticipantUsersToEventFilterProcedure',
     },
     event: {
-        list:                   'EventListProcedure',
-        create:                 'EventStoreProcedure',
-        read:                   'EventReadProcedure',
-        update:                 'EventUpdateProcedure',
-        getKey:                 'EventGetKeyProcedure',
+        list: 'EventListProcedure',
+        create: 'EventStoreProcedure',
+        read: 'EventReadProcedure',
+        update: 'EventUpdateProcedure',
+        getKey: 'EventGetKeyProcedure',
     },
     archive: {
-        create:                 'ArchiveStoreProcedure',
-        delete:                 'ArchiveDestroyProcedure',
+        create: 'ArchiveStoreProcedure',
+        delete: 'ArchiveDestroyProcedure',
     },
     option: {
-        create:                 'OptionStoreProcedure',
-        read:                   'OptionReadProcedure',
-        update:                 'OptionUpdateProcedure',
-        delete:                 'OptionDestroyProcedure',
+        create: 'OptionStoreProcedure',
+        read: 'OptionReadProcedure',
+        update: 'OptionUpdateProcedure',
+        delete: 'OptionDestroyProcedure',
     },
     participant: {
-        create:                 'ParticipantStoreProcedure',
+        create: 'ParticipantStoreProcedure',
         additionally: {
-            drop:               'ParticipantDisqualificationProcedure',
-            replace:            'ParticipantКReplacementProcedure',
-            skip:               'ParticipantSkippedProcedure',
+            drop: 'ParticipantDisqualificationProcedure',
+            replace: 'ParticipantКReplacementProcedure',
+            skip: 'ParticipantSkippedProcedure',
         }
     },
     log: {
-        create:                 'LogStoreProcedure',
-        list:                   'LogListProcedure',
+        create: 'LogStoreProcedure',
+        list: 'LogListProcedure',
     },
     tournament: {
-        read:                   'TournamentReadProcedure',
+        read: 'TournamentReadProcedure',
         value: {
-            create:             'TournamentValueStoreProcedure',
+            create: 'TournamentValueStoreProcedure',
             filter: {
-                free:           'TournamentValueFreeParticipantsFilterProcedure'
+                free: 'TournamentValueFreeParticipantsFilterProcedure'
             }
         }
     }

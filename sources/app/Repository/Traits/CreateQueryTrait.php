@@ -14,8 +14,9 @@ trait CreateQueryTrait
      */
     public function store(array $attributes): Model|Exception
     {
-        return gettype(get_class($this)) === 'string' && method_exists($this, 'store') ?
+        return $this->model::create($attributes);
+        /* return gettype(get_class($this)) === 'string' && method_exists($this, 'store') ?
             $this->model::create($attributes)
-            : new RegistrationUserException('Проверьте данные и повторите попытку.');
+            : new RegistrationUserException('Проверьте данные и повторите попытку.'); */
     }
 }

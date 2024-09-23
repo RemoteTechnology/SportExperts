@@ -61,7 +61,7 @@ class AuthService implements
 
     /**
      * @param array $attributes
-     * @return array
+     * @return array|AuthenticationException
      */
     public function authorization(array $attributes): array|AuthenticationException
     {

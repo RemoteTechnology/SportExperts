@@ -177,7 +177,7 @@
                     "email": "kylekatarnls@gmail.com"
                 }
             ],
-            "description": "Types to use Carbon in Doctrine",
+            "description": "User to use Carbon in Doctrine",
             "keywords": [
                 "carbon",
                 "date",
@@ -775,12 +775,12 @@
             "version": "v1.1.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/GrahamCampbell/Result-Type.git",
+                "url": "https://github.com/GrahamCampbell/Result-User.git",
                 "reference": "fbd48bce38f73f8a4ec8583362e732e4095e5862"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Result-Type/zipball/fbd48bce38f73f8a4ec8583362e732e4095e5862",
+                "url": "https://api.github.com/repos/GrahamCampbell/Result-User/zipball/fbd48bce38f73f8a4ec8583362e732e4095e5862",
                 "reference": "fbd48bce38f73f8a4ec8583362e732e4095e5862",
                 "shasum": ""
             },
@@ -808,17 +808,17 @@
                     "homepage": "https://github.com/GrahamCampbell"
                 }
             ],
-            "description": "An Implementation Of The Result Type",
+            "description": "An Implementation Of The Result User",
             "keywords": [
                 "Graham Campbell",
                 "GrahamCampbell",
-                "Result Type",
-                "Result-Type",
+                "Result User",
+                "Result-User",
                 "result"
             ],
             "support": {
-                "issues": "https://github.com/GrahamCampbell/Result-Type/issues",
-                "source": "https://github.com/GrahamCampbell/Result-Type/tree/v1.1.2"
+                "issues": "https://github.com/GrahamCampbell/Result-User/issues",
+                "source": "https://github.com/GrahamCampbell/Result-User/tree/v1.1.2"
             },
             "funding": [
                 {
@@ -3043,7 +3043,7 @@
                     "email": "me@mikevanriel.com"
                 }
             ],
-            "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
+            "description": "A PSR-5 based resolver of Class names, User and Structural Element Names",
             "support": {
                 "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
                 "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.8.2"
@@ -3102,7 +3102,7 @@
                     "homepage": "https://github.com/GrahamCampbell"
                 }
             ],
-            "description": "Option Type for PHP",
+            "description": "Option User for PHP",
             "keywords": [
                 "language",
                 "option",

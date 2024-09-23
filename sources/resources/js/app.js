@@ -7,7 +7,6 @@
 import './bootstrap';
 import { createApp } from 'vue';
 import VueCookies from 'vue-cookies'
-import PrimeVue from 'primevue/config';
 import 'primevue/resources/themes/aura-light-blue/theme.css';
 import "primeicons/primeicons.css";
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -15,9 +14,9 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 /**
  * Next, we will create a fresh Vue application instance. You may thlayouten begin
  * registering rules with the application instance so they are ready
- * to use in your application's views. An example is included for you.
+ * to use in your application's pages. An example is included for you.
  */
-// TODO: после создания жеребьёвки перепроверить код, респонсы будут изменены!!!!
+
 const app = createApp({});
 app.use(PrimeVue, { unstyled: false });
 app.use(VueCookies, {
@@ -33,47 +32,49 @@ app.use(VueCookies, {
 import HeaderComponent from './layouts/HeaderComponent.vue';
 app.component('header-component', HeaderComponent);
 
-// Use View
-import HomeView from './views/HomeView.vue';
-app.component('home-view', HomeView);
+import AppFooterComponent from './components/layouts/AppFooterComponent.vue';
+app.component('app-footer-component', AppFooterComponent);
 
-import RegistrationView from './views/Users/RegistrationView.vue';
+
+// Use Pages
+import RegistrationView from './pages/Users/RegistrationPage.vue';
 app.component('registration-view', RegistrationView);
 
-import LoginView from './views/Users/LoginView.vue';
+import LoginView from './pages/Users/LoginPage.vue';
 app.component('login-view', LoginView);
 
-import RecoveryView from './views/Users/RecoveryView.vue';
+import RecoveryView from './pages/Users/RecoveryPage.vue';
 app.component('recovery-view', RecoveryView);
 
-import ProfileView from './views/Users/ProfileView.vue';
+import ProfileView from './pages/Users/ProfileView.vue';
 app.component('profile-view', ProfileView);
 
-import Settings from './views/Users/SettingsView.vue';
+import Settings from './pages/Users/SettingsView.vue';
 app.component('settings-view', Settings);
 
-import InvitedView from './views/Participants/InvitedView.vue';
+import InvitedView from './pages/Participants/InvitedView.vue';
 app.component('participant-invited-view', InvitedView);
 
-import HistoryView from './views/Events/HistoryView.vue';
+import HistoryView from './pages/Events/HistoryView.vue';
 app.component('history-view', HistoryView);
 
-import EventListView from './views/Events/ListView.vue';
+import EventListView from './pages/Events/ListView.vue';
 app.component('event-view', EventListView);
 
-import CreateOfUpdateView from './views/Events/CreateOfUpdateView.vue';
+import CreateOfUpdateView from './pages/Events/CreateOfUpdateView.vue';
 app.component('event-create-of-update-view', CreateOfUpdateView);
 
-import EventDetailsView from './views/Events/DetailsView.vue';
+import EventDetailsView from './pages/Events/DetailsView.vue';
 app.component('event-detail-view', EventDetailsView);
 
-import InviteView from './views/Invites/IndexView.vue';
+import InviteView from './pages/Invites/IndexView.vue';
 app.component('invite-view', InviteView);
 
-import TournamentView from './views/Tournaments/IndexView.vue';
+import TournamentView from './pages/Tournaments/IndexView.vue';
 app.component('tournament-view', TournamentView);
 
-import TournamentSettingsView from './views/Tournaments/SettingsView.vue';
+import TournamentSettingsView from './pages/Tournaments/SettingsView.vue';
+import PrimeVue from "primevue/config";
 app.component('tournament-settings-view', TournamentSettingsView);
 /**
  * The following block of code may be used to automatically register your

@@ -4,7 +4,7 @@ namespace App\Services\Amq\Abstract;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Channel\AMQPChannel;
-use phpDocumentor\Reflection\Types\Callable_;
+use phpDocumentor\Reflection\User\Callable_;
 
 abstract class MQAbstract
 {

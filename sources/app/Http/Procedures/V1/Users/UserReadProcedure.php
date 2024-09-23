@@ -11,6 +11,8 @@ use App\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+
 class UserReadProcedure extends AbstractProcedure
 {
     public static string $name = PROCEDURE_USER_READ;
