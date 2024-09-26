@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\InviteModel;
+use App\Models\Invite;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -16,7 +16,7 @@ class InvitedSeeder extends Seeder
         $who_user_id = 2;
         foreach (User::where(['role' => 'athlete'])->limit(5)->get() as $athlete)
         {
-            InviteModel::create([
+            Invite::create([
                 'who_user_id' => $who_user_id,
                 'user_id' => $athlete->id
             ]);

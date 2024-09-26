@@ -2,7 +2,7 @@ import {
     BASE_URL,
     JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
-    PROCEDURES
+    PROCEDURES, TOKEN
 } from '../constant';
 import { EventEndpointQuery } from './query/EventEndpointQuery';
 
@@ -27,6 +27,7 @@ export async function createEventRequest(attributes, eventQuery = new EventEndpo
 {
     eventQuery.setUrl(`${BASE_URL}api/v1/event/store`);
     eventQuery.setHeaders();
+    eventQuery.isAuth(`Bearer ${window.$cookies.get(TOKEN)}`)
     eventQuery.setMethod(`${PROCEDURES.event.create}@${REQUEST_METHOD_DEFAULT}`);
     eventQuery.setParams(attributes);
     return await eventQuery.execute();
@@ -36,6 +37,7 @@ export async function updateEventRequest(attributes, eventQuery = new EventEndpo
 {
     eventQuery.setUrl(`${BASE_URL}api/v1/event/update`);
     eventQuery.setHeaders();
+    eventQuery.isAuth(`Bearer ${window.$cookies.get(TOKEN)}`)
     eventQuery.setMethod(`${PROCEDURES.event.update}@${REQUEST_METHOD_DEFAULT}`);
     eventQuery.setParams(attributes);
     return await eventQuery.execute();
@@ -45,6 +47,7 @@ export async function createEventOptionRequest(attributes, eventQuery = new Even
 {
     eventQuery.setUrl(`${BASE_URL}api/v1/option/store`);
     eventQuery.setHeaders();
+    eventQuery.isAuth(`Bearer ${window.$cookies.get(TOKEN)}`)
     eventQuery.setMethod(`${PROCEDURES.option.create}@${REQUEST_METHOD_DEFAULT}`);
     eventQuery.setParams(attributes);
     return await eventQuery.execute();
@@ -54,6 +57,7 @@ export async function updateEventOptionRequest(attributes, eventQuery = new Even
 {
     eventQuery.setUrl(`${BASE_URL}api/v1/option/update`);
     eventQuery.setHeaders();
+    eventQuery.isAuth(`Bearer ${window.$cookies.get(TOKEN)}`)
     eventQuery.setMethod(`${PROCEDURES.option.update}@${REQUEST_METHOD_DEFAULT}`);
     eventQuery.setParams(attributes);
     return await eventQuery.execute();

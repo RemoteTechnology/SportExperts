@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 require_once dirname(__DIR__, 2) . '/app/Domain/Constants/FieldConst.php';
 require_once dirname(__DIR__, 2) . '/app/Domain/Constants/EntitiesConst.php';
 
-class InviteModel extends Model
+class Invite extends Model
 {
     use HasFactory;
 

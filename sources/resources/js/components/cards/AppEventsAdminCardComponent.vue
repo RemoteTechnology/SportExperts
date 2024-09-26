@@ -70,7 +70,7 @@ import Button from "primevue/button";
                         .then(async (response) => {
                             console.log(response);
                             const data = await response.data.result.original;
-                            this.eventsNoActive = await data.attributes;
+                            this.eventsNoActive = await data.attributes.data;
                         })
                         .catch(async (error) => {
                             console.log(error);
@@ -96,7 +96,7 @@ import Button from "primevue/button";
                         .then(async (response) => {
                             console.log(response);
                             const data = await response.data.result.original;
-                            this.eventsArchive = await data.attributes;
+                            this.eventsArchive = await data.attributes.data;
                         })
                         .catch(async (error) => {
                             console.log(error);
@@ -256,9 +256,8 @@ import Button from "primevue/button";
                     </TabPanel>
                     <TabPanel header="Прошедшие">
                         <section v-if="this.eventsNoActive &&
-                                                Object.keys(this.eventsNoActive).includes('data') &&
-                                                this.eventsNoActive.data.length > 0">
-                            <section v-for="event in this.eventsNoActive[RESPONSE.data]" class="mt-1 mb-1">
+                                    this.eventsNoActive.length > 0">
+                            <section v-for="event in this.eventsNoActive" class="mt-1 mb-1">
                                 <Card class="w-100">
                                     <template #content>
                                         <div class="d-flex d-between d-align-center">
@@ -337,9 +336,8 @@ import Button from "primevue/button";
                     </TabPanel>
                     <TabPanel header="В архиве">
                         <section v-if="this.eventsArchive &&
-                                Object.keys(this.eventsArchive).includes('data') &&
-                                this.eventsArchive.data.length > 0">
-                            <section v-for="event in this.eventsArchive[RESPONSE.data]" class="mt-1 mb-1">
+                                this.eventsArchive.length > 0">
+                            <section v-for="event in this.eventsArchive" class="mt-1 mb-1">
                                 <Card class="w-100">
                                     <template #content>
                                         <div class="d-flex d-between d-align-center">

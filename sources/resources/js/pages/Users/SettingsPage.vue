@@ -59,13 +59,7 @@ export default {
         AppUserCreateOrUpdateOptionFormComponent,
         AppWrapperComponent,
         AppAlertComponent,
-        Breadcrumb: Breadcrumb,
-        Card: Card,
-        InputText: InputText,
-        InputMask: InputMask,
-        Button: Button,
-        Message: Message,
-        Calendar: Calendar,
+        Card
     },
     methods: {
         addMessageSuccess: function (data) { this.messageSuccess = data; },
@@ -137,7 +131,7 @@ export default {
                     <AppUserUpdateFormComponent
                         :userProps="this.user"
                         @messageSuccessEmit="addMessageSuccess"
-                        @messageErrorEmit="addMessageError"/>
+                        @messageErrorEmit="addMessageError" />
                 </template>
             </Card>
             <Card v-if="this.user" class="mt-3">
@@ -146,7 +140,7 @@ export default {
                     <AppUserUpdateEmailFormComponent
                         :userEmailProps="this.user.email"
                         @messageSuccessEmit="addMessageSuccess"
-                        @messageErrorEmit="addMessageError"/>
+                        @messageErrorEmit="addMessageError" />
                 </template>
             </Card>
             <Card v-if="this.user" class="mt-3">
@@ -155,7 +149,7 @@ export default {
                     <AppUserUpdatePhoneFormComponent
                         :userPhoneProps="this.user.phone"
                         @messageSuccessEmit="addMessageSuccess"
-                        @messageErrorEmit="addMessageError"/>
+                        @messageErrorEmit="addMessageError" />
                 </template>
             </Card>
             <Card class="mt-3">
@@ -164,7 +158,7 @@ export default {
                     <AppUserUpdatePasswordFormComponent
                         :userEmailProps="this.user.email"
                         @messageSuccessEmit="addMessageSuccess"
-                        @messageErrorEmit="addMessageError"/>
+                        @messageErrorEmit="addMessageError" />
                 </template>
             </Card>
             <Card v-if="this.user && this.user.role === 'athlete'"
@@ -175,7 +169,7 @@ export default {
                     <AppUserCreateOrUpdateOptionFormComponent
                         :userOptionsProps="this.options"
                         @messageSuccessEmit="addMessageSuccess"
-                        @messageErrorEmit="addMessageError"/>
+                        @messageErrorEmit="addMessageError" />
                 </template>
             </Card>
         </section>

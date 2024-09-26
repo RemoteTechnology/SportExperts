@@ -3,7 +3,7 @@ import {
     BASE_URL,
     JSON_RPC_VERSION,
     REQUEST_METHOD_DEFAULT,
-    PROCEDURES
+    PROCEDURES, TOKEN
 } from '../constant';
 import { FileEndpointQuery } from './query/FileEndpointQuery';
 
@@ -14,6 +14,7 @@ export async function uploadFileRequest(formData, fileQuery = new FileEndpointQu
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${window.$cookies.get(TOKEN)}`
             }
         })
         // fileQuery.setUrl(`${BASE_URL}api/v1/file/`);
