@@ -334,8 +334,7 @@ export default {
 </script>
 
 <template>
-<!--    TODO: отрисовать шаги-->
-<!--    TODO: добавить админов, сделать им систему прав аля круд-->
+<!-- TODO: добавить админов, сделать им систему прав аля круд -->
     <Dialog v-model:visible="this.dialog"
             maximizable
             modal

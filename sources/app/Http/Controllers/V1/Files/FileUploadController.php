@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Js;
 use Symfony\Component\HttpFoundation\Response;
 
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+
 class FileUploadController extends Controller
 {
     protected FileService $fileService;
@@ -30,12 +32,13 @@ class FileUploadController extends Controller
         $fileData = $request->file('file');
         if ($this->fileService->upload($fileData))
         {
+            $service = $this->fileService->get($fileData);
+            $repository = $this->fileRepository->store($service);
+
             return new JsonResponse(
-                data: new FileResource(
-                    $this->fileRepository->store(
-                        $this->fileService->get($fileData)
-                    )
-                ),
+                data: [
+                    FIELD_ATTRIBUTES => new FileResource($repository)
+                ],
                 status: Response::HTTP_CREATED
             );
         }

@@ -20,6 +20,7 @@ import Row from 'primevue/row';
 import Tag from 'primevue/tag';
 import {listInvitedRequest} from "../../api/InvitedRequest";
 import {createLogOptionRequest} from "../../api/CreateLogOptionRequest";
+import AppAlertComponent from "../../components/AppAlertComponent.vue";
 
 export default {
     data() {
@@ -38,18 +39,18 @@ export default {
         };
     },
     components: {
-        Card: Card,
-        InputText: InputText,
-        Button: Button,
-        InputMask: InputMask,
-        FloatLabel: FloatLabel,
-        Message: Message,
-        InlineMessage: InlineMessage,
-        DataTable: DataTable,
-        Column: Column,
-        ColumnGroup: ColumnGroup,
-        Row: Row,
-        Tag: Tag
+        AppAlertComponent,
+        Card,
+        InputText,
+        Button,
+        InputMask,
+        FloatLabel,
+        InlineMessage,
+        DataTable,
+        Column,
+        ColumnGroup,
+        Row,
+        Tag
     },
     methods: {
         formatDate: (inputDate) => {
@@ -75,9 +76,14 @@ export default {
                 enable_events: true
             };
             await listInvitedRequest(attributes)
-                .then((response) => { this.invites = response.data.result.original; })
-                .catch((error) => {
-                    createLogOptionRequest({
+                .then(async (response) => {
+                    console.log(response);
+                    const data = await response.data.result.original;
+                    this.invites = await data.attributes;
+                })
+                .catch(async (error) => {
+                    console.log(error);
+                    await createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
                         method: 'listInvitedRequest',
@@ -101,12 +107,9 @@ export default {
             <h2>Спортсмены которых вы пригласили.</h2>
         </div>
     </section>
-    <section class="mt-1 mb-2" v-if="this.messageSuccess">
-        <Message severity="success">{{ this.messageSuccess }}</Message>
-    </section>
-    <section class="mt-1 mb-2" v-if="this.messageError">
-        <Message severity="error">{{ this.messageError }}</Message>
-    </section>
+    <AppAlertComponent
+        :messageSuccess="this.messageSuccess"
+        :messageError="this.messageError" />
     <section class="d-flex d-between container">
             <section class="w-100">
                 <Card v-if="this.invites && this.invites.length">
@@ -135,19 +138,6 @@ export default {
                             <template #expansion="slotProps">
                                 <h5>Мероприятия на которые записан спортсмен ({{ slotProps.data.events.length }} шт)</h5>
                                 <DataTable stripedRows :value="slotProps.data.events">
-<!--                                    <Column header="Баннер" sortable>-->
-<!--                                        &lt;!&ndash; TODO: Придумать что нибудь с баннером&ndash;&gt;-->
-<!--                                        <template #body="slotProps">-->
-<!--                                            <div :style="-->
-<!--                                                    'background-size: cover;' +-->
-<!--                                                    'background-position: top;' +-->
-<!--                                                    'background-image: url(' + this.baseUrl + 'storage/uploads/' + slotProps.data.image.name + ');' +-->
-<!--                                                    'height: 8em;' +-->
-<!--                                                    'width: 50%;' +-->
-<!--                                                    'background-repeat: no-repeat;'-->
-<!--                                            "></div>-->
-<!--                                        </template>-->
-<!--                                    </Column>-->
                                     <Column header="Название" sortable>
                                         <template #body="slotProps">
                                             <a :href="this.baseUrl + 'event/detail?id=' + slotProps.data.id">
@@ -168,15 +158,6 @@ export default {
                                             </section>
                                         </template>
                                     </Column>
-<!--                                    <Column header="Параметры" sortable>-->
-<!--                                        <template #body="slotProps">-->
-<!--                                            {{ slotProps.index }}-->
-<!--&lt;!&ndash;                                            <DataTable :value="slotProps.data">&ndash;&gt;-->
-<!--&lt;!&ndash;                                                <Column field="name"></Column>&ndash;&gt;-->
-<!--&lt;!&ndash;                                                <Column field="value"></Column>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            </DataTable>&ndash;&gt;-->
-<!--                                        </template>-->
-<!--                                    </Column>-->
                                     <Column header="Дата старта" sortable>
                                         <template #body="slotProps">
                                             {{ this.formatDate(slotProps.data.start_date) }}

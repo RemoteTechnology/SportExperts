@@ -7,6 +7,7 @@
 import './bootstrap';
 import { createApp } from 'vue';
 import VueCookies from 'vue-cookies'
+import PrimeVue from "primevue/config";
 import 'primevue/resources/themes/aura-light-blue/theme.css';
 import "primeicons/primeicons.css";
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -29,8 +30,8 @@ app.use(VueCookies, {
 });
 
 // Use Layouts
-import HeaderComponent from './layouts/HeaderComponent.vue';
-app.component('header-component', HeaderComponent);
+import HeaderComponent from './components/layouts/AppHeaderComponent.vue';
+app.component('app-header-component', HeaderComponent);
 
 import AppFooterComponent from './components/layouts/AppFooterComponent.vue';
 app.component('app-footer-component', AppFooterComponent);
@@ -46,36 +47,27 @@ app.component('login-view', LoginView);
 import RecoveryView from './pages/Users/RecoveryPage.vue';
 app.component('recovery-view', RecoveryView);
 
-import ProfileView from './pages/Users/ProfileView.vue';
+import ProfileView from './pages/Users/ProfilePage.vue';
 app.component('profile-view', ProfileView);
 
-import Settings from './pages/Users/SettingsView.vue';
+import Settings from './pages/Users/SettingsPage.vue';
 app.component('settings-view', Settings);
 
-import InvitedView from './pages/Participants/InvitedView.vue';
-app.component('participant-invited-view', InvitedView);
-
-import HistoryView from './pages/Events/HistoryView.vue';
-app.component('history-view', HistoryView);
-
-import EventListView from './pages/Events/ListView.vue';
+import EventListView from './pages/Events/ListPage.vue';
 app.component('event-view', EventListView);
 
-import CreateOfUpdateView from './pages/Events/CreateOfUpdateView.vue';
+import CreateOfUpdateView from './pages/Events/CreateOfUpdatePage.vue';
 app.component('event-create-of-update-view', CreateOfUpdateView);
 
-import EventDetailsView from './pages/Events/DetailsView.vue';
+import EventDetailsView from './pages/Events/DetailsPage.vue';
 app.component('event-detail-view', EventDetailsView);
 
-import InviteView from './pages/Invites/IndexView.vue';
+import InviteView from './pages/Invites/IndexPage.vue';
 app.component('invite-view', InviteView);
 
 import TournamentView from './pages/Tournaments/IndexView.vue';
 app.component('tournament-view', TournamentView);
 
-import TournamentSettingsView from './pages/Tournaments/SettingsView.vue';
-import PrimeVue from "primevue/config";
-app.component('tournament-settings-view', TournamentSettingsView);
 /**
  * The following block of code may be used to automatically register your
  * Vue rules. It will recursively scan this directory for the Vue

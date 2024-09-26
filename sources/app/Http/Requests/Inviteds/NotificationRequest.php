@@ -24,9 +24,9 @@ class NotificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            FIELD_EMAIL             => ['required', 'string', 'exists:users,email'],
-            FIELD_INVITED_USER_ID   => ['required', 'numeric', 'exists:users,id'],
-            FIELD_EVENT_ID          => ['required', 'numeric', 'exists:events,id'],
+            FIELD_EMAIL             => ['required', 'string', ],
+            FIELD_INVITED_USER_ID   => ['required', 'numeric',],
+            FIELD_EVENT_ID          => ['required', 'numeric',],
         ];
     }
 }

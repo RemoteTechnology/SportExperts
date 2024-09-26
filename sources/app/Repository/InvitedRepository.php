@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Domain\Interfaces\Repositories\Entities\InvitedRepositoryInterface;
-use App\Models\InviteModel;
+use App\Models\Invite;
 use App\Repository\Filter\Entities\Invites\InviteUserFilter;
 use App\Repository\Traits\CreateQueryTrait;
 use App\Repository\Traits\DestroyQueryTrait;
@@ -24,7 +24,7 @@ final class InvitedRepository extends InviteUserFilter implements
     use DestroyQueryTrait;
 
     protected Model $model;
-    public function __construct(InviteModel $model = new InviteModel())
+    public function __construct(Invite $model = new Invite())
     {
         $this->model = $model;
     }

@@ -124,7 +124,7 @@
                           v-model="this.user.birth_date"
                           class="w-100"
                           :value="this.user.birth_date"
-                          dateFormat="dd.mm.yy"
+                          dateFormat="dd.mm.yyyy"
                           showIcon
                           required />
             </div>

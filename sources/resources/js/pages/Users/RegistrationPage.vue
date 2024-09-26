@@ -68,6 +68,6 @@
             :inviteUserId="this.inviteUserId"
             :urlKey="this.urlKey"
             @messageSuccessEmit="addMessageSuccess"
-            @messageErrorEmit="addMessageError"/>
+            @messageErrorEmit="addMessageError" />
     </AppWrapperComponent>
 </template>
