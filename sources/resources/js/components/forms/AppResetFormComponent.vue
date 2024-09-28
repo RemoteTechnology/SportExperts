@@ -12,6 +12,7 @@
           return {
               email: null,
               currentDate: new Date(),
+              error: []
           };
         },
         components: {
@@ -45,7 +46,7 @@
                             request_data: attributes.toString(),
                             message: error.message
                         });
-                        this.$emit('messageErrorEmit', MESSAGES.NO_VALID_DATA);
+                        await this.$emit('messageErrorEmit', MESSAGES.NO_VALID_DATA);
                     });
             }
         }

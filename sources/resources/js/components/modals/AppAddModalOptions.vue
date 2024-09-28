@@ -1,8 +1,8 @@
 <script>
-    import AppFormWrapperComponent from "./wrappers/AppFormWrapperComponent.vue";
-    import {IDENTIFIER, MESSAGES} from "../constant";
-    import {createOptionRequest, getOptionRequest} from "../api/OptionRequest";
-    import {createLogOptionRequest} from "../api/CreateLogOptionRequest";
+    import AppFormWrapperComponent from "../wrappers/AppFormWrapperComponent.vue";
+    import {IDENTIFIER, MESSAGES} from "../../constant";
+    import {createOptionRequest, getOptionRequest} from "../../api/OptionRequest";
+    import {createLogOptionRequest} from "../../api/CreateLogOptionRequest";
     import Dialog from "primevue/dialog";
     import InputText from "primevue/inputtext";
     import Button from "primevue/button";

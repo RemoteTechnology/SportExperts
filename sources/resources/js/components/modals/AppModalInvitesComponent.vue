@@ -1,14 +1,14 @@
 <script>
-    import { addNotificationUserInviteEventRequest } from "../api/InvitedRequest";
-    import { IDENTIFIER, MESSAGES } from "../constant";
-    import { createLogOptionRequest } from "../api/CreateLogOptionRequest";
-    import { recordUserToEventRequest } from "../api/ParticipantRequest";
-    import { getInvitedOwnerRequest } from "../api/UserRequest";
+    import { addNotificationUserInviteEventRequest } from "../../api/InvitedRequest";
+    import { IDENTIFIER, MESSAGES } from "../../constant";
+    import { createLogOptionRequest } from "../../api/CreateLogOptionRequest";
+    import { recordUserToEventRequest } from "../../api/ParticipantRequest";
+    import { getInvitedOwnerRequest } from "../../api/UserRequest";
     import Dialog from "primevue/dialog";
     import Listbox from "primevue/listbox";
     import InputText from "primevue/inputtext";
     import Button from "primevue/button";
-    import AppAlertComponent from "./AppAlertComponent.vue";
+    import AppAlertComponent from "../AppAlertComponent.vue";
 
     export default {
         data() {

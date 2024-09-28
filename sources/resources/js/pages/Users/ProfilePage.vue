@@ -109,7 +109,7 @@ export default {
         <div class="w-70">
             <!-- ADMIN VIEW -->
             <AppEventsAdminCardComponent
-                v-if="this.user !== null && this.user.role === 'admin'"
+                v-if="this.user && this.user.role === 'admin'"
                 :userProps="this.user"
                 :baseUrlProps="this.baseUrl"
                 :routeProps="this.route"

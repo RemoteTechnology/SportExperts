@@ -65,7 +65,7 @@ app.component('event-detail-view', EventDetailsView);
 import InviteView from './pages/Invites/IndexPage.vue';
 app.component('invite-view', InviteView);
 
-import TournamentView from './pages/Tournaments/IndexView.vue';
+import TournamentView from './pages/Tournaments/IndexPage.vue';
 app.component('tournament-view', TournamentView);
 
 /**

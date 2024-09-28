@@ -262,7 +262,6 @@
       <path value="$PROJECT_DIR$/sources/vendor/phpdocumentor/reflection-common" />
       <path value="$PROJECT_DIR$/sources/vendor/phpdocumentor/reflection-docblock" />
       <path value="$PROJECT_DIR$/sources/vendor/php-amqplib/php-amqplib" />
-      <path value="$PROJECT_DIR$/sources/vendor/bschmitt/laravel-amqp" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
