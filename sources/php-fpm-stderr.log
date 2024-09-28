@@ -1,0 +1,4 @@
+[28-Sep-2024 17:36:13] NOTICE: fpm is running, pid 14
+[28-Sep-2024 17:36:13] NOTICE: ready to handle connections
+172.18.0.4 -  28/Sep/2024:17:36:21 +0000 "POST /index.php" 200
+172.18.0.4 -  28/Sep/2024:17:38:01 +0000 "POST /index.php" 200

@@ -1,4 +1,4 @@
-FROM php:8.3-fpm
+FROM php:8.2-fpm
 
 ARG PUID=1001
 ENV PUID ${PUID}
@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     graphviz \
+    supervisor \
     && docker-php-ext-install pdo pdo_pgsql pgsql
 
 RUN pecl install mongodb
@@ -58,5 +59,11 @@ RUN echo "xdebug.client_port=9001" >> /usr/local/etc/php/conf.d/docker-php-ext-x
 RUN echo "xdebug.log=/var/log/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.env
 RUN echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.env
 
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+
 WORKDIR /var/www/sources
+
+RUN chown -R www-data:www-data /var/www/sources
+
 EXPOSE 9000

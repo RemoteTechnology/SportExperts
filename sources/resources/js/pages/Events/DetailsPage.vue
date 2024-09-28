@@ -6,7 +6,7 @@
     import {createLogOptionRequest} from "../../api/CreateLogOptionRequest";
     import AppAlertComponent from "../../components/AppAlertComponent.vue";
     import AppEventCardComponent from "../../components/cards/AppEventCardComponent.vue";
-    import AppModalInvitesComponent from "../../components/AppModalInvitesComponent.vue";
+    import AppModalInvitesComponent from "../../components/modals/AppModalInvitesComponent.vue";
 
     export default {
         data(){

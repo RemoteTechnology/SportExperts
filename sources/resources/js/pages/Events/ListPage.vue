@@ -10,7 +10,7 @@ import { createLogOptionRequest } from '../../api/CreateLogOptionRequest';
 import { getUser } from "../../api/UserRequest";
 import AppAlertComponent from "../../components/AppAlertComponent.vue";
 import AppEventListComponent from "../../components/AppEventListComponent.vue";
-import AppAddModalOptions from "../../components/AppAddModalOptions.vue";
+import AppAddModalOptions from "../../components/modals/AppAddModalOptions.vue";
 import AppUserUpdateEmailFormComponent from "../../components/forms/AppUserUpdateEmailFormComponent.vue";
 
 export default {

@@ -4,7 +4,7 @@
     import { IDENTIFIER, MESSAGES } from "../../constant";
     import { recordUserToEventRequest } from "../../api/ParticipantRequest";
     import { createLogOptionRequest } from "../../api/CreateLogOptionRequest";
-    import AppModalInvitesComponent from "../AppModalInvitesComponent.vue";
+    import AppModalInvitesComponent from "../modals/AppModalInvitesComponent.vue";
     import AppEventOptionsCardComponent from "./AppEventOptionsCardComponent.vue";
     import AppEventParticipantsCardComponent from "./AppEventParticipantsCardComponent.vue";
 
@@ -14,6 +14,8 @@
               currentDate: new Date(),
               dialog: false,
               eventId: null,
+              event: null,
+              user: null
           };
         },
         props: {
@@ -46,7 +48,7 @@
                     .then(async(response) => {
                         console.log(response);
                         const data = await response.data.result.original;
-                        this.messageSuccess = await data.attributes ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR;
+                        await this.$emit('messageSuccessEmit', data.attributes ? MESSAGES.FORM_SUCCESS : MESSAGES.ERROR_ERROR);
                     })
                     .catch(async(error) => {
                         console.log(error);
@@ -58,7 +60,7 @@
                             request_data: attributes.toString(),
                             message: error.message
                         });
-                        this.messageError = MESSAGES.ERROR_ERROR;
+                        await this.$emit('messageErrorEmit', MESSAGES.ERROR_ERROR);
                     });
             },
         },
@@ -66,6 +68,20 @@
             eventIdProps: {
                 handler(value) {
                     this.eventId = value;
+                },
+                immediate: true,
+                deep: true
+            },
+            eventProps: {
+                handler(value) {
+                    this.event = value;
+                },
+                immediate: true,
+                deep: true
+            },
+            userProps: {
+                handler(value) {
+                    this.user = value;
                 },
                 immediate: true,
                 deep: true
@@ -78,30 +94,30 @@
     <div class="w-50">
         <Card role="region">
             <template #header>
-                <h2 class="text-center">{{ this.eventProps.name }}</h2>
+                <h2 class="text-center">{{ this.event.name }}</h2>
             </template>
             <template #content>
                 <div class="mb-1">
                     <h3>
-                        <i class="pi pi-map-marker" style="color: #222"></i> <span>{{ this.eventProps.location }}</span>
+                        <i class="pi pi-map-marker" style="color: #222"></i> <span>{{ this.event.location }}</span>
                     </h3>
                 </div>
                 <div class="mb-1">
                     <h3>
-                        <i class="pi pi-calendar-clock" style="color: #222"></i> <span>{{ this.formatDate(this.eventProps.start_date) }}</span>
+                        <i class="pi pi-calendar-clock" style="color: #222"></i> <span>{{ this.formatDate(this.event.start_date) }}</span>
                     </h3>
                 </div>
                 <div class="mb-1">
                     <h3>
-                        <i class="pi pi-users" style="color: #222"></i> <span>{{ this.eventProps.participants.length }} участников</span>
+                        <i class="pi pi-users" style="color: #222"></i> <span>{{ this.event.participants.length }} участников</span>
                     </h3>
                 </div>
                 <div class="mb-1">
                     <br>
-                    <AppModalInvitesComponent  v-if="this.userProps && this.userProps.role === 'admin'"
-                                               :userProps="this.userProps"
+                    <AppModalInvitesComponent  v-if="this.user && this.user.role === 'admin'"
+                                               :userProps="this.user"
                                                :eventIdProps="this.eventIdProps" />
-                    <Button v-if="this.userProps && this.userProps.role === 'athlete'"
+                    <Button v-if="this.user && this.user.role === 'athlete'"
                             label="Записаться"
                             severity="primary"
                             class="w-100"
@@ -109,7 +125,7 @@
                 </div>
             </template>
         </Card>
-        <AppEventOptionsCardComponent :optionsProps="this.eventProps.options" />
-        <AppEventParticipantsCardComponent :optionsProps="this.eventProps.participants" />
+        <AppEventOptionsCardComponent :optionsProps="this.event.options" />
+        <AppEventParticipantsCardComponent :optionsProps="this.event.participants" />
     </div>
 </template>

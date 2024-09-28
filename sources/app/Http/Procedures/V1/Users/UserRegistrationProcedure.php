@@ -8,6 +8,7 @@ use App\Domain\Abstracts\AbstractProcedure;
 use App\Domain\Constants\EnumConstants\RoleEnum;
 use App\Http\Requests\Users\RegistrationUserRequest;
 use App\Http\Resources\Users\UserResource;
+use App\Jobs\MailQueue\RegistrationEmailJob;
 use App\Repository\UserRepository;
 use App\Services\MailingService;
 use Illuminate\Http\JsonResponse;
@@ -39,7 +40,7 @@ class UserRegistrationProcedure extends AbstractProcedure
         $attributes[FIELD_PASSWORD] = Hash::make($attributes[FIELD_PASSWORD]);
         $attributes[FIELD_ROLE] = key_exists(FIELD_ROLE, $attributes) ? $attributes[FIELD_ROLE] : RoleEnum::ATHLETE;
         $repository = $this->userRepository->store($attributes);
-        $this->mailingService->mailNewUser([FIELD_EMAIL => $attributes[FIELD_EMAIL]]);
+        RegistrationEmailJob::dispatch($attributes, $this->mailingService);
         unset($attributes[FIELD_PASSWORD]);
 
         return new JsonResponse(

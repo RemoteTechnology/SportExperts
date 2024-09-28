@@ -5,13 +5,11 @@
       <sourceFolder url="file://$MODULE_DIR$/src/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/sources/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/sources/tests" isTestSource="true" packagePrefix="Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/src/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/sources/app" isTestSource="false" packagePrefix="App\" />
       <sourceFolder url="file://$MODULE_DIR$/sources/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
       <sourceFolder url="file://$MODULE_DIR$/sources/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
-      <sourceFolder url="file://$MODULE_DIR$/sources/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/backend/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/src/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/src/vendor/carbonphp/carbon-doctrine-types" />
@@ -257,7 +255,11 @@
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/spiral-packages/profiler" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/http-client" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/http-client-contracts" />
-      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/bschmitt/laravel-amqp" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/paragonie/constant_time_encoding" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/paragonie/random_compat" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/php-amqplib/php-amqplib" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/phpseclib/phpseclib" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/vladimir-yuldashev/laravel-queue-rabbitmq" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
