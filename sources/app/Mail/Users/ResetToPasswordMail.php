@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ResetMail extends Mailable
+class ResetToPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -22,7 +22,7 @@ class ResetMail extends Mailable
         $this->password = $password;
     }
 
-    public function build(): ResetMail
+    public function build(): ResetToPasswordMail
     {
         return $this->subject('Восстановление пароля.')
             ->view('email.users.reset', ['password' => $this->password]);
