@@ -77,7 +77,8 @@ class ParticipantStoreProcedure extends AbstractProcedure
 
         return new JsonResponse(
             data: [
-                FIELD_MESSAGE => $participantStore->toArray(),
+                FIELD_ID => self::identifier(),
+                FIELD_ATTRIBUTES => $participantStore->toArray(),
                 ...self::meta($request, $attributes)
             ],
             status: Response::HTTP_CREATED

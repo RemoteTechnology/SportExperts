@@ -45,9 +45,7 @@ class InvitedStoreProcedure extends AbstractProcedure
                 ],
                 status: Response::HTTP_CREATED
             );
-        }
-        catch (TypeError)
-        {
+        } catch (TypeError) {
             $repository = $this->invitedRepository->store(ATTRIBUTES);
             return  new JsonResponse(
                 data: [

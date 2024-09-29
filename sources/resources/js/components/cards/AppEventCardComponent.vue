@@ -126,6 +126,6 @@
             </template>
         </Card>
         <AppEventOptionsCardComponent :optionsProps="this.event.options" />
-        <AppEventParticipantsCardComponent :optionsProps="this.event.participants" />
+        <AppEventParticipantsCardComponent :participantsProps="this.event.participants" />
     </div>
 </template>

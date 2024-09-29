@@ -117,7 +117,7 @@ export default {
                 @messageErrorEmit="addMessageError" />
             <!-- ATHLETE VIEW -->
             <AppRecordsListCardComponent
-                v-if="this.user !== null && this.user.role === 'athlete'"
+                v-if="this.user && this.user.role === 'athlete'"
                 :baseUrlProps="this.baseUrl"
                 :routeProps="this.route"
                 @messageSuccessEmit="addMessageSuccess"

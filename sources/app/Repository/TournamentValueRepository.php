@@ -38,7 +38,7 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
      * @param int $tournamentId
      * @return Collection
      */
-    public function findByTournamentValue(Collection $tournaments): Collection
+    public function findByTournamentValue(int $tournaments): Collection
     {
 
         return $this->model::where([FIELD_TOURNAMENT_ID => $tournaments])->get();

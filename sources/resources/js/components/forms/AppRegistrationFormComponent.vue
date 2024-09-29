@@ -14,6 +14,7 @@
     import { MESSAGES } from "../../common/messages";
     import { ENDPOINTS } from "../../common/route/api";
     import AppFormWrapperComponent from "../wrappers/AppFormWrapperComponent.vue";
+    import {IDENTIFIER} from "../../constant";
 
     export default {
         data() {
@@ -29,7 +30,10 @@
                 },
                 currentDate: new Date(),
                 participants: null,
-                userObject: null,
+                userModel: null,
+                eventId: null,
+                baseUrl: null,
+                inviteUserId: null,
                 user: {
                     firstName: null,
                     firstNameEng: null,
@@ -42,13 +46,29 @@
                     password: null,
                     passwordDouble: null
                 },
+                options: [
+                    {
+                        user_id: window.$cookies.get(IDENTIFIER),
+                        entity: 'user',
+                        name: 'Weight',
+                        value: null,
+                        type: 'string',
+                    },
+                    {
+                        user_id: window.$cookies.get(IDENTIFIER),
+                        entity: 'user',
+                        name: 'Height',
+                        value: null,
+                        type: 'string',
+                    },
+                ],
             };
         },
         props: {
-            baseUrl: String,
-            eventId: Number,
-            inviteUserId: Number,
-            urlKey: String,
+            baseUrlProps: String,
+            eventIdProps: Number,
+            inviteUserIdProps: Number,
+            urlKeyProps: Boolean,
         },
         components: {
             Card,
@@ -112,6 +132,7 @@
             createOption: async function(attributesOptions) {
                 await createOptionRequest(attributesOptions)
                     .catch(async (error) => {
+                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -124,7 +145,11 @@
             },
             createInvite: async function(attributesInvite) {
                 await createInvitedRequest(attributesInvite)
+                    .then(async (response) => {
+                        console.log(response)
+                    })
                     .catch(async (error) => {
+                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -139,13 +164,16 @@
                 if (this.user.password && this.user.passwordDouble && this.user.password === this.user.passwordDouble) {
                     const attributes = await this.getAttributes();
                     if (this.urlKey)  {
-                         registrationRequest(attributes)
+                         await registrationRequest(attributes)
                             .then(async (response) => {
+                                console.log(response);
                                 await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
                                 const data = response.data.result.original;
-                                this.userModel = await Object.assign(new UserModel(), data.attributes)
+                                // this.userModel = await Object.assign(new UserModel(), data.attributes)
+                                this.user = data.attributes;
                             })
                             .catch(async (error) => {
+                                console.log(error);
                                 await createLogOptionRequest({
                                     current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                                     current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -155,45 +183,46 @@
                                     message: error.message
                                 })
                             });
+                         console.log(this.inviteUserId)
                         let attributesInvite = {
                             who_user_id: this.inviteUserId,
-                            user_id: this.userModel.id,
+                            user_id: this.user.id,
                         }
                         let attributesRecord = {
                             event_id: this.eventId,
-                            user_id: this.userModel.id,
+                            user_id: this.user.id,
                             invited_user_id: this.inviteUserId,
                         };
                         let attributesOptions = [
                             {
-                                user_id: this.userModel.id,
+                                user_id: this.user.id,
                                 entity: "user",
                                 name: "Weight",
-                                value: this.option.weight,
+                                value: this.options[0].weight,
                                 type: "string",
                             },
                             {
-                                user_id: this.userModel.id,
+                                user_id: this.user.id,
                                 entity: "user",
                                 name: "Height",
-                                value: this.option.height,
+                                value: this.options[1].height,
                                 type: "string",
                             }
                         ];
-                         this.createInvite(attributesInvite);
+                         await this.createInvite(attributesInvite);
                         let i = 0;
                         while(i < attributesOptions.length) {
-                             this.createOption(attributesOptions[i]);
+                             await this.createOption(attributesOptions[i]);
                             i++;
                         }
-                        this.eventRecord(attributesRecord);
-                       // window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                        await this.eventRecord(attributesRecord);
+                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
                         return;
                     }
 
                     registrationRequest(attributes)
                         .then(async (response) => {
-                            console.log(response)
+                            console.log(response);
                             const data = response.data.result.original;
                             await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
                             this.userModel = Object.assign(new UserModel(), data.attributes);
@@ -210,11 +239,40 @@
                                 message: error.message
                             })
                         });
-                    console.log(this.baseUrl + ENDPOINTS.LOGIN)
                 } else {
                     this.$emit('messageErrorEmit', MESSAGES.PASSWORD_DOUBLE);
                 }
             },
+        },
+        watch: {
+            eventIdProps: {
+                handler(value) {
+                    this.eventId = value;
+                },
+                immediate: true,
+                deep: true
+            },
+            inviteUserIdProps: {
+                handler(value) {
+                    this.inviteUserId = value;
+                },
+                immediate: true,
+                deep: true
+            },
+            baseUrlProps: {
+                handler(value) {
+                    this.baseUrl = value;
+                },
+                immediate: true,
+                deep: true
+            },
+            urlKeyProps: {
+                handler(value) {
+                    this.urlKey = value;
+                },
+                immediate: true,
+                deep: true
+            }
         }
     }
 </script>
@@ -299,13 +357,13 @@
             <div class="form-block">
                 <label for="#">Укажите ваш рост</label>
                 <InputText type="number"
-                           v-model="this.option.height"
+                           v-model="this.options[1].height"
                            class="w-100" />
             </div>
             <div class="form-block">
                 <label for="#">Укажите ваш вес</label>
                 <InputText type="number"
-                           v-model="this.option.weight"
+                           v-model="this.options[0].weight"
                            class="w-100" />
             </div>
         </section>

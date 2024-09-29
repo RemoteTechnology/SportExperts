@@ -107,7 +107,7 @@ class AlgorithmRanging
      */
     public function ranging(
         Model $event,
-        Model|null $tournament,
+        Model $tournament,
         ParticipantRepository $participantRepository,
         Model $participant
     )

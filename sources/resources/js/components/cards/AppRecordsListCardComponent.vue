@@ -56,7 +56,7 @@
 <template>
     <section class="mb-5 d-flex d-between d-flex-wrap">
         <Card v-for="event in this.events"
-              v-key="event"
+              :key="event.id"
               style="overflow: hidden"
               class="mb-3 w-30">
             <template #header>
