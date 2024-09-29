@@ -2,22 +2,17 @@
 
 namespace App\Services\Tournaments;
 
-use App\Domain\Abstracts\AbstractAlgorithmRanging;
-use App\Domain\Interfaces\Services\Tournaments\AlgorithmRangingInterface;
-use App\Models\Event;
-use App\Models\Participant;
 use App\Repository\OptionRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\TournamentValueRepository;
 use App\Repository\UserRepository;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 require_once dirname(__DIR__, 2) . '/Domain/Constants/FieldConst.php';
 
-class AlgorithmRanging extends AbstractAlgorithmRanging
+class AlgorithmRanging
 {
     const WEIGHT_DISCREPANCY = 5;
     const HEIGHT_DISCREPANCY = 3;

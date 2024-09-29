@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class InviteNewUserMail extends Mailable
+class InviteToEventMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -19,7 +19,7 @@ class InviteNewUserMail extends Mailable
         $this->attributes = $attributes;
     }
 
-    public function build(): InviteNewUserMail
+    public function build(): InviteToEventMail
     {
         return $this->subject('Приглашение на событие!')
             ->view('email.invite.index', ['attributes' => $this->attributes]);

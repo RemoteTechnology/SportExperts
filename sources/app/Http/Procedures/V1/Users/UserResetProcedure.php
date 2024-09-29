@@ -7,6 +7,8 @@ namespace App\Http\Procedures\V1\Users;
 use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Users\ResetRequest;
 use App\Http\Resources\Users\UserResource;
+use App\Jobs\MailJob;
+use App\Mail\Users\ResetToPasswordMail;
 use App\Repository\Filter\Entities\Users\FindByEmailRepository;
 use App\Services\MailingService;
 use Illuminate\Http\JsonResponse;
@@ -22,12 +24,10 @@ class UserResetProcedure extends AbstractProcedure
     public static string $name = PROCEDURE_USER_RESET;
     public string $newPassword;
     private FindByEmailRepository $filter;
-    private MailingService $mailingService;
 
-    public function __construct(FindByEmailRepository $filter, MailingService $mailingService)
+    public function __construct(FindByEmailRepository $filter)
     {
         $this->filter = $filter;
-        $this->mailingService = $mailingService;
         $this->newPassword = Str::random(10);
     }
 
@@ -41,7 +41,8 @@ class UserResetProcedure extends AbstractProcedure
         $user = $this->filter->query([FIELD_EMAIL => ATTRIBUTES[FIELD_EMAIL]]);
         $user->password = Hash::make($this->newPassword);
         $user->save();
-        $this->mailingService->mailResetToPassword([
+
+        MailJob::dispatch(ResetToPasswordMail::class, [
             FIELD_EMAIL => $user->email,
             FIELD_PASSWORD => $this->newPassword
         ]);

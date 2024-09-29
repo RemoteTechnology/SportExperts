@@ -9,11 +9,11 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CreateUserMail extends Mailable
+class RegistrationUserMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function build(): CreateUserMail
+    public function build(): RegistrationUserMail
     {
         return $this->subject('Регистрация на платформе SportExperts.')
             ->view('email.users.registration');
