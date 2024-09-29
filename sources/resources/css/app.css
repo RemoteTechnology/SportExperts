@@ -238,3 +238,6 @@ ul li.item-admin i {
 .p-icon-field-right>.p-inputtext{
     width: 100%!important;
 }
+#detail-image img{
+    width: 100%;
+}
