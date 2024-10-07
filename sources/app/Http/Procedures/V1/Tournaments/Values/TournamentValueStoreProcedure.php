@@ -14,6 +14,8 @@ use App\Repository\TournamentValueRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
+
 class TournamentValueStoreProcedure extends AbstractProcedure
 {
     public static string $name = 'TournamentValueStoreProcedure';
@@ -40,14 +42,14 @@ class TournamentValueStoreProcedure extends AbstractProcedure
      */
     public function handle(TournamentValueStoreRequest $request): JsonResponse
     {
-        $attributes = $request->validated();
-        $event = $this->eventRepository->findByKey($attributes['event_key']);
+        define('ATTRIBUTES', $request->validated());
+        $event = $this->eventRepository->findByKey(ATTRIBUTES['event_key']);
         $participant = $this->participantRepository->findByKeyIsEvent([
             'event_id' => $event->id,
-            'user_id' => $attributes['user_id']
+            'user_id' => ATTRIBUTES['user_id']
         ]);
-        $tournament = $this->tournamentRepository->findByTournamentKey($attributes['event_key']);
-        $attributes['tournament_id'] = $tournament->id;
+        $tournament = $this->tournamentRepository->findByTournamentKey(ATTRIBUTES['event_key']);
+        $attributes['tournament_id'] = $tournament[0]->id;
         $attributes['participants_A'] = $participant->key;
         $attributes['participants_B'] = null;
 

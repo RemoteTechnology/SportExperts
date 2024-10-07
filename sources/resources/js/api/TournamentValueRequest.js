@@ -1,7 +1,7 @@
 import {
     BASE_URL,
     REQUEST_METHOD_DEFAULT,
-    PROCEDURES
+    PROCEDURES, TOKEN
 } from '../constant';
 import { TournamentValueEndpointQuery } from './query/TournamentValueEndpointQuery';
 
@@ -9,6 +9,7 @@ export async function tournamentValueCreateRequest(attributes, tournamentValueQu
     // Для записи из списка спортсменов
     tournamentValueQuery.setUrl(`${BASE_URL}api/v1/tournament/value/store`);
     tournamentValueQuery.setHeaders();
+    tournamentValueQuery.isAuth(`Bearer ${window.$cookies.get(TOKEN)}`);
     tournamentValueQuery.setMethod(`${PROCEDURES.tournament.value.create}@${REQUEST_METHOD_DEFAULT}`);
     tournamentValueQuery.setParams(attributes);
     return await tournamentValueQuery.execute();
@@ -17,6 +18,7 @@ export async function tournamentValueCreateRequest(attributes, tournamentValueQu
 export async function getFreeParticipantsRequest(attributes, tournamentValueQuery = new TournamentValueEndpointQuery()) {
     tournamentValueQuery.setUrl(`${BASE_URL}api/v1/tournament/value/filter`);
     tournamentValueQuery.setHeaders();
+    tournamentValueQuery.isAuth(`Bearer ${window.$cookies.get(TOKEN)}`);
     tournamentValueQuery.setMethod(`${PROCEDURES.tournament.value.filter.free}@${REQUEST_METHOD_DEFAULT}`);
     tournamentValueQuery.setParams(attributes);
     return await tournamentValueQuery.execute();

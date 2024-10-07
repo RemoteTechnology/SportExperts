@@ -77,7 +77,7 @@ export default {
             };
             await listInvitedRequest(attributes)
                 .then(async (response) => {
-                    console.log(response);
+                    console.log(['invites', response]);
                     const data = await response.data.result.original;
                     this.invites = await data.attributes;
                 })
@@ -111,68 +111,68 @@ export default {
         :messageSuccess="this.messageSuccess"
         :messageError="this.messageError" />
     <section class="d-flex d-between container">
-            <section class="w-100">
-                <Card v-if="this.invites && this.invites.length">
-                    <template #content>
-                        <DataTable v-model:expandedRows="expandedRows"
-                                   :value="this.invites"
-                                   dataKey="id"
-                                   @rowExpand="onRowExpand"
-                                   @rowCollapse="onRowCollapse"
-                                   tableStyle="min-width: 60rem">
-                            <template #header>
-                                <div class="flex flex-wrap justify-content-end gap-2">
-                                    <Button text icon="pi pi-cloud-download" label="Скачать документом" @click="collapseAll" />
-                                </div>
+        <section class="w-100">
+            <Card v-if="this.invites && this.invites.length">
+                <template #content>
+                    <DataTable v-model:expandedRows="expandedRows"
+                               :value="this.invites"
+                               dataKey="id"
+                               @rowExpand="onRowExpand"
+                               @rowCollapse="onRowCollapse"
+                               tableStyle="min-width: 60rem">
+                        <template #header>
+                            <div class="flex flex-wrap justify-content-end gap-2">
+                                <Button text icon="pi pi-cloud-download" label="Скачать документом" @click="collapseAll" />
+                            </div>
+                        </template>
+                        <Column expander style="width: 5rem" />
+                        <Column field="users.last_name" header="Фамилия" sortable></Column>
+                        <Column field="users.first_name" header="Имя" sortable></Column>
+                        <Column header="Дата рождения" sortable>
+                            <template #body="slotProps">
+                                {{ this.formatDate(slotProps.data.users.birth_date) }}
                             </template>
-                            <Column expander style="width: 5rem" />
-                            <Column field="user.last_name" header="Фамилия" sortable></Column>
-                            <Column field="user.first_name" header="Имя" sortable></Column>
-                            <Column header="Дата рождения" sortable>
-                                <template #body="slotProps">
-                                    {{ this.formatDate(slotProps.data.user.birth_date) }}
-                                </template>
-                            </Column>
-                            <Column field="user.email" header="Почта"></Column>
-                            <Column field="user.phone" header="Номер телефона"></Column>
-                            <template #expansion="slotProps">
-                                <h5>Мероприятия на которые записан спортсмен ({{ slotProps.data.events.length }} шт)</h5>
-                                <DataTable stripedRows :value="slotProps.data.events">
-                                    <Column header="Название" sortable>
-                                        <template #body="slotProps">
-                                            <a :href="this.baseUrl + 'event/detail?id=' + slotProps.data.id">
-                                                <Button :label="slotProps.data.name" severity="info" link />
-                                            </a>
-                                        </template>
-                                    </Column>
-                                    <Column header="Статус" sortable>
-                                        <template #body="slotProps">
-                                            <section v-if="slotProps.data.status === 'Active'">
-                                                <Tag severity="success" value="Активен"></Tag>
-                                            </section>
-                                            <section v-else-if="slotProps.data.status === 'No active'">
-                                                <Tag severity="info" value="Завершен"></Tag>
-                                            </section>
-                                            <section v-else>
-                                                <Tag severity="warning" value="В архиве"></Tag>
-                                            </section>
-                                        </template>
-                                    </Column>
-                                    <Column header="Дата старта" sortable>
-                                        <template #body="slotProps">
-                                            {{ this.formatDate(slotProps.data.start_date) }}
-                                        </template>
-                                    </Column>
-                                    <Column field="start_time" header="Время старта" sortable></Column>
-                                </DataTable>
-                            </template>
-                        </DataTable>
-                    </template>
-                </Card>
-                <section v-else class="d-flex d-center">
-                    <InlineMessage severity="info" class="w-50 mt-5">{{ this.noData }}</InlineMessage>
-                </section>
+                        </Column>
+                        <Column field="users.email" header="Почта"></Column>
+                        <Column field="users.phone" header="Номер телефона"></Column>
+                        <template #expansion="slotProps">
+                            <h5>Мероприятия на которые записан спортсмен ({{ slotProps.data.events.length }} шт)</h5>
+                            <DataTable stripedRows :value="slotProps.data.events">
+                                <Column header="Название" sortable>
+                                    <template #body="slotProps">
+                                        <a :href="this.baseUrl + 'event/detail?id=' + slotProps.data.id">
+                                            <Button :label="slotProps.data.name" severity="info" link />
+                                        </a>
+                                    </template>
+                                </Column>
+                                <Column header="Статус" sortable>
+                                    <template #body="slotProps">
+                                        <section v-if="slotProps.data.status === 'Active'">
+                                            <Tag severity="success" value="Активен"></Tag>
+                                        </section>
+                                        <section v-else-if="slotProps.data.status === 'No active'">
+                                            <Tag severity="info" value="Завершен"></Tag>
+                                        </section>
+                                        <section v-else>
+                                            <Tag severity="warning" value="В архиве"></Tag>
+                                        </section>
+                                    </template>
+                                </Column>
+                                <Column header="Дата старта" sortable>
+                                    <template #body="slotProps">
+                                        {{ this.formatDate(slotProps.data.start_date) }}
+                                    </template>
+                                </Column>
+                                <Column field="start_time" header="Время старта" sortable></Column>
+                            </DataTable>
+                        </template>
+                    </DataTable>
+                </template>
+            </Card>
+            <section v-else class="d-flex d-center">
+                <InlineMessage severity="info" class="w-50 mt-5">{{ this.noData }}</InlineMessage>
             </section>
+        </section>
     </section>
     <!--    <section v-if="this.events && this.events[this.response.data].length > 9" class="mt-5 mb-5">-->
     <!--    <Paginator :rows="9" :totalRecords="120"></Paginator>-->

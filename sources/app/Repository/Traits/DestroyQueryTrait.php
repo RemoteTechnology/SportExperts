@@ -8,7 +8,7 @@ trait DestroyQueryTrait
 {
     /**
      * @param Model $entity
-     * @return Model
+     * @return bool
      */
     public function destroy(Model $entity): bool
     {

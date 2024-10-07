@@ -38,4 +38,17 @@ final class TournamentRepository implements LCRUD_OperationInterface
     {
         return $this->model::where([FIELD_EVENT_KEY => $eventKey])->get();
     }
+
+    /**
+     * @param Model $entity
+     * @return Model
+     */
+    public function increaseStep(Model $entity): Model
+    {
+        $this->model->key = $entity->key;
+        $this->model->event_key = $entity->event_key;
+        $this->model->stage = $entity->stage + 1;
+        $this->model->save();
+        return $this->model;
+    }
 }

@@ -14,6 +14,7 @@ use App\Repository\Traits\ReadQueryTrait;
 use App\Repository\Traits\UpdateQueryTrait;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 require_once dirname(__DIR__, ) . '/Domain/Constants/EntitiesConst.php';
@@ -145,14 +146,19 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
     public function advanceSkipValue(Model $event, $attributes): mixed
     {
         $tournament = Tournament::where([FIELD_EVENT_KEY => $event->key])->first();
-        $tournamentValues = $this->searchParticipant($attributes, $event);
-        $value = DB::table(TABLE_TOURNAMENT_VALUES)
+        // TODO: придумать как не обновлять все записи по FIELD_PARTICIPANTS_PASSES
+        // $tournamentValue = TournamentValue::where([])->first();
+        $participant = DB::table(TABLE_PARTICIPANTS)
             ->where([
-            FIELD_TOURNAMENT_ID                 => $tournament->id,
-            $tournamentValues->recorded_in  => $tournamentValues[$tournamentValues->recorded_in]
+                FIELD_EVENT_ID  => $event->id,
+                FIELD_USER_ID   => $attributes[FIELD_USER_ID]
+            ])->limit(1)->get();
+        $value = DB::table(TABLE_TOURNAMENT_VALUES)->where([
+            FIELD_ID            => $attributes[FIELD_ID],
+            FIELD_TOURNAMENT_ID => $tournament->id
         ]);
         $value->update([
-            FIELD_PARTICIPANTS_PASSES => $tournamentValues[$tournamentValues->recorded_in]
+            FIELD_PARTICIPANTS_PASSES => $participant[0]->key,
         ]);
         return $value->first();
     }
@@ -176,5 +182,20 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
             WHERE tv.tournament_id = {$tournament->id} AND
                   tv.\"{$participantsB}\" IS NULL;
         ");
+    }
+
+    /**
+     * @param Model $entity
+     * @return void
+     */
+    public function copyAthlete(Model $entity, array $attributes): void
+    {
+        // TODO: перенести спортсменов с предыдущего шага, продумать что делать если шаг уже создан и надо записать спортсмена
+        $participant = Participant::where([FIELD_USER_ID => $attributes[FIELD_USER_ID]])->first();
+        $this->model->tournament_id = $entity->id;
+        $this->model->participants_A = $participant->key;
+        $this->model->participants_B = null;
+        $this->model->participants_passes = null;
+        $this->model->save();
     }
 }
