@@ -35,7 +35,7 @@ class EventDateFilterProcedure extends AbstractFilter
     {
         define('ATTRIBUTES', $request->validated());
 
-        if (ATTRIBUTES[FIELD_MODE] === FilterDateModeEnum::AFTER)
+        if (ATTRIBUTES[FIELD_MODE] === FilterDateModeEnum::AFTER->value)
         {
             $format = $this->formatDate(ATTRIBUTES);
             $repository = $this->filterRepository->filterAfterDate($format, ATTRIBUTES[FIELD_LIMIT]);
@@ -48,7 +48,7 @@ class EventDateFilterProcedure extends AbstractFilter
                 status: Response::HTTP_CREATED
             );
         }
-        elseif (ATTRIBUTES[FIELD_MODE] === FilterDateModeEnum::BEFORE)
+        elseif (ATTRIBUTES[FIELD_MODE] === FilterDateModeEnum::BEFORE->value)
         {
             $format = $this->formatDate(ATTRIBUTES);
             $repository = $this->filterRepository->filterBeforeDate($format, ATTRIBUTES[FIELD_LIMIT]);

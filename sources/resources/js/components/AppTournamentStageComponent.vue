@@ -34,19 +34,17 @@
 </script>
 
 <template>
-    <section id="tid" class="d-flex d-between d-align-center">
-        <section style="width: 150%;">
-            <section id="step-tournament">
-                <Card class="mb-3">
-                    <template #content>
-                        <strong># {{ this.tournamentProps.stage }} ЭТАП</strong>
-                    </template>
-                </Card>
-            </section>
-            <AppTournamentValuesComponent
-                :eventKeyProps="this.eventKeyProps"
-                :tournamentValueProps="this.tournamentProps.tournament_values"
-                @messageErrorEmit="addMessageError" />/>
+    <section id="tid" class="d-flex">
+        <section id="step-tournament" style="width: 17em;">
+            <Card class="mb-3 w-100">
+                <template #content>
+                    <strong># {{ this.tournamentProps.stage }} ЭТАП</strong>
+                </template>
+            </Card>
         </section>
+        <AppTournamentValuesComponent
+            :eventKeyProps="this.eventKeyProps"
+            :tournamentValuesProps="this.tournamentProps.tournament_values"
+            @messageErrorEmit="addMessageError" />
     </section>
 </template>

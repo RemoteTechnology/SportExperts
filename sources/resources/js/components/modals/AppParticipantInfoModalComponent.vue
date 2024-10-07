@@ -28,6 +28,7 @@
         },
         props: {
             userIdProps: Number,
+            valueIdProps: Number,
             eventKeyProps: String,
         },
         components: {
@@ -175,13 +176,19 @@
                         await this.$emit('messageErrorEmit', MESSAGES.NO_DATA);
                     });
             },
-            skipToParticipant: async function(participant)
+            skipToParticipant: async function(value_id, participant)
             {
                 const attributes = {
+                    tournament_value_id: value_id,
                     event_key: this.eventKey,
                     ...participant
                 };
                 await participantUserSkipAdditionallyRequest(attributes)
+                    .then((response) => {
+                        console.log(response);
+                        window.location.reload();
+
+                    })
                     .catch(async (error) => {
                         console.log(error);
                         await createLogOptionRequest({
@@ -226,6 +233,15 @@
                 this.participant.users = null;
             },
         },
+        watch: {
+            eventKeyProps: {
+                handler(value) {
+                    this.eventKey = value;
+                },
+                immediate: true,
+                deep: true
+            }
+        }
     }
 </script>
 
@@ -266,7 +282,7 @@
                         <Button label="Пропустить"
                                 severity="success"
                                 class="w-100"
-                                @click="this.skipToParticipant({user_id: this.participant.user.id})" />
+                                @click="this.skipToParticipant(this.valueIdProps,{user_id: this.participant.user.id})" />
                     </div>
                 </div>
             </section>
@@ -278,14 +294,14 @@
                      class="d-flex d-between d-align-center d-flex-wrap">
                     <div class="w-70">
                         <p>
-                            <strong>{{ item.user.first_name }} {{ item.user.last_name }}</strong>
+                            <strong>{{ item.users.first_name }} {{ item.users.last_name }}</strong>
                         </p>
                         <section>
                             <small>
-                                Возраст: {{ item.user.age }} лет
+                                Возраст: {{ item.users.age }} лет
                             </small>
                         </section>
-                        <section v-for="option in item.user.options"
+                        <section v-for="option in item.users.options"
                                  :key="option.name">
                             <small v-if="option.name === 'Height'">
                                 Рост: {{ option.value }} см
@@ -302,7 +318,7 @@
                                 @click="this.replaceToParticipant({
                                     event_key: this.eventKeyProps,
                                     new_participant_key: item.key,
-                                    user_id: this.participant.invite.user.id,
+                                    user_id: this.participant.invite.users.id,
                                 })"/>
                     </div>
                     <hr class="w-100">

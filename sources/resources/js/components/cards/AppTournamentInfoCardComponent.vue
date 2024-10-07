@@ -5,6 +5,9 @@
     import {getParticipantsToEventRequest} from "../../api/FilterRequest";
     import LeaderLine from "leader-line-vue";
     import {tournamentReadRequest} from "../../api/TournamentRequest";
+    import Card from "primevue/card";
+    import OrderList from "primevue/orderlist";
+    import Button from "primevue/button";
 
     export default {
         data() {
@@ -20,7 +23,9 @@
             eventKeyProps: String,
         },
         components: {
-
+            Card,
+            OrderList,
+            Button
         },
         methods: {
             tyingAthlete() {
@@ -67,7 +72,7 @@
                             request_data: attributes.toString(),
                             message: error.message
                         });
-                        await this.$emit('messageErrorEmit', MESSAGES.NO_DATA);
+                        await this.$emit('messageErrorEmit', MESSAGES.NO_DATA + '1');
                     });
             },
             getFreeParticipantList: async function() {
@@ -131,6 +136,7 @@
                         });
                     })
                     .catch(async (error) => {
+                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -169,9 +175,9 @@
                     <template #item="slotProps">
                         <section class="d-flex d-between d-align-center">
                             <section class="w-70">
-                                <p>{{ slotProps.item.user.first_name }} {{ slotProps.item.user.last_name }}</p>
-                                <small>Возраст: {{ slotProps.item.user.age }}
-                                    <span v-for="option in slotProps.item.user.options" :key="option.name">
+                                <p>{{ slotProps.item.users.first_name }} {{ slotProps.item.users.last_name }}</p>
+                                <small>Возраст: {{ slotProps.item.users.age }}
+                                    <span v-for="option in slotProps.item.users.options" :key="option.name">
                                         <span v-if="option.name === 'Height'"> | Рост: {{ option.value }} см</span>
                                         <span v-if="option.name === 'Weight'"> | Вес: {{ option.value }} кг</span>
                                     </span>
@@ -180,7 +186,7 @@
                             <section class="w-30 d-flex d-end">
                                 <Button icon="pi pi-arrow-right"
                                         aria-label="Success"
-                                        @click="this.createParticipantTournament(slotProps.item.user.id)" />
+                                        @click="this.createParticipantTournament(slotProps.item.users.id)" />
                             </section>
                         </section>
                     </template>

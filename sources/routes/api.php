@@ -154,8 +154,9 @@ Route::prefix('v1')->group(function () {
     Route::prefix('participant')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [ParticipantListProcedure::class])->name('participant.list');
         Route::rpc(ROUTE_READ, [ParticipantReadProcedure::class])->name('participant.read');
+        // TODO: разобраться с мидлварой для регистрации юзера
+        Route::rpc(ROUTE_STORE, [ParticipantStoreProcedure::class])->name('participant.store');
         Route::middleware('auth:sanctum')->group(function () {
-            Route::rpc(ROUTE_STORE, [ParticipantStoreProcedure::class])->name('participant.store');
             Route::rpc(ROUTE_UPDATE, [ParticipantUpdateProcedure::class])->name('participant.update');
             Route::rpc(ROUTE_DESTROY, [ParticipantDestroyProcedure::class])->name('participant.destroy');
         });
@@ -176,8 +177,9 @@ Route::prefix('v1')->group(function () {
     Route::prefix('option')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [OptionListProcedure::class])->name('option.list');
         Route::rpc(ROUTE_READ, [OptionReadProcedure::class])->name('option.read');
+        // TODO: разобраться с мидлварой для регистрации юзера
+        Route::rpc(ROUTE_STORE, [OptionStoreProcedure::class])->name('option.store');
         Route::middleware('auth:sanctum')->group(function () {
-            Route::rpc(ROUTE_STORE, [OptionStoreProcedure::class])->name('option.store');
             Route::rpc(ROUTE_UPDATE, [OptionUpdateProcedure::class])->name('option.update');
             Route::rpc(ROUTE_DESTROY, [OptionDestroyProcedure::class])->name('option.destroy');
         });
@@ -189,8 +191,9 @@ Route::prefix('v1')->group(function () {
         Route::rpc(ROUTE_DEFAULT, [InvitedListProcedure::class])->name('invite.list');
         Route::rpc(ROUTE_READ, [InvitedReadProcedure::class])->name('invite.read');
         Route::rpc(ROUTE_READ . '/participant', [InvitedReadUserParticipantProcedure::class])->name('invite.read.participant');
+        // TODO: разобраться с мидлварой для регистрации юзера
+        Route::rpc(ROUTE_STORE, [InvitedStoreProcedure::class])->name('invite.store');
         Route::middleware('auth:sanctum')->group(function () {
-            Route::rpc(ROUTE_STORE, [InvitedStoreProcedure::class])->name('invite.store');
             Route::rpc(ROUTE_DEFAULT . 'notification', [NotificationProcedure::class])->name('invite.notification');
         });
     });

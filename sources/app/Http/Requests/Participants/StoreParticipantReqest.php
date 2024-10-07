@@ -24,7 +24,7 @@ class StoreParticipantReqest extends FormRequest
     public function rules(): array
     {
         return [
-            FIELD_ID                => ['required', 'numeric', 'exists:events,id'],
+            FIELD_EVENT_ID          => ['required', 'numeric', 'exists:events,id'],
             FIELD_USER_ID           => ['required', 'numeric', 'exists:users,id'],
             FIELD_INVITED_USER_ID   => ['required', 'exists:users,id'],
             FIELD_TEAM_KEY          => ['nullable', 'exists:teams,key'],

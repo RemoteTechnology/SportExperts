@@ -47,10 +47,10 @@
                         await this.$emit('messageErrorEmit', MESSAGES.ERROR_ERROR);
                     });
             },
-            tyingAthlete() {
-                for (let key in this.values.attributes)
+             tyingAthlete() {
+                for (let key in this.values)
                 {
-                    this.values.attributes[key].forEach(async (value) => {
+                     this.values[key].forEach(async (value) => {
                         await value.tournament_values.forEach((participant) => {
                             try {
                                 let line = new LeaderLine.setLine(
@@ -74,9 +74,9 @@
         },
         async mounted() {
             await this.readTournament();
-            await this.$nextTick(() => {
-                this.tyingAthlete();
-            });
+            //await this.$nextTick(() => {
+            //    this.tyingAthlete();
+            //});
         },
         watch: {
             eventKeyProps: {
@@ -90,38 +90,46 @@
     }
 </script>
 
-<template v-for="value in this.tournamentValuesProps">
-    <section id="body-tournament">
-        <Card class="mt-1">
-            <template #content>
-                <section id="athlete-card" class="d-flex d-between">
-                    <span>{{ value.users[0].first_name }} {{ value.users[0].last_name }}</span>
-                    <AppParticipantInfoModalComponent
-                        :userIdProps="value.users[0].id"
-                        :eventKeyProps="this.eventKeyProps"
-                        @messageErrorEmit="addMessageError" />
-                </section>
-                <span class="flag" :id="value.participants_A.key"></span>
-                <small>Команда</small>
-            </template>
-        </Card>
-        <Card class="mt-1">
-            <template #content v-if="value.users[1] !== null">
-                <section id="athlete-card" class="d-flex d-between">
-                    <span>{{ value.users[1].first_name }} {{ value.users[1].last_name }}</span>
-                    <AppParticipantInfoModalComponent
-                        :userIdProps="value.users[1].id"
-                        :eventKeyProps="this.eventKeyProps"
-                        @messageErrorEmit="addMessageError" />
-                </section>
-                <span class="flag" :id="value.participants_B.key"></span>
-                <small>Команда</small>
-            </template>
-            <template #content v-else>
-                <span style="color: #bd3131">
-                    <i>(Нет соперника)</i>
-                </span>
-            </template>
-        </Card>
+<template>
+    <section v-for="value in this.tournamentValuesProps" class="w-100" style="margin-bottom: 0.7em;">
+        <section id="body-tournament" style="
+            padding: 0.7em;
+            background-color: #ececec;
+            border-radius: 0.4em;
+        ">
+            <Card class="mt-1" :class="value.participants_passes === value.participants_A.key ? 'active-athlete' : ''">
+                <template #content>
+                    <section id="athlete-card" class="d-flex d-between">
+                        <span>{{ value.users[0].first_name }} {{ value.users[0].last_name }}</span>
+                        <AppParticipantInfoModalComponent
+                            :valueIdProps="value.id"
+                            :userIdProps="value.users[0].id"
+                            :eventKeyProps="this.eventKeyProps"
+                            @messageErrorEmit="addMessageError" />
+                    </section>
+                    <!-- <span class="flag" :id="value.participants_A.key"></span>
+                    <small>Команда</small> -->
+                </template>
+            </Card>
+            <Card class="mt-1" :class="value.participants_B !== null && value.participants_passes === value.participants_B.key ? 'active-athlete' : ''">
+                <template #content v-if="value.users[1] !== null">
+                    <section id="athlete-card" class="d-flex d-between">
+                        <span>{{ value.users[1].first_name }} {{ value.users[1].last_name }}</span>
+                        <AppParticipantInfoModalComponent
+                            :valueIdProps="value.id"
+                            :userIdProps="value.users[1].id"
+                            :eventKeyProps="this.eventKeyProps"
+                            @messageErrorEmit="addMessageError" />
+                    </section>
+                    <!-- <span class="flag" :id="value.participants_B.key"></span>
+                    <small>Команда</small> -->
+                </template>
+                <template #content v-else>
+                    <span style="color: #bd3131">
+                        <i>(Нет соперника)</i>
+                    </span>
+                </template>
+            </Card>
+        </section>
     </section>
 </template>

@@ -22,6 +22,7 @@
         name: 'AppEventFormComponent',
         data() {
             return {
+                baseUrl: null,
                 currentDate: new Date(),
                 file: null,
                 event: {
@@ -144,7 +145,7 @@
                     expiration_date: this.event.expiration_date,
                     expiration_time: this.event.expiration_time,
                 };
-
+                // TODO: id не правильный, в обновлении тоже
                 await createEventRequest(attributes)
                     .then(async (response) => {
                         console.log(response);
@@ -295,6 +296,7 @@
                 await this.createFile();
                 await this.createEvent();
                 await this.createOptions();
+                window.location = this.baseUrlProps + ENDPOINTS.EVENT + '/detail?id=' + this.event.id;
 
             },
             updateEventObject: async function()
@@ -302,9 +304,17 @@
                 await this.createFile();
                 await this.updateEvent();
                 await this.updateOrCreateOptions();
+                window.location = this.baseUrlProps + ENDPOINTS.EVENT + '/detail?id=' + this.event.id;
             },
         },
         watch: {
+            baseUrlProps: {
+                handler(data) {
+                    this.baseUrl = data;
+                },
+                immediate: true,
+                deep: true
+            },
             eventProps: {
                 handler(data) {
                     if (data) {
@@ -352,7 +362,7 @@
                         <Image :src="this.baseUrlProps + 'storage/uploads/' + event.image.name"
                                :alt="event.name"
                                style="display:block;"
-                               class="w-74"
+                               id="detail-image"
                                preview />
                     </section>
                     <label class="text-center" for="#">Добавьте баннер</label>

@@ -11,7 +11,6 @@ use App\Http\Resources\Users\UserResource;
 use App\Jobs\MailJob;
 use App\Mail\Users\RegistrationUserMail;
 use App\Repository\UserRepository;
-use App\Services\MailingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;

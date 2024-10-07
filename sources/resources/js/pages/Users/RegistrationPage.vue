@@ -13,8 +13,8 @@
         data() {
             return {
                 urlKey: false,
-                inviteUserId: null,
-                eventId: null,
+                invite_user_id: null,
+                event_id: null,
                 pageTitle: 'Регистрация',
                 subTitle: 'Вход',
                 webUrl: WEB_URL,
@@ -63,10 +63,10 @@
             :baseUrl="this.webUrl"
             :endPoint="this.route.LOGIN" />
         <AppRegistrationFormComponent
-            :baseUrl="this.webUrl"
-            :eventId="this.eventId"
-            :inviteUserId="this.inviteUserId"
-            :urlKey="this.urlKey"
+            :baseUrlProps="this.webUrl"
+            :eventIdProps="this.event_id"
+            :inviteUserIdProps="this.invite_user_id"
+            :urlKeyProps="this.urlKey"
             @messageSuccessEmit="addMessageSuccess"
             @messageErrorEmit="addMessageError" />
     </AppWrapperComponent>

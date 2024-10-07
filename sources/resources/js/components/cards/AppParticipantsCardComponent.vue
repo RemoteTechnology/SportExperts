@@ -34,7 +34,7 @@ import {IDENTIFIER, MESSAGES} from "../../constant";
                     .then(async (response) => {
                         console.log(response);
                         const data = await response.data.result.original;
-                        this.invited = await data.attributes;
+                        this.userInvites = await data.attributes;
                     })
                     .catch(async (error) => {
                         console.log(error);
@@ -52,7 +52,7 @@ import {IDENTIFIER, MESSAGES} from "../../constant";
         },
         async beforeMount() {
             await this.getUserInvites();
-        }
+        },
     }
 </script>
 
@@ -76,8 +76,8 @@ import {IDENTIFIER, MESSAGES} from "../../constant";
                             <Image src="images/athlete_default_avatar.png" width="30" />
                         </template>
                     </Column>
-                    <Column field="user.first_name" header="Имя"></Column>
-                    <Column field="user.last_name" header="Фамилия"></Column>
+                    <Column field="users.first_name" header="Имя"></Column>
+                    <Column field="users.last_name" header="Фамилия"></Column>
                     <Column v-if="this.userProps" header="">
                         <template #body>
                             <a :href="this.baseUrlProps + 'invite/detail?user_id=' + this.userProps.id">
@@ -106,7 +106,7 @@ import {IDENTIFIER, MESSAGES} from "../../constant";
 </template>
 
 <style scoped>
-#table .p-card-body{
-    padding: 0.7em!important;
-}
+    #table .p-card-body{
+        padding: 0.7em!important;
+    }
 </style>

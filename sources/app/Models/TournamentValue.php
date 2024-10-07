@@ -36,10 +36,10 @@ class TournamentValue extends Model
 
     public function getRecordedInAttribute()
     {
-        if ($this->participants_A === $this->attributes[FIELD_PARTICIPANT_KEY]) {
+        if ($this->participants_A === $this->attributes['participants_key']) {
             return FIELD_PARTICIPANTS_A;
         }
-        if ($this->participants_B === $this->attributes[FIELD_PARTICIPANT_KEY]) {
+        if ($this->participants_B === $this->attributes['participants_key']) {
             return FIELD_PARTICIPANTS_B;
         }
         return null;

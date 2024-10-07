@@ -39,6 +39,8 @@ class TournamentReadProcedure extends AbstractProcedure
             $tournaments[$item[FIELD_STAGE]][] = new TournamentResource($item);
         }
 
+
+
         return new JsonResponse(
             data: [
                 FIELD_ID => self::identifier(),

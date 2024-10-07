@@ -34,7 +34,7 @@ class UserResource extends JsonResource
             FIELD_ROLE              => $this->role,
         ];
 
-        if ($this->role === RoleEnum::ATHLETE)
+        if ($this->role === RoleEnum::ATHLETE->value)
         {
             $user[TABLE_OPTIONS] = Option::where([FIELD_USER_ID => $this->id])->get();
             $user[FIELD_AGE] = !is_null($user[FIELD_BIRTH_DATE]) ? Carbon::parse($user[FIELD_BIRTH_DATE])->age : null;

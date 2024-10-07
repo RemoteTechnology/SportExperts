@@ -92,6 +92,9 @@ ul li{
 .w-22{
     width: 22%;
 }
+.w-22e{
+    width: 22em;
+}
 .w-25{
     width: 25%;
 }
@@ -109,6 +112,9 @@ ul li{
 }
 .w-55{
     width: 55%;
+}
+.w-65{
+    width: 65%;
 }
 .w-70{
     width: 69%;
@@ -193,8 +199,8 @@ ul li{
 }
 #tid{
     flex-wrap: wrap;
-    width: 25%;
-    /*margin: 0 auto;*/
+    /*width: 25%;
+    margin: 0 auto;*/
     padding: 2em;
 
 }
@@ -237,4 +243,29 @@ ul li.item-admin i {
 }
 .p-icon-field-right>.p-inputtext{
     width: 100%!important;
+}
+#detail-image img{
+    width: 100%;
+}
+.scroll-bottom{
+    overflow-x: scroll;
+}
+/* кастомизация скролла */
+.scroll-bottom::-webkit-scrollbar {
+    height: 12px;
+}
+.scroll-bottom::-webkit-scrollbar-thumb {
+    background-color: #535353;
+    border-radius: 3em;
+    border: 2px solid #fff;
+}
+.scroll-bottom::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-radius: 3em;
+}
+.active-athlete{
+    background-color: #63e96f;
+}
+ul.p-listbox-list{
+    height: 12em;
 }

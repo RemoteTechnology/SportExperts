@@ -19,6 +19,7 @@
                 eventKey: '',
                 event: null,
                 user: null,
+                values: null
             };
         },
         components: {
@@ -40,7 +41,7 @@
                 const attributes = {
                     key: eventKey
                 };
-                getKeyEventRequest(attributes)
+                await getKeyEventRequest(attributes)
                     .then(async (response) => {
                         console.log(response)
                         const data = await response.data.result.original;
@@ -68,6 +69,10 @@
                         console.log(response);
                         const data = await response.data.result.original;
                         this.values = await data.attributes;
+                        // Сортировка "tournament_values", у кого нет пары смещаем в конец
+                        for (let attributes in this.values) {
+                            this.values[attributes][0].tournament_values.sort((a, b) => (a.participants_B === null) - (b.participants_B === null));
+                        }
                     })
                     .catch(async (error) => {
                         console.log(error);
@@ -85,7 +90,7 @@
         },
         async beforeMount() {
             await this.getUrl();
-            await this.getEvent(this.eventKey,);
+            await this.getEvent(this.eventKey);
             await this.readTournament();
         }
     };
@@ -101,19 +106,27 @@
             <section v-if="this.event">
                 <h2 class="mb-2 text-center">{{ this.event.name }}</h2>
             </section>
-            <div v-if="this.values != null && Object.keys(this.values).includes('attributes')" class="d-flex d-between">
+            <div class="d-flex d-between">
                 <div class="w-30 d-flex d-end">
                     <AppTournamentInfoCardComponent
                         :eventKeyProps="this.eventKey"
-                        @messageErrorEmit="addMessageError" />/>
+                        @messageErrorEmit="addMessageError" />
                 </div>
-                <div v-for="attribute in this.values.attributes" class="w-70">
-                    <template v-for="tournament in attribute" :key="tournament.id">
-                        <AppTournamentStageComponent
-                            :eventKeyProps="this.eventKey"
-                            :tournamentProps="tournament"
-                            @messageErrorEmit="addMessageError" />/>
-                    </template>
+                <div class=" d-flex scroll-bottom"
+                     style="
+                         position: relative;
+                         right: 2.5%;
+                         width: 65vw;
+                         height: 73vh;
+                    ">
+                   <div v-for="attribute in this.values" class="w-22e">
+                        <template v-for="tournament in attribute" :key="tournament.id">
+                            <AppTournamentStageComponent
+                                :eventKeyProps="this.eventKey"
+                                :tournamentProps="tournament"
+                                @messageErrorEmit="addMessageError" />
+                        </template>
+                   </div>
                 </div>
             </div>
         </section>

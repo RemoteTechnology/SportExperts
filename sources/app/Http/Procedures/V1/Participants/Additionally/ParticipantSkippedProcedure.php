@@ -8,7 +8,9 @@ use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Participants\Additionally\ParticipantSkippedRequest;
 use App\Http\Resources\TournamentValues\TournamentValueResource;
 use App\Repository\EventRepository;
+use App\Repository\TournamentRepository;
 use App\Repository\TournamentValueRepository;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -19,14 +21,17 @@ class ParticipantSkippedProcedure extends AbstractProcedure
 {
     public static string $name = PROCEDURE_PARTICIPANT_SKIPPED;
     private EventRepository $eventRepository;
+    private TournamentRepository $tournamentRepository;
     private TournamentValueRepository $tournamentValueRepository;
 
     public function __construct(
         EventRepository $eventRepository,
+        TournamentRepository $tournamentRepository,
         TournamentValueRepository $tournamentValueRepository
     )
     {
         $this->eventRepository = $eventRepository;
+        $this->tournamentRepository = $tournamentRepository;
         $this->tournamentValueRepository = $tournamentValueRepository;
     }
 
@@ -34,12 +39,16 @@ class ParticipantSkippedProcedure extends AbstractProcedure
      * @param ParticipantSkippedRequest $request
      * @return JsonResponse
      */
-    public function handle(ParticipantSkippedRequest $request)
+    public function handle(ParticipantSkippedRequest $request): JsonResponse
     {
         define('ATTRIBUTES', $request->validated());
         $event = $this->eventRepository->findByKey(ATTRIBUTES[FIELD_EVENT_KEY]);
-        $tournament = $this->tournamentValueRepository->advanceSkipValue($event, ATTRIBUTES);
-        $repository = $this->tournamentValueRepository->advanceSkipValue($tournament, ATTRIBUTES);
+        $repository = $this->tournamentValueRepository->advanceSkipValue($event, ATTRIBUTES);
+        // Увеличение шага
+        $tournament = $this->tournamentRepository->findByTournamentKey(ATTRIBUTES[FIELD_EVENT_KEY]);
+        $step = $this->tournamentRepository->increaseStep($tournament[count($tournament) - 1]);
+        // Перенос всех спортсменов с предыдущего шага
+        $this->tournamentValueRepository->copyAthlete($step, ATTRIBUTES);
 
         return new JsonResponse(
             data: [

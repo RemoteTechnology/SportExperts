@@ -42,7 +42,6 @@
                 };
                 await getInvitedOwnerRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         const data = await response.data.result.original;
                         this.invites = await data.attributes;
                     })
@@ -89,7 +88,7 @@
             recordToInvitedUser: async function () {
                 let attributes = {
                     event_id: this.eventId,
-                    user_id: window.$cookies.get(IDENTIFIER),
+                    user_id: this.selectedInvite.users.id,
                     invited_user_id: this.selectedInvite.who_user.id,
                     // team_key: null,
                 };
@@ -172,7 +171,7 @@
                      listStyle="max-height:310px">
                 <template #option="slotProps">
                     <div class="flex align-items-center">
-                        <div>{{ slotProps.option.user.first_name }} {{ slotProps.option.user.last_name }}</div>
+                        <div>{{ slotProps.option.users.first_name }} {{ slotProps.option.users.last_name }}</div>
                     </div>
                 </template>
             </Listbox>

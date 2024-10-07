@@ -8,6 +8,7 @@ const FIELD_EVENT_ID = 'event_id';
 const FIELD_INVITED_USER_ID = 'invited_user_id';
 const FIELD_TOURNAMENT_ID = 'tournament_id';
 const FIELD_TOURNAMENT_ADMIN_ID = 'tournament_admin_id';
+const FIELD_TOURNAMENT_VALUE_ID = 'tournament_value_id';
 const FIELD_KEY = 'key';
 const FIELD_PARTICIPANT_KEY = 'participant_key';
 const FIELD_NEW_PARTICIPANT_KEY = 'new_participant_key';
