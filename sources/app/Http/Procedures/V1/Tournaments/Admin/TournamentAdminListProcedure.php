@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Sajya\Server\Procedure;
 
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
+
 class TournamentAdminListProcedure extends AbstractProcedure
 {
     /**
@@ -38,7 +40,7 @@ class TournamentAdminListProcedure extends AbstractProcedure
     public function handle(TournamentAdminListRequest $request): JsonResponse
     {
         define("ATTRIBUTES", $request->validated());
-        $repository = $this->tournamentAdminRepository->list();
+        $repository = $this->tournamentAdminRepository->eventToAdminList(ATTRIBUTES);
         $dataCollection = new TournamentAdminCollection($repository);
 
         return new JsonResponse(

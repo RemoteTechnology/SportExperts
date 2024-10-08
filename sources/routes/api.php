@@ -42,6 +42,7 @@ use App\Http\Procedures\V1\Teams\TeamListProcedure;
 use App\Http\Procedures\V1\Teams\TeamReadProcedure;
 use App\Http\Procedures\V1\Teams\TeamStoreProcedure;
 use App\Http\Procedures\V1\Teams\TeamUpdateProcedure;
+use App\Http\Procedures\V1\Tournaments\Admin\TournamentAdminListProcedure;
 use App\Http\Procedures\V1\Tournaments\TournamentReadProcedure;
 use App\Http\Procedures\V1\Tournaments\Values\Filter\TournamentValueFreeParticipantsFilterProcedure;
 use App\Http\Procedures\V1\Tournaments\Values\TournamentValueStoreProcedure;
@@ -203,14 +204,20 @@ Route::prefix('v1')->group(function () {
     Route::prefix('tournament')->group(function () {
         Route::rpc(ROUTE_READ, [TournamentReadProcedure::class])->name('tournament.read');
 
+        //// V1 Tournament Admin ENDPOINTS
+        Route::prefix('admin')->group(function (){
+            Route::rpc(ROUTE_DEFAULT, [TournamentAdminListProcedure::class])->name('tournament.value.store');
+        });
+        //// END V1 Tournament Admin ENDPOINTS
+
         //// V1 Tournament Value ENDPOINTS
         Route::prefix('value')->group(function (){
-        Route::middleware('auth:sanctum')->group(function () {
-            Route::rpc(ROUTE_STORE, [TournamentValueStoreProcedure::class])->name('tournament.value.store');
-            Route::prefix('filter')->group(function(){
-                Route::rpc(ROUTE_DEFAULT, [TournamentValueFreeParticipantsFilterProcedure::class])->name('tournament.value.filter');
+            Route::middleware('auth:sanctum')->group(function () {
+                Route::rpc(ROUTE_STORE, [TournamentValueStoreProcedure::class])->name('tournament.value.store');
+                Route::prefix('filter')->group(function(){
+                    Route::rpc(ROUTE_DEFAULT, [TournamentValueFreeParticipantsFilterProcedure::class])->name('tournament.value.filter');
+                });
             });
-        });
         });
         //// END V1 Tournament Value ENDPOINTS
     });

@@ -15,7 +15,8 @@
         },
         props: {
             eventKeyProps: String,
-            tournamentValuesProps: Object
+            tournamentValuesProps: Object,
+            roleProps: String
         },
         components: {
             AppParticipantsCardComponent,
@@ -102,6 +103,7 @@
                     <section id="athlete-card" class="d-flex d-between">
                         <span>{{ value.users[0].first_name }} {{ value.users[0].last_name }}</span>
                         <AppParticipantInfoModalComponent
+                            v-if="this.roleProps === 'OWNER' || this.roleProps === 'ADMIN'"
                             :valueIdProps="value.id"
                             :userIdProps="value.users[0].id"
                             :eventKeyProps="this.eventKeyProps"
@@ -116,6 +118,7 @@
                     <section id="athlete-card" class="d-flex d-between">
                         <span>{{ value.users[1].first_name }} {{ value.users[1].last_name }}</span>
                         <AppParticipantInfoModalComponent
+                            v-if="this.roleProps === 'OWNER' || this.roleProps === 'ADMIN'"
                             :valueIdProps="value.id"
                             :userIdProps="value.users[1].id"
                             :eventKeyProps="this.eventKeyProps"

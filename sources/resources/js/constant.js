@@ -64,6 +64,9 @@ export const PROCEDURES= {
             filter: {
                 free: 'TournamentValueFreeParticipantsFilterProcedure'
             }
+        },
+        admin: {
+            list: 'TournamentAdminListProcedure'
         }
     }
 };
