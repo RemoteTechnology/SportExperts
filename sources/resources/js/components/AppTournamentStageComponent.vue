@@ -11,7 +11,8 @@
         },
         props: {
             eventKeyProps: String,
-            tournamentProps: Object
+            tournamentProps: Object,
+            roleProps: String
         },
         components: {
             AppParticipantsCardComponent,
@@ -45,6 +46,7 @@
         <AppTournamentValuesComponent
             :eventKeyProps="this.eventKeyProps"
             :tournamentValuesProps="this.tournamentProps.tournament_values"
+            :roleProps="this.roleProps"
             @messageErrorEmit="addMessageError" />
     </section>
 </template>

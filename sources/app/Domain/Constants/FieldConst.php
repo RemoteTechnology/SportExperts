@@ -66,3 +66,5 @@ const FIELD_WHO_USER = 'who_user';
 const FIELD_AGE = 'age';
 const FIELD_RECORDED_IN = 'recorded_in';
 const FIELD_ATTRIBUTES = 'attributes';
+const FIELD_WIDTH = 'width';
+const FIELD_HEIGHT = 'height';

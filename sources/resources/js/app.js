@@ -62,6 +62,9 @@ app.component('event-create-of-update-view', CreateOfUpdateView);
 import EventDetailsView from './pages/Events/DetailsPage.vue';
 app.component('event-detail-view', EventDetailsView);
 
+import ParticipantSearchView from './pages/Participants/ParticipantSearchPage.vue';
+app.component('participant-search-view', ParticipantSearchView);
+
 import InviteView from './pages/Invites/IndexPage.vue';
 app.component('invite-view', InviteView);
 

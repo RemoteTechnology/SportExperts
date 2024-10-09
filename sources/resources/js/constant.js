@@ -51,7 +51,8 @@ export const PROCEDURES= {
             drop: 'ParticipantDisqualificationProcedure',
             replace: 'ParticipantКReplacementProcedure',
             skip: 'ParticipantSkippedProcedure',
-        }
+        },
+        search: 'ParticipantSearchProcedure'
     },
     log: {
         create: 'LogStoreProcedure',
@@ -64,6 +65,9 @@ export const PROCEDURES= {
             filter: {
                 free: 'TournamentValueFreeParticipantsFilterProcedure'
             }
+        },
+        admin: {
+            list: 'TournamentAdminListProcedure'
         }
     }
 };

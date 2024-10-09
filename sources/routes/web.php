@@ -42,6 +42,10 @@ Route::prefix('invite')->group(function (){
     Route::get('/detail', [InvitedController::class, 'detail']);
 });
 
+Route::prefix('participant')->group(function () {
+    Route::get('search', [ParticipantController::class, 'search']);
+});
+
 Route::prefix('tournament')->group(function () {
     Route::get('/', [TournamentController::class, 'index']);
     Route::get('/settings', [TournamentController::class, 'settings']);

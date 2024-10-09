@@ -10,4 +10,9 @@ class ParticipantController extends Controller
     {
         return view('participant.index');
     }
+
+    public function search()
+    {
+        return view('participant.search');
+    }
 }

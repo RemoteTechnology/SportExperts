@@ -1,7 +1,7 @@
 <script>
     import {getFreeParticipantsRequest, tournamentValueCreateRequest} from "../../api/TournamentValueRequest";
     import {createLogOptionRequest} from "../../api/CreateLogOptionRequest";
-    import {MESSAGES} from "../../constant";
+    import {IDENTIFIER, MESSAGES} from "../../constant";
     import {getParticipantsToEventRequest} from "../../api/FilterRequest";
     import LeaderLine from "leader-line-vue";
     import {tournamentReadRequest} from "../../api/TournamentRequest";
@@ -21,6 +21,9 @@
         },
         props: {
             eventKeyProps: String,
+            eventProps: Object,
+            adminsProps: Array,
+            roleProps: String
         },
         components: {
             Card,
@@ -131,9 +134,11 @@
                         console.log(response);
                         await this.getListParticipants(this.eventKey, 'page');
                         await this.readTournament();
-                        await this.$nextTick(() => {
-                            this.tyingAthlete();
-                        });
+                        /*
+                            await this.$nextTick(() => {
+                                this.tyingAthlete();
+                            });
+                         */
                     })
                     .catch(async (error) => {
                         console.log(error);
@@ -149,7 +154,10 @@
             },
         },
         async beforeMount () {
-            await this.getFreeParticipantList();
+            if (window.$cookies.get(IDENTIFIER)) {
+                await this.getFreeParticipantList();
+            }
+
             await this.readTournament();
             await this.getListParticipants(this.eventKey, 'page');
         },
@@ -168,9 +176,8 @@
 <template>
     <Card class="mb-3 w-95 h-40">
         <template #content>
-            <section v-if="this.participantList">
+            <section v-if="this.tournamentFree !== null">
                 <h3>Свободные спортсмены</h3>
-                <br>
                 <OrderList v-model="this.tournamentFree" listStyle="height:auto" dataKey="id">
                     <template #item="slotProps">
                         <section class="d-flex d-between d-align-center">
@@ -184,13 +191,28 @@
                                 </small>
                             </section>
                             <section class="w-30 d-flex d-end">
-                                <Button icon="pi pi-arrow-right"
+                                <Button v-if="this.roleProps === 'OWNER' || this.roleProps === 'ADMIN'"
+                                        icon="pi pi-arrow-right"
                                         aria-label="Success"
                                         @click="this.createParticipantTournament(slotProps.item.users.id)" />
                             </section>
                         </section>
                     </template>
                 </OrderList>
+            </section>
+            <br>
+            <section>
+                <div class="mb-3">
+                    <h3>Администраторы события</h3>
+                    <OrderList v-model="this.adminsProps" listStyle="height:auto" dataKey="id">
+                        <template #item="slotProps">
+                            <p>
+                                {{ slotProps.item.users.first_name }} {{ slotProps.item.users.last_name }}
+                                <small v-if="slotProps.item.users.id === this.eventProps.owner.id">(Создатель)</small>
+                            </p>
+                        </template>
+                    </OrderList>
+                </div>
             </section>
         </template>
     </Card>

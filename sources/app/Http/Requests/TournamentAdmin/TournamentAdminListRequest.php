@@ -4,6 +4,8 @@ namespace App\Http\Requests\TournamentAdmin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
+
 class TournamentAdminListRequest extends FormRequest
 {
     /**
@@ -11,7 +13,7 @@ class TournamentAdminListRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +24,7 @@ class TournamentAdminListRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            FIELD_EVENT_KEY => ['required', 'string']
         ];
     }
 }
