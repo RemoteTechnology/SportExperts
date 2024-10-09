@@ -37,6 +37,7 @@ use App\Http\Procedures\V1\Participants\ParticipantListProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantReadProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantStoreProcedure;
 use App\Http\Procedures\V1\Participants\ParticipantUpdateProcedure;
+use App\Http\Procedures\V1\Participants\Search\ParticipantSearchProcedure;
 use App\Http\Procedures\V1\Teams\TeamDestroyProcedure;
 use App\Http\Procedures\V1\Teams\TeamListProcedure;
 use App\Http\Procedures\V1\Teams\TeamReadProcedure;
@@ -166,6 +167,9 @@ Route::prefix('v1')->group(function () {
             Route::rpc(ROUTE_DEFAULT . 'drop', [ParticipantDisqualificationProcedure::class])->name('participant.additionally.drop');
             Route::rpc(ROUTE_DEFAULT . 'replace', [ParticipantКReplacementProcedure::class])->name('participant.additionally.replace');
             Route::rpc(ROUTE_DEFAULT . 'skip', [ParticipantSkippedProcedure::class])->name('participant.additionally.skip');
+        });
+        Route::prefix('search')->group(function () {
+            Route::rpc(ROUTE_DEFAULT, [ParticipantSearchProcedure::class])->name('participant.search');
         });
         Route::prefix(ROUTE_FILTER)->group(function () {
             Route::rpc(ROUTE_DEFAULT . '/events/my/participants', [ParticipantOwnerFilterProcedure::class])->name('participant.owner.filter');

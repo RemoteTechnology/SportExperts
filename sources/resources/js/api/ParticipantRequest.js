@@ -45,3 +45,11 @@ export async function participantUserSkipAdditionallyRequest(attributes,  partic
     participantQuery.setParams(attributes);
     return await participantQuery.execute();
 }
+
+export async function participantSearchAthleteRequest(attributes,  participantQuery = new ParticipantEndpointQuery()) {
+    participantQuery.setUrl(`${BASE_URL}api/v1/participant/search/`);
+    participantQuery.setHeaders();
+    participantQuery.setMethod(`${PROCEDURES.participant.search}@${REQUEST_METHOD_DEFAULT}`);
+    participantQuery.setParams(attributes);
+    return await participantQuery.execute();
+}

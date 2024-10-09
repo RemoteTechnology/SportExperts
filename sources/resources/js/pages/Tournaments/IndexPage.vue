@@ -159,15 +159,14 @@
 </script>
 
 <template>
-    <!-- TODO: добавить админов, сделать им систему прав аля круд -->
     <section class="d-center">
-        <section class="mt-5">
+        <section class="mt-3">
             <AppAlertComponent
                 :messageSuccess="this.messageSuccess"
                 :messageError="this.messageError" />
             <section v-if="this.event">
-                <h2 class="mb-2 text-center">{{ this.event.name }}</h2>
-                <section class="d-flex d-center mt-1 mb-1">
+                <h2 class="text-center">{{ this.event.name }}</h2>
+                <section class="d-flex d-center mb-1">
                     <Button v-if="this.rule === 'OWNER'"
                             label="История изменений"
                             icon="pi pi-history"

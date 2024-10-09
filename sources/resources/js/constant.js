@@ -51,7 +51,8 @@ export const PROCEDURES= {
             drop: 'ParticipantDisqualificationProcedure',
             replace: 'ParticipantКReplacementProcedure',
             skip: 'ParticipantSkippedProcedure',
-        }
+        },
+        search: 'ParticipantSearchProcedure'
     },
     log: {
         create: 'LogStoreProcedure',

@@ -7,11 +7,13 @@
     import AppModalInvitesComponent from "../modals/AppModalInvitesComponent.vue";
     import AppEventOptionsCardComponent from "./AppEventOptionsCardComponent.vue";
     import AppEventParticipantsCardComponent from "./AppEventParticipantsCardComponent.vue";
+    import {BASE_URL} from "../../common/rpc";
 
     export default {
         data() {
           return {
               currentDate: new Date(),
+              baseUrl: BASE_URL,
               dialog: false,
               eventId: null,
               event: null,
@@ -107,6 +109,15 @@
                         <i class="pi pi-calendar-clock" style="color: #222"></i> <span>{{ this.formatDate(this.event.start_date) }}</span>
                     </h3>
                 </div>
+                <div v-if="this.event.participants.length > 0" class="mb-1">
+                    <a :href="this.baseUrl + 'tournament?event=' + this.event.key">
+                        <Card class="w-50" style="color: #40a053; font-size: 1.1em;">
+                            <template #content>
+                                <i class="pi pi-sitemap"></i> Турнирная сетка
+                            </template>
+                        </Card>
+                    </a>
+                </div>
                 <div class="mb-1">
                     <h3>
                         <i class="pi pi-users" style="color: #222"></i> <span>{{ this.event.participants.length }} участников</span>
@@ -126,6 +137,8 @@
             </template>
         </Card>
         <AppEventOptionsCardComponent :optionsProps="this.event.options" />
-        <AppEventParticipantsCardComponent :participantsProps="this.event.participants" />
+        <AppEventParticipantsCardComponent
+            :participantsProps="this.event.participants"
+            :eventKeyProps="this.event.key" />
     </div>
 </template>

@@ -1,12 +1,19 @@
 <script>
 import Card from "primevue/card";
+import {BASE_URL} from "../../common/rpc";
 
 export default {
+    data() {
+      return {
+          baseUrl: BASE_URL
+      }
+    },
     components: {
         Card
     },
     props: {
-        participantsProps: Array
+        participantsProps: Array,
+        eventKeyProps: String
     }
 }
 </script>
@@ -24,7 +31,9 @@ export default {
                              class="option-list">
                         <div class="mb-3">
                             <strong>
-                                <a href="#">{{ participant.first_name }} {{ participant.last_name }}</a><br>
+                                <a :href="this.baseUrl + 'participant/search?event=' + this.eventKeyProps">
+                                    {{ participant.first_name }} {{ participant.last_name }}
+                                </a><br>
                             </strong>
                         </div>
                     </section>
