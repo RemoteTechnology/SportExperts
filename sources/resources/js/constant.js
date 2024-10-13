@@ -34,6 +34,7 @@ export const PROCEDURES= {
         read: 'EventReadProcedure',
         update: 'EventUpdateProcedure',
         getKey: 'EventGetKeyProcedure',
+        closed: 'EventClosedProcedure',
     },
     archive: {
         create: 'ArchiveStoreProcedure',

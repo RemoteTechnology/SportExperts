@@ -1,7 +1,7 @@
 <script>
     import {BASE_URL, MESSAGES, ENDPOINTS, IDENTIFIER} from '../../constant';
     import { createLogOptionRequest } from "../../api/CreateLogOptionRequest";
-    import { getKeyEventRequest } from "../../api/EventRequest";
+    import {getKeyEventRequest, statusEventUpdate} from "../../api/EventRequest";
     import AppParticipantInfoModalComponent from "../../components/modals/AppParticipantInfoModalComponent.vue";
     import AppAlertComponent from "../../components/AppAlertComponent.vue";
     import AppTournamentStageComponent from "../../components/AppTournamentStageComponent.vue";
@@ -12,6 +12,7 @@
     import {getUser} from "../../api/UserRequest";
     import {getTournamentAdminRequest} from "../../api/TournamentAdminRequest";
     import Button from 'primevue/button';
+    import InlineMessage from "primevue/inlinemessage";
 
     export default {
         data() {
@@ -34,7 +35,8 @@
             AppAlertComponent,
             AppParticipantInfoModalComponent,
             AppTournamentInfoCardComponent,
-            Button
+            Button,
+            InlineMessage
         },
         methods: {
             addMessageSuccess: function (data) { this.messageSuccess = data; },
@@ -147,6 +149,27 @@
                         });
                     })
             },
+            tournamentStatusClosed: async function() {
+                const attributes = {
+                  key: this.event.key
+                };
+                await statusEventUpdate(attributes)
+                    .then(async (response) => {
+                        console.log(response);
+                        window.location = this.baseUrl + ENDPOINTS.TOURNAMENT + '?event=' + this.event.key;
+                    })
+                    .catch(async (error) => {
+                        console.log(error);
+                        await createLogOptionRequest({
+                            current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                            current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                            method: 'statusEventUpdate',
+                            status: error.code,
+                            request_data: attributes.toString(),
+                            message: error.message
+                        });
+                    });
+            }
         },
         async beforeMount() {
             this.getUrl();
@@ -166,13 +189,24 @@
                 :messageError="this.messageError" />
             <section v-if="this.event">
                 <h2 class="text-center">{{ this.event.name }}</h2>
-                <section class="d-flex d-center mb-1">
-                    <a :href="this.baseUrl + 'tournament/history?event=' + this.eventKey">
+                <section class="d-flex d-end mb-1" style="width: 97%;">
+                    <a :href="this.baseUrl + 'tournament/history?event=' + this.eventKey"
+                        style="position: relative; right: 1%;">
                         <Button v-if="this.rule === 'OWNER'"
+                                severity="info"
                                 label="История изменений"
                                 icon="pi pi-history"
                                 aria-label="Info" />
                     </a>
+                    <Button v-if="this.rule === 'OWNER' && this.event.status === 'Active'"
+                            severity="success"
+                            label="Завершить турнир"
+                            icon="pi pi-check-circle"
+                            aria-label="Success"
+                            @click="this.tournamentStatusClosed()"/>
+                    <div v-if="this.event.status !== 'Active'" class="mb-1">
+                        <InlineMessage icon="pi pi-ban" severity="secondary">Событие завершено</InlineMessage>
+                    </div>
                 </section>
 
             </section>
@@ -180,6 +214,7 @@
                 <div class="w-30 d-flex d-end">
                     <AppTournamentInfoCardComponent
                         :eventKeyProps="this.eventKey"
+                        :eventStatusProps="this.event.status"
                         :adminsProps="this.admins"
                         :eventProps="this.event"
                         :roleProps="this.rule"
@@ -199,6 +234,7 @@
                         <template v-for="tournament in attribute" :key="tournament.id">
                             <AppTournamentStageComponent
                                 :eventKeyProps="this.eventKey"
+                                :eventStatusProps="this.event.status"
                                 :tournamentProps="tournament"
                                 :roleProps="this.rule"
                                 @messageErrorEmit="addMessageError" />

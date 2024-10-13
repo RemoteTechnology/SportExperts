@@ -8,6 +8,7 @@
     import AppEventOptionsCardComponent from "./AppEventOptionsCardComponent.vue";
     import AppEventParticipantsCardComponent from "./AppEventParticipantsCardComponent.vue";
     import {BASE_URL} from "../../common/rpc";
+    import InlineMessage from "primevue/inlinemessage";
 
     export default {
         data() {
@@ -29,6 +30,7 @@
             AppEventParticipantsCardComponent,
             AppEventOptionsCardComponent,
             AppModalInvitesComponent,
+            InlineMessage,
             Card,
             Button
         },
@@ -123,7 +125,7 @@
                         <i class="pi pi-users" style="color: #222"></i> <span>{{ this.event.participants.length }} участников</span>
                     </h3>
                 </div>
-                <div class="mb-1">
+                <div v-if="this.eventProps.status === 'Active'" class="mb-1">
                     <br>
                     <AppModalInvitesComponent  v-if="this.user && this.user.role === 'admin'"
                                                :userProps="this.user"
@@ -133,6 +135,9 @@
                             severity="primary"
                             class="w-100"
                             @click="this.invited" />
+                </div>
+                <div v-else class="mb-1">
+                    <InlineMessage class="w-100" icon="pi pi-ban" severity="secondary">Событие завершено</InlineMessage>
                 </div>
             </template>
         </Card>

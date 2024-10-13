@@ -11,8 +11,9 @@
         },
         props: {
             eventKeyProps: String,
+            eventStatusProps: String,
             tournamentProps: Object,
-            roleProps: String
+            roleProps: String,
         },
         components: {
             AppParticipantsCardComponent,
@@ -44,6 +45,7 @@
             </Card>
         </section>
         <AppTournamentValuesComponent
+            :eventStatusProps="this.eventStatusProps"
             :eventKeyProps="this.eventKeyProps"
             :tournamentValuesProps="this.tournamentProps.tournament_values"
             :roleProps="this.roleProps"
