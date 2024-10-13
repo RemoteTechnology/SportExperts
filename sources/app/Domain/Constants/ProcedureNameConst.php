@@ -12,6 +12,7 @@ const PROCEDURE_EVENT_STORE = 'EventStoreProcedure';
 const PROCEDURE_EVENT_READ = 'EventReadProcedure';
 const PROCEDURE_EVENT_UPDATE = 'EventUpdateProcedure';
 const PROCEDURE_EVENT_DESTROY = 'EventDestroyProcedure';
+const PROCEDURE_EVENT_CLOSED = 'EventClosedProcedure';
 //// EVENTS ARCHIVE PROCEDURE
 const PROCEDURE_EVENT_ARCHIVE_STORE = 'ArchiveStoreProcedure';
 const PROCEDURE_EVENT_ARCHIVE_DESTROY = 'ArchiveDestroyProcedure';

@@ -9,6 +9,7 @@ use App\Http\Procedures\V1\Authorizations\AuthByVkontakteProcedure;
 use App\Http\Procedures\V1\Authorizations\LogoutProcedure;
 use App\Http\Procedures\V1\Events\Archive\ArchiveDestroyProcedure;
 use App\Http\Procedures\V1\Events\Archive\ArchiveStoreProcedure;
+use App\Http\Procedures\V1\Events\EventClosedProcedure;
 use App\Http\Procedures\V1\Events\EventDestroyProcedure;
 use App\Http\Procedures\V1\Events\EventListProcedure;
 use App\Http\Procedures\V1\Events\EventReadProcedure;
@@ -144,6 +145,7 @@ Route::prefix('v1')->group(function () {
             Route::rpc(ROUTE_STORE, [EventStoreProcedure::class])->name('event.store');
             Route::rpc(ROUTE_UPDATE, [EventUpdateProcedure::class])->name('event.update');
             Route::rpc(ROUTE_DESTROY, [EventDestroyProcedure::class])->name('event.destroy');
+            Route::rpc('/closed', [EventClosedProcedure::class])->name('event.closed');
         });
         Route::prefix(ROUTE_FILTER)->group(function () {
             Route::rpc(ROUTE_DEFAULT . '/participant/to/events', [EventDateFilterProcedure::class])->name('event.to.events.filter');

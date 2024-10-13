@@ -6,7 +6,9 @@ namespace App\Http\Procedures\V1\Participants;
 
 use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Participants\StoreParticipantReqest;
+use App\Jobs\AddAdminJob;
 use App\Jobs\AddTournamentHistoryJob;
+use App\Jobs\AlgoritmRangingJob;
 use App\Repository\EventRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\TournamentRepository;
@@ -77,6 +79,7 @@ class ParticipantStoreProcedure extends AbstractProcedure
         $tournament                         = $this->tournament->findByTournamentKey($event->key);
 
         $this->algorithmRanging->ranging($event, $tournament[0], $this->participantRepository, $participantStore);
+
         AddTournamentHistoryJob::dispatch([
             FIELD_TOURNAMENT_ID         => $tournament[0]->id,
             FIELD_TOURNAMENT_ADMIN_ID   => $attributes[FIELD_ADMIN_ID],
@@ -85,6 +88,12 @@ class ParticipantStoreProcedure extends AbstractProcedure
             FIELD_CURRENT_DATE          => Carbon::today(),
             FIELD_CURRENT_TIME          => Carbon::now()->format('H:i:s'),
         ]);
+
+        AddAdminJob::dispatch([
+            FIELD_TOURNAMENT_ID         => $tournament[0]->id,
+            FIELD_USER_ID               => $attributes[FIELD_ADMIN_ID],
+        ]);
+
         return new JsonResponse(
             data: [
                 FIELD_ID => self::identifier(),

@@ -269,3 +269,7 @@ ul li.item-admin i {
 ul.p-listbox-list{
     height: 12em;
 }
+.pi-ban{
+    color: #cf3232;
+    font-weight: bold;
+}

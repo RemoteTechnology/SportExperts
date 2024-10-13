@@ -70,3 +70,13 @@ export async function getKeyEventRequest(attributes, eventQuery = new EventEndpo
     eventQuery.setParams(attributes);
     return await eventQuery.execute();
 }
+
+export  async function  statusEventUpdate(attributes, eventQuery = new EventEndpointQuery())
+{
+    eventQuery.setUrl(`${BASE_URL}api/v1/event/closed`);
+    eventQuery.setHeaders();
+    eventQuery.isAuth(`Bearer ${window.$cookies.get(TOKEN)}`)
+    eventQuery.setMethod(`${PROCEDURES.event.closed}@${REQUEST_METHOD_DEFAULT}`);
+    eventQuery.setParams(attributes);
+    return await eventQuery.execute();
+}

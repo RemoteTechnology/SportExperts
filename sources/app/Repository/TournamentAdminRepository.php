@@ -24,14 +24,16 @@ final class TournamentAdminRepository implements LCRUD_OperationInterface
     use DestroyQueryTrait;
 
     protected Model $model;
-    public function __construct(TournamentAdmin $model = new TournamentAdmin())
-    {
+    public function __construct(TournamentAdmin $model = new TournamentAdmin()) {
         $this->model = $model;
     }
 
-    public function eventToAdminList(array $attributes)
-    {
+    public function eventToAdminList(array $attributes) {
         $tournament = Tournament::where($attributes)->first();
         return $this->model::where([FIELD_TOURNAMENT_ID => $tournament->id])->get();
+    }
+
+    public function isAdmin(array $attributes) {
+        return $this->model::where($attributes)->first();
     }
 }

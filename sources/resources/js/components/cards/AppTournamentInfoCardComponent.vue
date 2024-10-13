@@ -21,6 +21,7 @@
         },
         props: {
             eventKeyProps: String,
+            eventStatusProps: String,
             eventProps: Object,
             adminsProps: Array,
             roleProps: String
@@ -191,7 +192,7 @@
                                 </small>
                             </section>
                             <section class="w-30 d-flex d-end">
-                                <Button v-if="this.roleProps === 'OWNER' || this.roleProps === 'ADMIN'"
+                                <Button v-if="this.eventStatusProps === 'Active' && this.roleProps === 'OWNER' || this.roleProps === 'ADMIN'"
                                         icon="pi pi-arrow-right"
                                         aria-label="Success"
                                         @click="this.createParticipantTournament(slotProps.item.users.id)" />
