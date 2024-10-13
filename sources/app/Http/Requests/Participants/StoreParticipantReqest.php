@@ -28,6 +28,7 @@ class StoreParticipantReqest extends FormRequest
             FIELD_USER_ID           => ['required', 'numeric', 'exists:users,id'],
             FIELD_INVITED_USER_ID   => ['required', 'exists:users,id'],
             FIELD_TEAM_KEY          => ['nullable', 'exists:teams,key'],
+            FIELD_ADMIN_ID          => ['required', 'numeric'],
         ];
     }
 }

@@ -39,7 +39,7 @@ return new class extends Migration
                 ->on(TABLE_TOURNAMENTS)
                 ->references(FIELD_ID);
             $table->foreign(FIELD_TOURNAMENT_ADMIN_ID)
-                ->on(TABLE_TOURNAMENT_ADMINS)
+                ->on(TABLE_TOURNAMENT_ADMINS) // TODO: надо прокинуть в реквесты админа а не юзера
                 ->references(FIELD_ID);
             // Индексы
             $table->index([

@@ -30,6 +30,8 @@
             userIdProps: Number,
             valueIdProps: Number,
             eventKeyProps: String,
+            participantsPositionProps: String,
+            stageProps: Number
         },
         components: {
             Button,
@@ -147,11 +149,13 @@
                         await this.$emit('messageErrorEmit', MESSAGES.ERROR_ERROR);
                     });
             },
-            dropTournamentParticipant: async function()
+            dropTournamentParticipant: async function(participants_position, stage)
             {
                 const attributes = {
                     event_key: this.eventKey,
-                    user_id: this.participant.user.id
+                    participants_position: participants_position,
+                    user_id: this.participant.user.id,
+                    stage: stage
                 };
                 await participantUserRemoveAdditionallyRequest(attributes)
                     .then(async (response) => {
@@ -173,20 +177,21 @@
                             request_data: attributes.toString(),
                             message: error.message
                         });
-                        await this.$emit('messageErrorEmit', MESSAGES.NO_DATA);
+                        // await this.$emit('messageErrorEmit', MESSAGES.NO_DATA);
                     });
             },
-            skipToParticipant: async function(value_id, participant)
+            skipToParticipant: async function(value_id, stage, participant)
             {
                 const attributes = {
                     tournament_value_id: value_id,
                     event_key: this.eventKey,
+                    stage: stage,
                     ...participant
                 };
                 await participantUserSkipAdditionallyRequest(attributes)
                     .then((response) => {
                         console.log(response);
-                        window.location.reload();
+                        //window.location.reload();
 
                     })
                     .catch(async (error) => {
@@ -225,8 +230,6 @@
                 this.dialog=true;
             },
             closeDialog() {
-                // TODO: тут может фигня
-                // this.user = null;
                 this.dialog = false;
                 this.participant.user = null;
                 this.participant.invite = null;
@@ -276,13 +279,13 @@
                         <Button label="Дисквалифицировать"
                                 severity="danger"
                                 class="w-100"
-                                @click="this.dropTournamentParticipant()" />
+                                @click="this.dropTournamentParticipant(this.participantsPositionProps, this.stageProps)" />
                     </div>
                     <div class="mb-2">
                         <Button label="Пропустить"
                                 severity="success"
                                 class="w-100"
-                                @click="this.skipToParticipant(this.valueIdProps,{user_id: this.participant.user.id})" />
+                                @click="this.skipToParticipant(this.valueIdProps, this.stageProps, {user_id: this.participant.user.id})" />
                     </div>
                 </div>
             </section>
@@ -318,6 +321,7 @@
                                 @click="this.replaceToParticipant({
                                     event_key: this.eventKeyProps,
                                     new_participant_key: item.key,
+                                    stage: this.stageProps,
                                     user_id: this.participant.invite.users.id,
                                 })"/>
                     </div>

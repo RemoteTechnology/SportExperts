@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Procedures\V1\Users;
 
 use App\Domain\Abstracts\AbstractProcedure;
+use App\Domain\Constants\EnumConstants\ClientRoleNameEnum;
 use App\Domain\Constants\EnumConstants\RoleEnum;
 use App\Http\Requests\Users\RegistrationUserRequest;
 use App\Http\Resources\Users\UserResource;
@@ -36,7 +37,11 @@ class UserRegistrationProcedure extends AbstractProcedure
     {
         $attributes = $request->validated();
         $attributes[FIELD_PASSWORD] = Hash::make($attributes[FIELD_PASSWORD]);
-        $attributes[FIELD_ROLE] = key_exists(FIELD_ROLE, $attributes) ? $attributes[FIELD_ROLE] : RoleEnum::ATHLETE;
+        if ($attributes[FIELD_ROLE] === ClientRoleNameEnum::ADMIN->value) {
+            $attributes[FIELD_ROLE] = RoleEnum::ADMIN->value;
+        } else {
+            $attributes[FIELD_ROLE] = RoleEnum::ATHLETE->value;
+        }
         $repository = $this->userRepository->store($attributes);
         unset($attributes[FIELD_PASSWORD]);
 

@@ -47,6 +47,7 @@
             :eventKeyProps="this.eventKeyProps"
             :tournamentValuesProps="this.tournamentProps.tournament_values"
             :roleProps="this.roleProps"
+            :stageProps="this.tournamentProps.stage"
             @messageErrorEmit="addMessageError" />
     </section>
 </template>

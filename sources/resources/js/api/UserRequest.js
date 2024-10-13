@@ -29,7 +29,6 @@ export async function updateUserRequest(attributes, userQuery = new UserEndpoint
     userQuery.setUrl(`${BASE_URL}api/v1/user/update`);
     userQuery.setHeaders();
     userQuery.isAuth(`Bearer ${window.$cookies.get(TOKEN)}`);
-    // TODO: возможно тут нужен "validateStatus: () => true,"
     userQuery.setMethod(`${PROCEDURES.users.update}@${REQUEST_METHOD_DEFAULT}`);
     userQuery.setParams(attributes);
     return await userQuery.execute();

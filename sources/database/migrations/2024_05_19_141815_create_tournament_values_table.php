@@ -34,7 +34,8 @@ return new class extends Migration
                 ->references(FIELD_KEY);
             $table->foreign(FIELD_PARTICIPANTS_B)
                 ->on(TABLE_PARTICIPANTS)
-                ->references(FIELD_KEY);
+                ->references(FIELD_KEY)
+                ->onDelete('SET NULL');
             $table->foreign(FIELD_PARTICIPANTS_PASSES)
                 ->on(TABLE_PARTICIPANTS)
                 ->references(FIELD_KEY);

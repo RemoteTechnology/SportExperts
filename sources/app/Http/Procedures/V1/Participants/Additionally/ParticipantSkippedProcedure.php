@@ -7,9 +7,11 @@ namespace App\Http\Procedures\V1\Participants\Additionally;
 use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Participants\Additionally\ParticipantSkippedRequest;
 use App\Http\Resources\TournamentValues\TournamentValueResource;
+use App\Jobs\AddTournamentHistoryJob;
 use App\Repository\EventRepository;
 use App\Repository\TournamentRepository;
 use App\Repository\TournamentValueRepository;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -46,9 +48,18 @@ class ParticipantSkippedProcedure extends AbstractProcedure
         $repository = $this->tournamentValueRepository->advanceSkipValue($event, ATTRIBUTES);
         // Увеличение шага
         $tournament = $this->tournamentRepository->findByTournamentKey(ATTRIBUTES[FIELD_EVENT_KEY]);
-        $step = $this->tournamentRepository->increaseStep($tournament[count($tournament) - 1]);
+        $step = $this->tournamentRepository->increaseStep($tournament[count($tournament) - 1], ATTRIBUTES[FIELD_STAGE]);
         // Перенос всех спортсменов с предыдущего шага
         $this->tournamentValueRepository->copyAthlete($step, ATTRIBUTES);
+
+        AddTournamentHistoryJob::dispatch([
+            FIELD_TOURNAMENT_ID         => $tournament->id,
+            FIELD_TOURNAMENT_ADMIN_ID   => ATTRIBUTES[FIELD_ADMIN_ID],
+            FIELD_STATUS                => STATUS_SKIPPED,
+            FIELD_DESCRIPTION           => DESCRIPTION_SKIPPED,
+            FIELD_CURRENT_DATE          => Carbon::today(),
+            FIELD_CURRENT_TIME          => Carbon::now()->format('H:i:s'),
+        ]);
 
         return new JsonResponse(
             data: [

@@ -22,30 +22,30 @@
             AppAlertComponent,
             AppLoginFormComponent,
             AppPageTitleComponent,
-            AppWrapperComponent
+            AppWrapperComponent,
         },
         methods: {
             addMessageError: function (data) {
                 this.messageError = data;
-            }
-        }
+            },
+        },
     }
 </script>
 
 <template>
     <AppWrapperComponent>
-            <AppAlertComponent
-                :messageSuccess="this.messageSuccess"
-                :messageError="this.messageError" />
-            <AppPageTitleComponent
-                :title="this.pageTitle"
-                :subTitle="this.pageSubTitle"
-                :baseUrl="this.webUrl"
-                :endPoint="this.route.REGISTRATION" />
-           <AppLoginFormComponent
-                :messageError="this.messageError"
-                :baseUrl="this.webUrl"
-                :endPoint="this.route.RECOVERY"
-                @messageErrorEmit="addMessageError"/>
+        <AppAlertComponent
+            :messageSuccess="this.messageSuccess"
+            :messageError="this.messageError" />
+        <AppPageTitleComponent
+            :title="this.pageTitle"
+            :subTitle="this.pageSubTitle"
+            :baseUrl="this.webUrl"
+            :endPoint="this.route.REGISTRATION" />
+       <AppLoginFormComponent
+            :messageError="this.messageError"
+            :baseUrl="this.webUrl"
+            :endPoint="this.route.RECOVERY"
+            @messageErrorEmit="addMessageError"/>
     </AppWrapperComponent>
 </template>

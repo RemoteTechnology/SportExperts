@@ -26,4 +26,9 @@ final class TournamentHistoryActionRepository implements LCRUD_OperationInterfac
     {
         $this->model = $model;
     }
+
+    public function getTournamentHistory(array $attributes)
+    {
+        return $this->model::where($attributes)->get();
+    }
 }

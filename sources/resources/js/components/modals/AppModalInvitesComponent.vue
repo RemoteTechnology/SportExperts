@@ -90,6 +90,7 @@
                     event_id: this.eventId,
                     user_id: this.selectedInvite.users.id,
                     invited_user_id: this.selectedInvite.who_user.id,
+                    admin_id: this.user.id,
                     // team_key: null,
                 };
                 await recordUserToEventRequest(attributes)

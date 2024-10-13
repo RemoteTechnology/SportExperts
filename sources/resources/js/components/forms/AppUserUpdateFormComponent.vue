@@ -6,12 +6,14 @@
     import InputText from "primevue/inputtext";
     import Calendar from "primevue/calendar";
     import Button from "primevue/button";
+    import SelectButton from "primevue/selectbutton";
 
     export default {
         data() {
           return {
               currentDate: new Date(),
               user: null,
+              roles: ['Администратор', 'Спортсмен'],
           }
         },
         props: {
@@ -21,7 +23,8 @@
             AppFormWrapperComponent,
             InputText,
             Calendar,
-            Button
+            Button,
+            SelectButton
         },
         methods: {
             dateFormat: async function(dateStr) {
@@ -64,6 +67,11 @@
         watch: {
             userProps: {
                 handler(newVal) {
+                    /*if (newVal.role === 'admin') {
+                        newVal = 'Администратор';
+                    } else {
+                        newVal = 'Спортсмен';
+                    }*/
                     this.user = newVal;
                 },
                 immediate: true,
@@ -115,6 +123,16 @@
                            required />
             </div>
         </section>
+        <!-- <section class="d-flex d-center">
+            <div class="form-block w-100">
+                <label for="#">Выберите роль</label>
+                <div class="card flex justify-center">
+                    <SelectButton v-model="this.user.role"
+                                  :options="this.roles"
+                                  aria-labelledby="basic" />
+                </div>
+            </div>
+        </section> -->
         <section class="d-flex d-center">
             <div class="form-block w-100">
                 <label for="name">Дата рождения</label>

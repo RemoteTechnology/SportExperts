@@ -10,8 +10,8 @@ class TournamentController extends Controller
     {
         return view('tournament.index');
     }
-    public function settings()
+    public function history()
     {
-        return view('tournament.settings');
+        return view('tournament.history');
     }
 }

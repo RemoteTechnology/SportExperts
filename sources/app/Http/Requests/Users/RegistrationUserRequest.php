@@ -29,6 +29,7 @@ class RegistrationUserRequest extends FormRequest
             FIELD_LAST_NAME         => ['required', 'min:2', 'max:255'],
             FIELD_LAST_NAME_ENG     => ['required', 'min:2', 'max:255'],
             FIELD_BIRTH_DATE        => ['nullable'],
+            FIELD_ROLE              => ['nullable'],
             FIELD_GENDER            => ['required'],
             FIELD_EMAIL             => ['required', 'min:8', 'max:255', 'unique:users'],
             FIELD_PHONE             => ['nullable', 'max:20', 'unique:users'],

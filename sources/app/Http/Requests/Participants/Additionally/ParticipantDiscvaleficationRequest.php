@@ -24,8 +24,11 @@ class ParticipantDiscvaleficationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            FIELD_EVENT_KEY     => ['required', 'string'],
-            FIELD_USER_ID       => ['required', 'numeric'],
+            FIELD_EVENT_KEY             => ['required', 'string'],
+            FIELD_PARTICIPANTS_POSITION => ['required', 'string'],
+            FIELD_USER_ID               => ['required', 'numeric'],
+            FIELD_STAGE                 => ['required', 'numeric'],
+            FIELD_ADMIN_ID              => ['required', 'numeric'],
         ];
     }
 }
