@@ -15,6 +15,7 @@
     import { ENDPOINTS } from "../../common/route/api";
     import AppFormWrapperComponent from "../wrappers/AppFormWrapperComponent.vue";
     import {IDENTIFIER} from "../../constant";
+    import SelectButton from "primevue/selectbutton";
 
     export default {
         data() {
@@ -34,6 +35,7 @@
                 eventId: null,
                 baseUrl: null,
                 inviteUserId: null,
+                roles: ['Администратор', 'Спортсмен'],
                 user: {
                     firstName: null,
                     firstNameEng: null,
@@ -41,6 +43,7 @@
                     lastNameEng: null,
                     birthDate: null,
                     gender: null,
+                    role: 'Спортсмен',
                     email: null,
                     phone: null,
                     password: null,
@@ -76,6 +79,7 @@
             Button,
             InputMask,
             FloatLabel,
+            SelectButton,
             Password,
             AppFormWrapperComponent
         },
@@ -96,6 +100,7 @@
                     first_name_eng: await this.user.firstNameEng,
                     last_name: await this.user.lastName,
                     last_name_eng: await this.user.lastNameEng,
+                    role: await this.user.role,
                     gender: await this.user.gender,
                     password: await this.user.password,
                 };
@@ -286,10 +291,6 @@
                            v-model="this.user.firstName"
                            @input="this.translationFirstName($event)"
                            class="w-100" />
-                <label for="nameLat">Имя на латинице</label>
-                <InputText type="text"
-                           v-model="this.user.firstNameEng"
-                           class="w-100" />
             </div>
             <div class="form-block w-46">
                 <label for="lastName">Фамилия</label>
@@ -297,6 +298,16 @@
                            v-model="this.user.lastName"
                            @input="translationLastName($event)"
                            class="w-100" />
+            </div>
+        </div>
+        <div class="d-flex d-between">
+            <div class="form-block w-46">
+                <label for="nameLat">Имя на латинице</label>
+                <InputText type="text"
+                           v-model="this.user.firstNameEng"
+                           class="w-100" />
+            </div>
+            <div class="form-block w-46">
                 <label for="lastNameLat">Фамилия на латинице</label>
                 <InputText type="text"
                            v-model="this.user.lastNameEng"
@@ -346,12 +357,32 @@
             </div>
         </div>
         <div class="form-block">
+            <label for="#">Выберите роль</label>
+            <div class="card flex justify-center">
+                <SelectButton v-model="this.user.role"
+                              :options="this.roles"
+                              aria-labelledby="basic" />
+            </div>
+        </div>
+        <div class="form-block">
             <label for="#">Придумайте пароль</label>
-            <Password toggleMask v-model="this.user.password" id="input-password" />
+            <Password toggleMask
+                      v-model="this.user.password"
+                      id="input-password"
+                      promptLabel="Введите пароль"
+                      weakLabel="Простой пароль"
+                      mediumLabel="Пароль средней сложности"
+                      strongLabel="Сложный пароль" />
         </div>
         <div class="form-block">
             <label for="#">Повторите пароль</label>
-            <Password toggleMask v-model="this.user.passwordDouble" id="input-password" />
+            <Password toggleMask
+                      v-model="this.user.passwordDouble"
+                      id="input-password"
+                      promptLabel="Введите пароль"
+                      weakLabel="Простой пароль"
+                      mediumLabel="Пароль средней сложности"
+                      strongLabel="Сложный пароль" />
         </div>
         <section v-if="this.urlKey">
             <div class="form-block">
@@ -390,5 +421,8 @@ input:invalid {
 }
 .p-password{
     width: 100%;
+}
+label {
+    margin-bottom: 0.5em;
 }
 </style>

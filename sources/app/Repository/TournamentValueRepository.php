@@ -78,22 +78,41 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
 
     public function removeParticipant(Model $event, array $attributes)
     {
-        $tournamentValues = $this->searchParticipant($attributes, $event);
+        //$tournamentValues = $this->searchParticipant($attributes, $event);
+        $tournament = Tournament::where([
+            FIELD_EVENT_KEY => $event->key,
+            FIELD_STAGE => $attributes[FIELD_STAGE]
+        ])->first();
+        $participant = Participant::where([
+            FIELD_USER_ID   => $attributes[FIELD_USER_ID],
+            FIELD_EVENT_ID  => $event->id
+        ])->first();
+        $tournamentValues = $this->model::where([
+            FIELD_TOURNAMENT_ID => $tournament->id,
+            $attributes[FIELD_PARTICIPANTS_POSITION] => $participant->key
+        ])->first();
         // Если у "participants_A" есть соперник, меняем "participants_A" на значение из "participants_B"
         // саму колонку "participants_B" затирем
         if (
-            $tournamentValues->recorded_in === FIELD_PARTICIPANTS_A &&
+            $attributes[FIELD_PARTICIPANTS_POSITION] === FIELD_PARTICIPANTS_A &&
             !is_null($tournamentValues->participants_A) &&
             !is_null($tournamentValues->participants_B)
         )
         {
-            $tournamentValues->participants_A = $tournamentValues->participants_B;
-            $tournamentValues->participants_B = null;
-            $tournamentValues->save();
+            DB::table(TABLE_TOURNAMENT_VALUES)
+                ->select()
+                ->where([
+                    FIELD_ID => $tournamentValues->id,
+
+                ])
+                ->update([
+                    FIELD_PARTICIPANTS_A => $tournamentValues->participants_B,
+                    FIELD_PARTICIPANTS_B => null,
+                ]);
         }
         // Если у "participants_A" нет соперника, удаляем запись из таблицы
         elseif (
-            $tournamentValues->recorded_in === FIELD_PARTICIPANTS_A &&
+            $attributes[FIELD_PARTICIPANTS_POSITION] === FIELD_PARTICIPANTS_A &&
             !is_null($tournamentValues->participants_A) &&
             is_null($tournamentValues->participants_B)
         )
@@ -102,10 +121,16 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
             $tournamentValueQuery->delete();
         }
         // Если принимаем "participants_B" то тупо его убираем
-        elseif ($tournamentValues->recorded_in === FIELD_PARTICIPANTS_B)
+        elseif ($attributes[FIELD_PARTICIPANTS_POSITION] === FIELD_PARTICIPANTS_B)
         {
-            $tournamentValues->participants_B = null;
-            $tournamentValues->save();
+            DB::table(TABLE_TOURNAMENT_VALUES)
+                ->select()
+                ->where([
+                    FIELD_ID => $tournamentValues->id
+                ])
+                ->update([
+                    FIELD_PARTICIPANTS_B => null,
+                ]);
         }
         return $tournamentValues;
     }
@@ -117,7 +142,10 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
      */
     public function replaceParticipant(Model $event, array $attributes): Model
     {
-        $tournament = Tournament::where([FIELD_EVENT_KEY => $event->key])->first();
+        $tournament = Tournament::where([
+            FIELD_EVENT_KEY => $event->key,
+            FIELD_STAGE     => $attributes[FIELD_STAGE]
+        ])->first();
         $event = Event::where([FIELD_KEY => $attributes[FIELD_EVENT_KEY]])->first();
         $participant = Participant::where([
             FIELD_USER_ID => $attributes[FIELD_USER_ID],
@@ -146,15 +174,13 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
     public function advanceSkipValue(Model $event, $attributes): mixed
     {
         $tournament = Tournament::where([FIELD_EVENT_KEY => $event->key])->first();
-        // TODO: придумать как не обновлять все записи по FIELD_PARTICIPANTS_PASSES
-        // $tournamentValue = TournamentValue::where([])->first();
         $participant = DB::table(TABLE_PARTICIPANTS)
             ->where([
                 FIELD_EVENT_ID  => $event->id,
                 FIELD_USER_ID   => $attributes[FIELD_USER_ID]
             ])->limit(1)->get();
         $value = DB::table(TABLE_TOURNAMENT_VALUES)->where([
-            FIELD_ID            => $attributes[FIELD_ID],
+            FIELD_ID            => $attributes[FIELD_TOURNAMENT_VALUE_ID],
             FIELD_TOURNAMENT_ID => $tournament->id
         ]);
         $value->update([
@@ -190,12 +216,20 @@ final class TournamentValueRepository implements LCRUD_OperationInterface
      */
     public function copyAthlete(Model $entity, array $attributes): void
     {
-        // TODO: перенести спортсменов с предыдущего шага, продумать что делать если шаг уже создан и надо записать спортсмена
         $participant = Participant::where([FIELD_USER_ID => $attributes[FIELD_USER_ID]])->first();
-        $this->model->tournament_id = $entity->id;
-        $this->model->participants_A = $participant->key;
-        $this->model->participants_B = null;
-        $this->model->participants_passes = null;
-        $this->model->save();
+        $tournamentValue = TournamentValue::where([
+            FIELD_TOURNAMENT_ID => $entity->id,
+            FIELD_PARTICIPANTS_A => $participant->key
+        ])->orWhere([
+            FIELD_TOURNAMENT_ID => $entity->id,
+            FIELD_PARTICIPANTS_B => $participant->key
+        ])->first();
+        //if (empty($tournamentValue)) {
+            $this->model->tournament_id = $entity->id;
+            $this->model->participants_A = $participant->key;
+            $this->model->participants_B = null;
+            $this->model->participants_passes = null;
+            $this->model->save();
+        //}
     }
 }

@@ -27,8 +27,6 @@ return new class extends Migration
             $table->uuid(FIELD_KEY)
                 ->unique()
                 ->nullable(false);
-            // TODO: связать с опциями "под какими опциями регается спортсмен на событие"
-
             $table->timestamp(FIELD_CREATED_AT);
             $table->timestamp(FIELD_UPDATED_AT);
             $table->timestamp(FIELD_DELETED_AT)

@@ -71,6 +71,9 @@ app.component('invite-view', InviteView);
 import TournamentView from './pages/Tournaments/IndexPage.vue';
 app.component('tournament-view', TournamentView);
 
+import TournamentHistoryView from './pages/Tournaments/HistoryPage.vue';
+app.component('tournament-history-view', TournamentHistoryView);
+
 /**
  * The following block of code may be used to automatically register your
  * Vue rules. It will recursively scan this directory for the Vue

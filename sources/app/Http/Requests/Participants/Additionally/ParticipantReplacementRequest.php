@@ -27,6 +27,8 @@ class ParticipantReplacementRequest extends FormRequest
             FIELD_EVENT_KEY             => ['required', 'string'],
             FIELD_NEW_PARTICIPANT_KEY   => ['required', 'string'],
             FIELD_USER_ID               => ['required', 'numeric'],
+            FIELD_STAGE                 => ['required', 'numeric'],
+            FIELD_ADMIN_ID              => ['required', 'numeric'],
         ];
     }
 }

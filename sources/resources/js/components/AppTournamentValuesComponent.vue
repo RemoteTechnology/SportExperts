@@ -16,7 +16,8 @@
         props: {
             eventKeyProps: String,
             tournamentValuesProps: Object,
-            roleProps: String
+            roleProps: String,
+            stageProps: Number
         },
         components: {
             AppParticipantsCardComponent,
@@ -106,7 +107,9 @@
                             v-if="this.roleProps === 'OWNER' || this.roleProps === 'ADMIN'"
                             :valueIdProps="value.id"
                             :userIdProps="value.users[0].id"
+                            participantsPositionProps="participants_A"
                             :eventKeyProps="this.eventKeyProps"
+                            :stageProps="this.stageProps"
                             @messageErrorEmit="addMessageError" />
                     </section>
                     <!-- <span class="flag" :id="value.participants_A.key"></span>
@@ -121,6 +124,8 @@
                             v-if="this.roleProps === 'OWNER' || this.roleProps === 'ADMIN'"
                             :valueIdProps="value.id"
                             :userIdProps="value.users[1].id"
+                            participantsPositionProps="participants_B"
+                            :stageProps="this.stageProps"
                             :eventKeyProps="this.eventKeyProps"
                             @messageErrorEmit="addMessageError" />
                     </section>

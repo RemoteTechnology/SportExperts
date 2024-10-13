@@ -167,10 +167,12 @@
             <section v-if="this.event">
                 <h2 class="text-center">{{ this.event.name }}</h2>
                 <section class="d-flex d-center mb-1">
-                    <Button v-if="this.rule === 'OWNER'"
-                            label="История изменений"
-                            icon="pi pi-history"
-                            aria-label="Info" />
+                    <a :href="this.baseUrl + 'tournament/history?event=' + this.eventKey">
+                        <Button v-if="this.rule === 'OWNER'"
+                                label="История изменений"
+                                icon="pi pi-history"
+                                aria-label="Info" />
+                    </a>
                 </section>
 
             </section>

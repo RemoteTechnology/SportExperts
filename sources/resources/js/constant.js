@@ -68,6 +68,9 @@ export const PROCEDURES= {
         },
         admin: {
             list: 'TournamentAdminListProcedure'
+        },
+        history: {
+            read: 'TournamentHistoryReadProcedure'
         }
     }
 };
@@ -84,7 +87,7 @@ export const MESSAGES = {
     PASSWORD_DOUBLE: 'Пароли должны совпадать!',
     ARCHIVE_SUCCESS: 'Событие добавлено в архив!',
 };
-// TODO: Выставить всё по алфавиту, импорты во всех файлах тоже только там где это уместно!!!!
+
 export const ENDPOINTS = {
     API: {
         LIST: 'list',

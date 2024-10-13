@@ -96,7 +96,6 @@
             },
             updateEvent: async function()
             {
-                // TODO: смещение даты назад
                 let attributes = {
                     id: this.event.id,
                     name: this.event.name,
@@ -145,7 +144,6 @@
                     expiration_date: this.event.expiration_date,
                     expiration_time: this.event.expiration_time,
                 };
-                // TODO: id не правильный, в обновлении тоже
                 await createEventRequest(attributes)
                     .then(async (response) => {
                         console.log(response);
@@ -296,7 +294,7 @@
                 await this.createFile();
                 await this.createEvent();
                 await this.createOptions();
-                window.location = this.baseUrlProps + ENDPOINTS.EVENT + '/detail?id=' + this.event.id;
+                window.location = this.baseUrlProps + ENDPOINTS.BASE;
 
             },
             updateEventObject: async function()
@@ -304,7 +302,7 @@
                 await this.createFile();
                 await this.updateEvent();
                 await this.updateOrCreateOptions();
-                window.location = this.baseUrlProps + ENDPOINTS.EVENT + '/detail?id=' + this.event.id;
+                window.location = this.baseUrlProps + ENDPOINTS.BASE;
             },
         },
         watch: {
@@ -348,7 +346,6 @@
         </div>
         <div class="form-block">
             <label for="#">Введите описание</label>
-            <!-- TODO: удалить или применить html теги при сохранении в бд -->
             <QuillEditor ref="editor"
                          v-model:content="event.description"
                          :options="editor"

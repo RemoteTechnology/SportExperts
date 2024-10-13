@@ -44,6 +44,7 @@ use App\Http\Procedures\V1\Teams\TeamReadProcedure;
 use App\Http\Procedures\V1\Teams\TeamStoreProcedure;
 use App\Http\Procedures\V1\Teams\TeamUpdateProcedure;
 use App\Http\Procedures\V1\Tournaments\Admin\TournamentAdminListProcedure;
+use App\Http\Procedures\V1\Tournaments\History\TournamentHistoryReadProcedure;
 use App\Http\Procedures\V1\Tournaments\TournamentReadProcedure;
 use App\Http\Procedures\V1\Tournaments\Values\Filter\TournamentValueFreeParticipantsFilterProcedure;
 use App\Http\Procedures\V1\Tournaments\Values\TournamentValueStoreProcedure;
@@ -109,7 +110,6 @@ Route::prefix('v1')->group(function () {
             //// END V1 AUTH SOCIAL ENDPOINTS
         });
         //// END V1 AUTH ENDPOINTS
-        //TODO: передавать роль для приглашенных спортсменов
         Route::rpc(ROUTE_DEFAULT . 'registration', [UserRegistrationProcedure::class])->name('v1.user.registration');
         Route::rpc(ROUTE_READ, [UserReadProcedure::class])->name('v1.user.read');
         Route::rpc('reset', [UserResetProcedure::class])->name('v1.user.reset');
@@ -162,7 +162,6 @@ Route::prefix('v1')->group(function () {
             Route::rpc(ROUTE_UPDATE, [ParticipantUpdateProcedure::class])->name('participant.update');
             Route::rpc(ROUTE_DESTROY, [ParticipantDestroyProcedure::class])->name('participant.destroy');
         });
-        // TODO: эти процедуры мало чем относятся к "participant"
         Route::prefix('additionally')->group(function () {
             Route::rpc(ROUTE_DEFAULT . 'drop', [ParticipantDisqualificationProcedure::class])->name('participant.additionally.drop');
             Route::rpc(ROUTE_DEFAULT . 'replace', [ParticipantКReplacementProcedure::class])->name('participant.additionally.replace');
@@ -223,7 +222,15 @@ Route::prefix('v1')->group(function () {
                 });
             });
         });
-        //// END V1 Tournament Value ENDPOINTS
+        //// END V1 Tournament History ENDPOINTS
+
+        //// V1 Tournament History ENDPOINTS
+        Route::prefix('history')->group(function (){
+            Route::middleware('auth:sanctum')->group(function () {
+                Route::rpc(ROUTE_DEFAULT, [TournamentHistoryReadProcedure::class])->name('tournament.history');
+            });
+        });
+        //// END V1 Tournament History ENDPOINTS
     });
     //// END V1 Tournament ENDPOINTS
 });

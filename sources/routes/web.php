@@ -48,5 +48,5 @@ Route::prefix('participant')->group(function () {
 
 Route::prefix('tournament')->group(function () {
     Route::get('/', [TournamentController::class, 'index']);
-    Route::get('/settings', [TournamentController::class, 'settings']);
+    Route::get('/history', [TournamentController::class, 'history']);
 });

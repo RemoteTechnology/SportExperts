@@ -6,10 +6,12 @@ namespace App\Http\Procedures\V1\Participants;
 
 use App\Domain\Abstracts\AbstractProcedure;
 use App\Http\Requests\Participants\StoreParticipantReqest;
+use App\Jobs\AddTournamentHistoryJob;
 use App\Repository\EventRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\TournamentRepository;
 use App\Services\Tournaments\AlgorithmRanging;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
@@ -18,6 +20,7 @@ use Sajya\Server\Procedure;
 require_once dirname(__DIR__, 4) . '/Domain/Constants/ParticipantMessageConst.php';
 require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
 require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/ActionConst.php';
 
 class ParticipantStoreProcedure extends AbstractProcedure
 {
@@ -31,7 +34,7 @@ class ParticipantStoreProcedure extends AbstractProcedure
         ParticipantRepository $participantRepository,
         AlgorithmRanging $algorithmRanging,
         EventRepository $eventRepository,
-        TournamentRepository $tournament,
+        TournamentRepository $tournament
     )
     {
         $this->participantRepository        = $participantRepository;
@@ -74,7 +77,14 @@ class ParticipantStoreProcedure extends AbstractProcedure
         $tournament                         = $this->tournament->findByTournamentKey($event->key);
 
         $this->algorithmRanging->ranging($event, $tournament[0], $this->participantRepository, $participantStore);
-
+        AddTournamentHistoryJob::dispatch([
+            FIELD_TOURNAMENT_ID         => $tournament[0]->id,
+            FIELD_TOURNAMENT_ADMIN_ID   => $attributes[FIELD_ADMIN_ID],
+            FIELD_STATUS                => STATUS_CREATED,
+            FIELD_DESCRIPTION           => DESCRIPTION_CREATED,
+            FIELD_CURRENT_DATE          => Carbon::today(),
+            FIELD_CURRENT_TIME          => Carbon::now()->format('H:i:s'),
+        ]);
         return new JsonResponse(
             data: [
                 FIELD_ID => self::identifier(),

@@ -26,7 +26,9 @@ class ParticipantSkippedRequest extends FormRequest
         return [
             FIELD_TOURNAMENT_VALUE_ID   => ['required', 'numeric'],
             FIELD_USER_ID               => ['nullable', 'numeric'],
-            FIELD_EVENT_KEY             => ['required', 'string']
+            FIELD_EVENT_KEY             => ['required', 'string'],
+            FIELD_STAGE                 => ['required', 'numeric'],
+            FIELD_ADMIN_ID              => ['required', 'numeric'],
         ];
     }
 }
