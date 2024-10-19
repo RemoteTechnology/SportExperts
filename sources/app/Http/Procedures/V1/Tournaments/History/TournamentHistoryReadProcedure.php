@@ -13,9 +13,12 @@ use App\Repository\TournamentRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
+
 class TournamentHistoryReadProcedure extends AbstractProcedure
 {
-    public static string $name = 'TournamentHistoryReadProcedure';
+    public static string $name = PROCEDURE_TOURNAMENT_HISTORY_READ;
     private TournamentRepository $tournamentRepository;
     private TournamentHistoryActionRepository $tournamentHistoryActionRepository;
     public function __construct(

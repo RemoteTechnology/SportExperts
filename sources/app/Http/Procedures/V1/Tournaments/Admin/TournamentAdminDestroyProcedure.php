@@ -13,6 +13,8 @@ use Illuminate\Http\Response;
 use Sajya\Server\Procedure;
 
 require_once dirname(__DIR__, 5) . '/Domain/Constants/ErrorMessageConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
 
 class TournamentAdminDestroyProcedure extends AbstractProcedure
 {
@@ -21,7 +23,7 @@ class TournamentAdminDestroyProcedure extends AbstractProcedure
      *
      * @var string
      */
-    public static string $name = 'TournamentAdminDestroyProcedure';
+    public static string $name = PROCEDURE_TOURNAMENT_ADMIN_DESTROY;
     private TournamentAdminRepository $tournamentAdminRepository;
     public function __construct(TournamentAdminRepository $tournamentAdminRepository)
     {
@@ -38,7 +40,7 @@ class TournamentAdminDestroyProcedure extends AbstractProcedure
     public function handle(TournamentAdminReadRequest $request): JsonResponse
     {
         define("ATTRIBUTES", $request->validated());
-        $entity = $this->tournamentAdminRepository->findById(ATTRIBUTES['id']);
+        $entity = $this->tournamentAdminRepository->findById(ATTRIBUTES[FIELD_ID]);
         if ($this->tournamentAdminRepository->destroy($entity))
         {
             return new JsonResponse(

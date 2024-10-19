@@ -14,11 +14,12 @@ use App\Repository\TournamentValueRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
 require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
 
 class TournamentValueStoreProcedure extends AbstractProcedure
 {
-    public static string $name = 'TournamentValueStoreProcedure';
+    public static string $name = PROCEDURE_TOURNAMENT_VALUE_STORE;
     private EventRepository $eventRepository;
     private ParticipantRepository $participantRepository;
     private TournamentRepository $tournamentRepository;
@@ -43,15 +44,15 @@ class TournamentValueStoreProcedure extends AbstractProcedure
     public function handle(TournamentValueStoreRequest $request): JsonResponse
     {
         define('ATTRIBUTES', $request->validated());
-        $event = $this->eventRepository->findByKey(ATTRIBUTES['event_key']);
+        $event = $this->eventRepository->findByKey(ATTRIBUTES[FIELD_EVENT_KEY]);
         $participant = $this->participantRepository->findByKeyIsEvent([
-            'event_id' => $event->id,
-            'user_id' => ATTRIBUTES['user_id']
+            FIELD_EVENT_ID  => $event->id,
+            FIELD_USER_ID   => ATTRIBUTES[FIELD_USER_ID]
         ]);
-        $tournament = $this->tournamentRepository->findByTournamentKey(ATTRIBUTES['event_key']);
-        $attributes['tournament_id'] = $tournament[0]->id;
-        $attributes['participants_A'] = $participant->key;
-        $attributes['participants_B'] = null;
+        $tournament = $this->tournamentRepository->findByTournamentKey(ATTRIBUTES[FIELD_EVENT_KEY]);
+        $attributes[FIELD_TOURNAMENT_ID] = $tournament[0]->id;
+        $attributes[FIELD_PARTICIPANTS_A] = $participant->key;
+        $attributes[FIELD_PARTICIPANTS_B] = null;
 
         $repository = $this->tournamentValueRepository->store($attributes);
         return new JsonResponse(

@@ -11,9 +11,12 @@ use App\Repository\TournamentValueRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
+
 class TournamentValueListProcedure extends AbstractProcedure
 {
-    public static string $name = 'TournamentValueListProcedure';
+    public static string $name = PROCEDURE_TOURNAMENT_VALUE_LIST;
     private TournamentValueRepository $tournamentValueRepository;
     public function __construct(TournamentValueRepository $tournamentValueRepository)
     {

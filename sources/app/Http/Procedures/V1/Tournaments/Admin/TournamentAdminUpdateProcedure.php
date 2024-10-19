@@ -11,6 +11,9 @@ use App\Repository\TournamentAdminRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
+
 class TournamentAdminUpdateProcedure extends AbstractProcedure
 {
     /**
@@ -18,7 +21,7 @@ class TournamentAdminUpdateProcedure extends AbstractProcedure
      *
      * @var string
      */
-    public static string $name = 'TournamentAdminUpdateProcedure';
+    public static string $name = PROCEDURE_TOURNAMENT_ADMIN_UPDATE;
     private TournamentAdminRepository $tournamentAdminRepository;
     public function __construct(TournamentAdminRepository $tournamentAdminRepository)
     {
@@ -35,7 +38,7 @@ class TournamentAdminUpdateProcedure extends AbstractProcedure
     public function handle(TournamentAdminUpdateRequest $request): JsonResponse
     {
         define("ATTRIBUTES", $request->validated());
-        $entity = $this->tournamentAdminRepository->findById(ATTRIBUTES['id']);
+        $entity = $this->tournamentAdminRepository->findById(ATTRIBUTES[FIELD_ID]);
         $repository = $this->tournamentAdminRepository->update($entity, ATTRIBUTES);
 
         return new JsonResponse(

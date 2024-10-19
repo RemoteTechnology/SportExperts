@@ -11,6 +11,9 @@ use App\Repository\TournamentAdminRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
+
 class TournamentAdminStoreProcedure extends AbstractProcedure
 {
     /**
@@ -18,7 +21,7 @@ class TournamentAdminStoreProcedure extends AbstractProcedure
      *
      * @var string
      */
-    public static string $name = 'TournamentAdminStoreProcedure';
+    public static string $name = PROCEDURE_TOURNAMENT_ADMIN_STORE;
     private TournamentAdminRepository $tournamentAdminRepository;
     public function __construct(TournamentAdminRepository $tournamentAdminRepository)
     {

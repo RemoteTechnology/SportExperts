@@ -14,11 +14,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Sajya\Server\Procedure;
 
+require_once dirname(__DIR__, 6) . '/Domain/Constants/ProcedureNameConst.php';
 require_once dirname(__DIR__, 6) . '/Domain/Constants/FieldConst.php';
 
 class TournamentValueFreeParticipantsFilterProcedure extends AbstractProcedure
 {
-    public static string $name = 'TournamentValueFreeParticipantsFilterProcedure';
+    public static string $name = PROCEDURE_TOURNAMENT_VALUE_FREE_PARTICIPANTS;
     private EventRepository $eventRepository;
     private TournamentValueRepository $tournamentValueRepository;
 
