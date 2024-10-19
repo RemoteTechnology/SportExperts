@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Sajya\Server\Procedure;
 
+require_once dirname(__DIR__, 5) . '/Domain/Constants/ProcedureNameConst.php';
 require_once dirname(__DIR__, 5) . '/Domain/Constants/FieldConst.php';
 
 class TournamentAdminListProcedure extends AbstractProcedure
@@ -22,7 +23,7 @@ class TournamentAdminListProcedure extends AbstractProcedure
      *
      * @var string
      */
-    public static string $name = 'TournamentAdminListProcedure';
+    public static string $name = PROCEDURE_TOURNAMENT_ADMIN_LIST;
     private TournamentAdminRepository $tournamentAdminRepository;
 
     public function __construct(TournamentAdminRepository $tournamentAdminRepository)

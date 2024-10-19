@@ -57,6 +57,26 @@ const PROCEDURE_TEAM_DESTROY = 'TeamDestroyProcedure';
 //// TOURNAMENT PROCEDURE
 const PROCEDURE_TOURNAMENT_READ = 'TournamentReadProcedure';
 
+//// TOURNAMENT ADMIN PROCEDURE
+const PROCEDURE_TOURNAMENT_ADMIN_LIST = 'TournamentAdminListProcedure';
+const PROCEDURE_TOURNAMENT_ADMIN_STORE = 'TournamentAdminStoreProcedure';
+const PROCEDURE_TOURNAMENT_ADMIN_READ = 'TournamentAdminReadProcedure';
+const PROCEDURE_TOURNAMENT_ADMIN_UPDATE = 'TournamentAdminUpdateProcedure';
+const PROCEDURE_TOURNAMENT_ADMIN_DESTROY = 'TournamentAdminDestroyProcedure';
+
+//// TOURNAMENT HISTORY PROCEDURE
+const PROCEDURE_TOURNAMENT_HISTORY_READ = 'TournamentHistoryReadProcedure';
+
+//// TOURNAMENT VALUE PROCEDURE
+const PROCEDURE_TOURNAMENT_VALUE_LIST = 'TournamentValueListProcedure';
+const PROCEDURE_TOURNAMENT_VALUE_STORE = 'TournamentValueStoreProcedure';
+const PROCEDURE_TOURNAMENT_VALUE_READ = 'TournamentValueReadProcedure';
+const PROCEDURE_TOURNAMENT_VALUE_UPDATE = 'TournamentValueUpdateProcedure';
+const PROCEDURE_TOURNAMENT_VALUE_DESTROY = 'TournamentValueDestroyProcedure';
+
+//// TOURNAMENT VALUE FILTER PROCEDURE
+const PROCEDURE_TOURNAMENT_VALUE_FREE_PARTICIPANTS = 'TournamentValueFreeParticipantsFilterProcedure';
+
 //// USER PROCEDURE
 const PROCEDURE_USER_READ = 'UserReadProcedure';
 const PROCEDURE_USER_REGISTRATION = 'UserRegistrationProcedure';
