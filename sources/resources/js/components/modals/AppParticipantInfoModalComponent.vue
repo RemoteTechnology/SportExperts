@@ -183,6 +183,7 @@
             skipToParticipant: async function(value_id, stage, participant)
             {
                 const attributes = {
+                    admin_id: this.userIdProps,
                     tournament_value_id: value_id,
                     event_key: this.eventKey,
                     stage: stage,
