@@ -3,7 +3,7 @@
     import Dialog from 'primevue/dialog';
     import {getUser} from "../../api/UserRequest";
     import {createLogOptionRequest} from "../../api/CreateLogOptionRequest";
-    import {MESSAGES} from "../../constant";
+    import {MESSAGES, TRIGGER} from "../../constant";
     import {readUserParticipantInvitedRequest} from "../../api/InvitedRequest";
     import {getParticipantsToEventRequest} from "../../api/FilterRequest";
     import {
@@ -164,7 +164,8 @@
                         if (data.attributes.id)
                         {
                             this.closeDialog();
-                            await this.readTournament();
+                            // await this.readTournament();
+                            window.$cookies.set(TRIGGER, true);
                         }
                     })
                     .catch(async (error) => {
@@ -192,6 +193,7 @@
                 await participantUserSkipAdditionallyRequest(attributes)
                     .then((response) => {
                         console.log(response);
+                        window.$cookies.set(TRIGGER, true);
                         //window.location.reload();
 
                     })
@@ -212,6 +214,9 @@
             {
                 const attributes = values;
                 await participantUserReplaceAdditionallyRequest(attributes)
+                    .then(async (response) => {
+                        window.$cookies.set(TRIGGER, true);
+                    })
                     .catch(async (error) => {
                         console.log(error);
                         await createLogOptionRequest({
