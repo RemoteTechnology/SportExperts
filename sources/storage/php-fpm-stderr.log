@@ -1063,3 +1063,28 @@
 [21-Oct-2024 17:58:30] NOTICE: exiting, bye-bye!
 [22-Oct-2024 04:49:21] NOTICE: fpm is running, pid 15
 [22-Oct-2024 04:49:21] NOTICE: ready to handle connections
+172.18.0.5 -  22/Oct/2024:05:42:07 +0000 "GET /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:43:13 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:43:13 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:43:13 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:43:14 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:43:14 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:43:14 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:43:15 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:51:50 +0000 "GET /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:51:51 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:51:51 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:51:53 +0000 "GET /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:51:54 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:51:54 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:51:54 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:05:51:59 +0000 "POST /index.php" 200
+[22-Oct-2024 06:42:37] NOTICE: Terminating ...
+[22-Oct-2024 06:42:37] NOTICE: exiting, bye-bye!
+[22-Oct-2024 11:23:35] NOTICE: fpm is running, pid 15
+[22-Oct-2024 11:23:35] NOTICE: ready to handle connections
+[22-Oct-2024 17:39:50] NOTICE: fpm is running, pid 15
+[22-Oct-2024 17:39:50] NOTICE: ready to handle connections
+172.18.0.5 -  22/Oct/2024:17:40:33 +0000 "GET /index.php" 200
+172.18.0.5 -  22/Oct/2024:17:40:33 +0000 "POST /index.php" 200
+172.18.0.5 -  22/Oct/2024:17:40:33 +0000 "POST /index.php" 200
