@@ -77,8 +77,8 @@
                        v-model="password"
                        class="w-100"/>
         </div>
-        <div class="form-block d-flex d-between">
-            <a :href="this.baseUrl + this.endPoint">
+        <div class="form-block d-flex d-between wrap-reverse">
+            <a :href="this.baseUrl + this.endPoint" class="m-mt-10">
                 <Button type="button"
                         label="Забыли пароль?"
                         severity="info"

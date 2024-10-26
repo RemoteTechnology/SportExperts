@@ -69,7 +69,7 @@
 
 <template>
     <AppFormWrapperComponent>
-        <div class="d-flex d-between d-align-center">
+        <div class="d-flex d-between d-align-center wrap">
             <div class="form-block">
                 <label for="name">Имя</label>
                 <InputText type="text"
@@ -83,7 +83,7 @@
                            class="w-100" />
             </div>
         </div>
-        <div class="d-flex d-between d-align-center">
+        <div class="d-flex d-between d-align-center wrap">
             <div class="form-block">
                 <label for="lastName">Фамилия</label>
                 <InputText type="text"
@@ -97,7 +97,7 @@
                            class="w-100" />
             </div>
         </div>
-        <div class="d-flex d-between d-align-center">
+        <div class="d-flex d-between d-align-center wrap">
             <div class="form-block w-50">
                 <label for="#">Дата рождения</label>
                 <InputText type="date"
@@ -126,7 +126,7 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex d-between d-align-center">
+        <div class="d-flex d-between d-align-center wrap">
             <div class="form-block">
                 <label for="#">Укажите вес</label>
                 <InputText type="number"

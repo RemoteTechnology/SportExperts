@@ -285,7 +285,7 @@
 
 <template>
     <AppFormWrapperComponent>
-        <div class="d-flex d-between">
+        <div class="d-flex d-between wrap">
             <div class="form-block w-46">
                 <label for="name">Имя</label>
                 <InputText type="text"
@@ -301,7 +301,7 @@
                            class="w-100" />
             </div>
         </div>
-        <div class="d-flex d-between">
+        <div class="d-flex d-between wrap">
             <div class="form-block w-46">
                 <label for="nameLat">Имя на латинице</label>
                 <InputText type="text"
@@ -328,7 +328,7 @@
                        mask="+7 (999) 999-99-99"
                        class="w-100" />
         </div>
-        <div class="d-flex d-between">
+        <div class="d-flex d-between wrap">
             <div class="form-block w-46">
                 <label for="#">Дата рождения</label>
                 <InputText type="date"
