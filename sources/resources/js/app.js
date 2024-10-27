@@ -28,12 +28,6 @@ app.use(VueCookies, {
     sameSite: 'Lax',
     partitioned: false
 });
-//app.use(VueGapi, {
-//apiKey: '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',
-//clientId: '28317098568-4q0rhn7qmq74s1jv6cll29gldosdd7bl.apps.googleusercontent.com',
-//discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-//scope: 'https://www.googleapis.com/auth/spreadsheets',
-//});
 
 // Use Layouts
 import HeaderComponent from './components/layouts/AppHeaderComponent.vue';
