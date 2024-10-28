@@ -278,9 +278,17 @@ ul.p-listbox-list{
     color: #cf3232;
     font-weight: bold;
 }
+
 .mobile-view {
     display: none;
 }
+
+#errorField{
+    color: #d75252;
+    font-weight: 500;
+    padding: 0.4em;
+}
+
 
 @media(max-width: 480px) {
     h2{
