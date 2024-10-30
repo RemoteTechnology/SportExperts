@@ -1,14 +1,16 @@
 <script>
-import {BASE_URL, TOKEN, IDENTIFIER, ENDPOINTS} from '../../constant';
 import Menubar from 'primevue/menubar';
 import Image from 'primevue/image';
 import Button from 'primevue/button';
+import {WEB_URL} from "../../common/route/web";
+import {ENDPOINTS} from "../../common/route/api";
+import {IDENTIFIER, TOKEN} from "../../common/fields";
 
 export default {
     name: 'HeaderComponent',
     data() {
         return {
-            baseUrl: BASE_URL,
+            baseUrl: WEB_URL,
             token: null,
             route: ENDPOINTS,
             items: [
@@ -16,21 +18,21 @@ export default {
                     label: 'Профиль',
                     icon: 'pi pi-user',
                     command: () => {
-                        window.location = BASE_URL + ENDPOINTS.PROFILE
+                        window.location = WEB_URL + ENDPOINTS.PROFILE
                     },
                 },
                 {
                     label: 'События',
                     icon: 'pi pi-calendar',
                     command: () => {
-                        window.location = BASE_URL + ENDPOINTS.EVENT
+                        window.location = WEB_URL + ENDPOINTS.EVENT
                     },
                 },
                 {
                     label: 'Настройки',
                     icon: 'pi pi-cog',
                     command: () => {
-                        window.location = BASE_URL + ENDPOINTS.PROFILE + ENDPOINTS.BASE + ENDPOINTS.SETTINGS
+                        window.location = WEB_URL + ENDPOINTS.PROFILE + ENDPOINTS.BASE + ENDPOINTS.SETTINGS
                     },
                 },
             ]
@@ -50,7 +52,7 @@ export default {
         {
             window.$cookies.remove(TOKEN);
             window.$cookies.remove(IDENTIFIER);
-            window.location = BASE_URL;
+            window.location = WEB_URL;
         }
     },
     beforeMount() {

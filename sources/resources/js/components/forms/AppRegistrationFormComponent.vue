@@ -12,10 +12,9 @@
     import { createOptionRequest } from "../../api/OptionRequest";
     import { eventRecordRequest } from "../../api/ParticipantRequest";
     import { MESSAGES } from "../../common/messages";
-    import { ENDPOINTS } from "../../common/route/api";
     import AppFormWrapperComponent from "../wrappers/AppFormWrapperComponent.vue";
-    import {IDENTIFIER} from "../../constant";
     import SelectButton from "primevue/selectbutton";
+    import {IDENTIFIER} from "../../common/fields";
 
     export default {
         data() {

@@ -1,13 +1,13 @@
 <script>
 import Image from "primevue/image";
 import Button from "primevue/button";
-import { BASE_URL } from "../../common/rpc";
+import {WEB_URL} from "../../common/route/web";
 
 
 export default {
     data() {
       return {
-          webUrl: BASE_URL,
+          webUrl: WEB_URL,
           postscriptText: 'Продолжая использовать наш сайт, вы даете согласие на обработку файлов cookies и других пользовательских данных, в соответствии с ',
           postscriptUrlText: 'Политикой конфиденциальности',
           postscriptUrl: '#',
