@@ -1,26 +1,24 @@
 <script>
-import {
-    BASE_URL,
-    IDENTIFIER,
-    ENDPOINTS,
-    RESPONSE
-} from "../../constant";
-
 import { createLogOptionRequest } from '../../api/CreateLogOptionRequest';
 import { getUser } from "../../api/UserRequest";
 import AppAlertComponent from "../../components/AppAlertComponent.vue";
 import AppEventListComponent from "../../components/AppEventListComponent.vue";
 import AppAddModalOptions from "../../components/modals/AppAddModalOptions.vue";
 import AppUserUpdateEmailFormComponent from "../../components/forms/AppUserUpdateEmailFormComponent.vue";
+import {WEB_URL} from "../../common/route/web";
+import {ENDPOINTS} from "../../common/route/api";
+import {IDENTIFIER} from "../../common/fields";
 
 export default {
     data() {
       return {
           messageSuccess: null,
           messageError: null,
-          response: RESPONSE,
+          response: {
+              data: 'data'
+          },
           route: ENDPOINTS,
-          baseUrl: BASE_URL,
+          baseUrl: WEB_URL,
           user: null
       };
     },
@@ -66,6 +64,7 @@ export default {
 </script>
 
 <template>
+    {{ this.baseUrl }}
     <AppAddModalOptions
         :userProps="this.user"
         @messageSuccessEmit="addMessageSuccess"
