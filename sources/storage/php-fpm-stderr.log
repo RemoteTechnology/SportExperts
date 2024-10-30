@@ -1088,3 +1088,5 @@
 172.18.0.5 -  22/Oct/2024:17:40:33 +0000 "GET /index.php" 200
 172.18.0.5 -  22/Oct/2024:17:40:33 +0000 "POST /index.php" 200
 172.18.0.5 -  22/Oct/2024:17:40:33 +0000 "POST /index.php" 200
+[30-Oct-2024 10:49:26] NOTICE: fpm is running, pid 15
+[30-Oct-2024 10:49:26] NOTICE: ready to handle connections

@@ -221,7 +221,7 @@
                             i++;
                         }
                         await this.eventRecord(attributesRecord);
-                        // window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
                         return;
                     }
 
@@ -231,7 +231,7 @@
                             const data = response.data.result.original;
                             await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
                             this.userModel = Object.assign(new UserModel(), data.attributes);
-                            // window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                            window.location = this.baseUrl + ENDPOINTS.LOGIN;
                         })
                         .catch(async (error) => {
                             console.log(error)
