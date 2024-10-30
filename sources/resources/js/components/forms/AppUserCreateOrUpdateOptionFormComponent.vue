@@ -11,6 +11,7 @@
         data() {
             return {
                 currentDate: new Date(),
+                errors: [],
                 options: [
                     {
                         user_id: window.$cookies.get(IDENTIFIER),
@@ -38,6 +39,9 @@
             Button,
         },
         methods: {
+            isValid: function(fields) {
+                this.errors = fields
+            },
             userOptionsCreate: async function (idx)
             {
                 if (this.options[idx].value)
@@ -46,6 +50,10 @@
                     await createOptionRequest(attributes)
                         .then(async (response) => {
                             console.log(response);
+                            if ('error' in response.data) {
+                                this.isValid(response.data.error.data);
+                                return;
+                            }
                             const data = await response.data.result.original;
                             this.options[idx] = await data.attributes;
                             this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
@@ -72,6 +80,10 @@
                     await updateOptionRequest(attributes)
                         .then(async (response) => {
                             console.log(response);
+                            if ('error' in response.data) {
+                                this.isValid(response.data.error.data);
+                                return;
+                            }
                             const data = await response.data.result.original;
                             this.options[idx] = await data.attributes;
                         })
@@ -126,7 +138,12 @@
                            v-model="this.options[0].value"
                            class="w-100"
                            :value="item.value"
-                           required />
+                           :invalid="this.errors !== null && 'value' in this.errors" />
+                <section id="errorField" v-if="this.errors !== null && 'value' in this.errors">
+                    <small v-for="error in this.errors.value">
+                        <i class="pi pi-times-circle"></i> {{ error }}
+                    </small>
+                </section>
             </div>
             <div v-else-if="item.name === 'Height'" class="form-block w-100">
                 <label for="name">Рост</label>
@@ -134,7 +151,12 @@
                            v-model="this.options[1].value"
                            class="w-100"
                            :value="item.value"
-                           required />
+                           :invalid="this.errors !== null && 'value' in this.errors" />
+                <section id="errorField" v-if="this.errors !== null && 'value' in this.errors">
+                    <small v-for="error in this.errors.value">
+                        <i class="pi pi-times-circle"></i> {{ error }}
+                    </small>
+                </section>
             </div>
         </section>
         <Button type="button"

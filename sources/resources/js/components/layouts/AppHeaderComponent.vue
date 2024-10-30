@@ -5,6 +5,8 @@ import Button from 'primevue/button';
 import {WEB_URL} from "../../common/route/web";
 import {ENDPOINTS} from "../../common/route/api";
 import {IDENTIFIER, TOKEN} from "../../common/fields";
+import Sidebar from 'primevue/sidebar';
+import AppMobileMenuComponent from "./AppMobileMenuComponent.vue";
 
 export default {
     name: 'HeaderComponent',
@@ -12,6 +14,7 @@ export default {
         return {
             baseUrl: WEB_URL,
             token: null,
+            visibleRight: false,
             route: ENDPOINTS,
             items: [
                 {
@@ -20,6 +23,7 @@ export default {
                     command: () => {
                         window.location = WEB_URL + ENDPOINTS.PROFILE
                     },
+                    href: BASE_URL + ENDPOINTS.PROFILE
                 },
                 {
                     label: 'События',
@@ -27,6 +31,7 @@ export default {
                     command: () => {
                         window.location = WEB_URL + ENDPOINTS.EVENT
                     },
+                    href: BASE_URL + ENDPOINTS.EVENT
                 },
                 {
                     label: 'Настройки',
@@ -34,14 +39,17 @@ export default {
                     command: () => {
                         window.location = WEB_URL + ENDPOINTS.PROFILE + ENDPOINTS.BASE + ENDPOINTS.SETTINGS
                     },
+                    href: BASE_URL + ENDPOINTS.PROFILE + ENDPOINTS.BASE + ENDPOINTS.SETTINGS
                 },
             ]
         };
     },
     components: {
-        Menubar: Menubar,
-        Image: Image,
-        Button: Button,
+        Menubar,
+        Image,
+        Button,
+        Sidebar,
+        AppMobileMenuComponent
     },
     methods: {
         tokenRead: function ()
@@ -70,18 +78,35 @@ export default {
                 border: none;
         ">
             <template #start>
-                <a :href="baseUrl">
+                <a id="logo" :href="baseUrl">
                     <Image :src="baseUrl +'images/logo.png'" alt="Image" width="250" />
                 </a>
             </template>
-            <template #item="{ item, props, hasSubmenu, root }">
-                <a v-if="this.token !== null" v-ripple class="flex align-items-center">
-                    <span class="ml-2"><span :class="item.icon" /> {{ item.label }}</span>
+            <template #item="{ item }">
+                <a v-if="this.token !== null"
+                   v-ripple
+                   class="flex align-items-center">
+                    <span class="ml-2">
+                        <span :class="item.icon" /> {{ item.label }}
+                    </span>
                 </a>
             </template>
             <template #end>
+                <section v-if="this.token" class="mobile-view">
+                    <Button icon="pi pi-bars" @click="this.visibleRight = true" />
+                    <Sidebar v-model:visible="visibleRight"
+                             header="Меню"
+                             position="right">
+                        <AppMobileMenuComponent :items="this.items"/>
+                    </Sidebar>
+                </section>
+
                 <div class="flex align-items-center gap-2">
-                    <Button v-if="this.token" label="Выход" severity="danger" @click="logout" />
+                    <Button v-if="this.token"
+                            label="Выход"
+                            class="mobile-none"
+                            severity="danger"
+                            @click="logout" />
                     <a v-else :href="baseUrl + this.route.LOGIN">
                         <Button label="Войти в личный кабинет" severity="success" />
                     </a>
@@ -90,4 +115,3 @@ export default {
         </Menubar>
     </header>
 </template>
-

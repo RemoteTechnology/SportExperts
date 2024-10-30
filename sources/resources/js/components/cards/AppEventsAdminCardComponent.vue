@@ -184,7 +184,7 @@ import {MESSAGES} from "../../common/messages";
                                 <Card class="w-100">
                                     <template #content>
                                         <div class="d-flex d-between d-align-center">
-                                            <div class="w-30">
+                                            <div class="w-30 mobile-none">
                                                 <div :style="
                                                         'background-size: cover;' +
                                                         'background-position: center top;' +
@@ -196,7 +196,7 @@ import {MESSAGES} from "../../common/messages";
                                                 "></div>
                                             </div>
                                             <div class="w-70">
-                                                <div class="d-flex d-between">
+                                                <div class="d-flex d-between wrap">
                                                     <section class="w-40">
                                                         <p>
                                                             <strong>{{ event.name }}</strong>
@@ -205,13 +205,13 @@ import {MESSAGES} from "../../common/messages";
                                                         <small>{{ this.formatDate(event.expiration_date) }} {{ event.expiration_time.slice(0, -3) }}</small>
                                                     </section>
                                                     <section>
-                                                        <section>
+                                                        <section class="mobile-none">
                                                             <p>
                                                                 <strong>Статус:</strong>
                                                             </p>
                                                             <InlineMessage severity="success">Активное событие</InlineMessage>
                                                         </section>
-                                                        <section v-if="event.admins && event.admins.length > 0">
+                                                        <section v-if="event.admins && event.admins.length > 0" class="mobile-none">
                                                             <p>
                                                                 <strong>Администраторы:</strong>
                                                                 <ul>
@@ -219,13 +219,15 @@ import {MESSAGES} from "../../common/messages";
                                                                         :key="item.id"
                                                                         class="item-admin">
                                                                         <i class="pi pi-check-circle" style="font-size: 1rem"></i>
-                                                                        <a href="#">{{ item.first_name }} {{ item.last_name }}</a>
+                                                                        <a href="#" class="text-link">
+                                                                            {{ item.first_name }} {{ item.last_name }}
+                                                                        </a>
                                                                     </li>
                                                                 </ul>
                                                             </p>
                                                         </section>
                                                     </section>
-                                                    <section>
+                                                    <section class="wm-100">
                                                         <p>Участников: 11</p>
                                                         <div class="mb-1">
                                                             <a :href="this.baseUrlProps + this.routeProps.EVENT + '/detail?id=' + event.id">
@@ -301,7 +303,9 @@ import {MESSAGES} from "../../common/messages";
                                                                         :key="item.id"
                                                                         class="item-admin">
                                                                         <i class="pi pi-check-circle" style="font-size: 1rem"></i>
-                                                                        <a href="#">{{ item.first_name }} {{ item.last_name }}</a>
+                                                                        <a href="#" class="text-link">
+                                                                            {{ item.first_name }} {{ item.last_name }}
+                                                                        </a>
                                                                     </li>
                                                                 </ul>
                                                             </p>
@@ -381,7 +385,9 @@ import {MESSAGES} from "../../common/messages";
                                                                         :key="item.id"
                                                                         class="item-admin">
                                                                         <i class="pi pi-check-circle" style="font-size: 1rem"></i>
-                                                                        <a href="#">{{ item.first_name }} {{ item.last_name }}</a>
+                                                                        <a href="#" class="text-link">
+                                                                            {{ item.first_name }} {{ item.last_name }}
+                                                                        </a>
                                                                     </li>
                                                                 </ul>
                                                             </p>

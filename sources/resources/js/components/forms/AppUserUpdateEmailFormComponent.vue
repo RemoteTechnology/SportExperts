@@ -12,6 +12,7 @@
             return {
                 currentDate: new Date(),
                 email: null,
+                errors: [],
             }
         },
         props: {
@@ -23,6 +24,9 @@
             Button,
         },
         methods: {
+            isValid: function(fields) {
+                this.errors = fields
+            },
             userEmailUpdate: async function ()
             {
                 let attributes = {
@@ -33,6 +37,10 @@
                 await updateUserRequest(attributes)
                     .then((response) => {
                         console.log(response);
+                        if ('error' in response.data) {
+                            this.isValid(response.data.error.data);
+                            return;
+                        }
                         this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
                     })
                     .catch(async (error) => {
@@ -70,7 +78,12 @@
                            v-model="this.email"
                            class="w-100"
                            :value="this.email"
-                           required />
+                           :invalid="this.errors !== null && 'email' in this.errors" />
+                <section id="errorField" v-if="this.errors !== null && 'email' in this.errors">
+                    <small v-for="error in this.errors.email">
+                        <i class="pi pi-times-circle"></i> {{ error }}
+                    </small>
+                </section>
             </div>
         </section>
         <Button type="button"
