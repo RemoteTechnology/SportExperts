@@ -1,6 +1,6 @@
-.idea
-data
-.env
+/.idea
+/data
+/.env
 schema.drawio.bkp
 /sources/storage/php-fpm-stderr.log
 /sources/storage/php-fpm-stdout.log
