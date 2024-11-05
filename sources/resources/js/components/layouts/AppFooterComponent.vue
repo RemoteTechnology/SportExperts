@@ -17,11 +17,11 @@ export default {
               [
                   {
                       text: 'События',
-                      url: BASE_URL + ENDPOINTS.EVENT,
+                      url: WEB_URL + ENDPOINTS.EVENT,
                   },
                   {
                       text: 'Вход',
-                      url: BASE_URL + ENDPOINTS.LOGIN,
+                      url: WEB_URL + ENDPOINTS.LOGIN,
                   },
               ],
               [
