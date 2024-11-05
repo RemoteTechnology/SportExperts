@@ -64,7 +64,6 @@ export default {
 </script>
 
 <template>
-    {{ this.baseUrl }}
     <AppAddModalOptions
         :userProps="this.user"
         @messageSuccessEmit="addMessageSuccess"

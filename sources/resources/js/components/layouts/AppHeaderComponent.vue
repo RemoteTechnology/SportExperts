@@ -23,7 +23,7 @@ export default {
                     command: () => {
                         window.location = WEB_URL + ENDPOINTS.PROFILE
                     },
-                    href: BASE_URL + ENDPOINTS.PROFILE
+                    href: WEB_URL + ENDPOINTS.PROFILE
                 },
                 {
                     label: 'События',
@@ -31,7 +31,7 @@ export default {
                     command: () => {
                         window.location = WEB_URL + ENDPOINTS.EVENT
                     },
-                    href: BASE_URL + ENDPOINTS.EVENT
+                    href: WEB_URL + ENDPOINTS.EVENT
                 },
                 {
                     label: 'Настройки',
@@ -39,7 +39,7 @@ export default {
                     command: () => {
                         window.location = WEB_URL + ENDPOINTS.PROFILE + ENDPOINTS.BASE + ENDPOINTS.SETTINGS
                     },
-                    href: BASE_URL + ENDPOINTS.PROFILE + ENDPOINTS.BASE + ENDPOINTS.SETTINGS
+                    href: WEB_URL + ENDPOINTS.PROFILE + ENDPOINTS.BASE + ENDPOINTS.SETTINGS
                 },
             ]
         };
