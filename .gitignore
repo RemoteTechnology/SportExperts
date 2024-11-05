@@ -1,5 +1,5 @@
 ./.idea
-.env
+./.env
 schema.drawio.bkp
 /sources/storage/php-fpm-stderr.log
 /sources/storage/php-fpm-stdout.log
