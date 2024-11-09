@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: your-nginx-image:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: NAME
+              value: "sport_experts"
+            - name: HTTP_PORT
+              value: "8080"
+            - name: HTTP_LOCAL_CONFIG_PATH
+              value: "nginx/conf.d/default.conf"
+            - name: HTTP_CONTAINER_CONFIG_PATH
+              value: "/etc/nginx/conf.d/default.conf"
+            - name: APP_LOCAL_PATH
+              value: "sources"
+            - name: APP_CONTAINER_PATH
+              value: "/var/www/sources"
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+            - name: app-sources
+              mountPath: /var/www/sources
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+        - name: app-sources
+          hostPath:
+            path: /path/to/your/sources
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  default.conf: |
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
