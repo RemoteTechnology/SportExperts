@@ -20,7 +20,7 @@
     </li>
 </ul>
 <hr>
-<h3 style="color: #2c2c2c;">Настройка окружения.</h3>
+<h3 style="color: #2c2c2c;">Настройка окружения <small><b style="color: #57bafb;text-decoration: underline;text-decoration-color: #57bafb;">STAGING</b></small></h3>
 <ul>
     <li>
         <p>
@@ -90,6 +90,17 @@
         <span style="color: #2c2c2c;">Создать ссылку на storage:</span><br>
         <b style="color: #2c2c2c;">(sudo) docker-compose run php-fpm php artisan storage:link</b><br>
     </li>
+</ul>
+<hr />
+<h3 style="color: #2c2c2c;">Настройка окружения <small><b style="color: #57bafb;text-decoration: underline;text-decoration-color: #57bafb;">PRODUCTION</b></small></h3>
+<ul>
+    <li>
+        <p>
+            <span style="color: #2c2c2c;">Запустить k8s:</span><br>
+            <b style="color: #2c2c2c;">(sudo) kubectl apply -k .</b><br>
+        </p>
+    </li>
+    <br />
 </ul>
 <hr />
 <h3 style="color: #2c2c2c;">Дополнительно:</h3>

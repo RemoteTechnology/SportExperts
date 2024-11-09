@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-fpm-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: php-fpm
+  template:
+    metadata:
+      labels:
+        app: php-fpm
+    spec:
+      containers:
+        - name: php-fpm
+          image: your-php-fpm-image:latest
+          env:
+            - name: PHP_FPM_EXTRA_HOST
+              value: "host.docker.internal:host-gateway"
+            - name: PHP_FPM_CONFIG_PATH
+              value: "/usr/local/etc/php/php.ini"
+            - name: PHP_FPM_SUPERVISOR_PATH
+              value: "/etc/supervisor/conf.d/laravel-worker.conf"
+            - name: PHP_FPM_LOG_PATH
+              value: "/logs/php/"
+            - name: APP_LOCAL_PATH
+              value: "sources"
+            - name: APP_CONTAINER_PATH
+              value: "/var/www/sources"
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: LOCALES_ADDITIONAL
+              value: "ru_RU.UTF-8 en_EN.UTF-8 de_DE.UTF-8 es_ES.UTF-8"
+            - name: LOCALE_DEFAULT
+              value: "POSIX"
+            - name: TIMEZONE_DEFAULT
+              value: "UTC"
+          volumeMounts:
+            - name: app-sources
+              mountPath: /var/www/sources
+            - name: php-fpm-config
+              mountPath: /usr/local/etc/php/php.ini
+              subPath: php.ini
+      volumes:
+        - name: app-sources
+          hostPath:
+            path: /path/to/your/sources
+        - name: php-fpm-config
+          configMap:
+            name: php-fpm-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: php-fpm-config
+data:
+  php.ini: |
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-fpm-service
+spec:
+  selector:
+    app: php-fpm
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+  type: ClusterIP

@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: node-build-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: node-build
+          image: your-node-image:latest
+          command: ['npm', 'run', 'build']
+          volumeMounts:
+            - name: app-sources
+              mountPath: /var/www/sources
+      volumes:
+        - name: app-sources
+          hostPath:
+            path: /path/to/your/sources
+      restartPolicy: Never
