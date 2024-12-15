@@ -37,11 +37,6 @@ class UserRegistrationProcedure extends AbstractProcedure
     {
         $attributes = $request->validated();
         $attributes[FIELD_PASSWORD] = Hash::make($attributes[FIELD_PASSWORD]);
-        if ($attributes[FIELD_ROLE] === ClientRoleNameEnum::ADMIN->value) {
-            $attributes[FIELD_ROLE] = RoleEnum::ADMIN->value;
-        } else {
-            $attributes[FIELD_ROLE] = RoleEnum::ATHLETE->value;
-        }
         $repository = $this->userRepository->store($attributes);
         unset($attributes[FIELD_PASSWORD]);
 

@@ -14,7 +14,8 @@
     import { MESSAGES } from "../../common/messages";
     import AppFormWrapperComponent from "../wrappers/AppFormWrapperComponent.vue";
     import SelectButton from "primevue/selectbutton";
-    import {IDENTIFIER} from "../../common/fields";
+    import {IDENTIFIER, USER_ROLE} from "../../common/fields";
+    import {ENDPOINTS} from "../../common/route/api";
 
     export default {
         data() {
@@ -34,7 +35,6 @@
                 eventId: null,
                 baseUrl: null,
                 inviteUserId: null,
-                roles: ['Администратор', 'Спортсмен'],
                 errors: null,
                 user: {
                     firstName: null,
@@ -43,7 +43,7 @@
                     lastNameEng: null,
                     birthDate: null,
                     gender: null,
-                    role: 'Спортсмен',
+                    role: USER_ROLE.ADMIN,
                     email: null,
                     phone: null,
                     password: null,
@@ -79,7 +79,6 @@
             Button,
             InputMask,
             FloatLabel,
-            SelectButton,
             Password,
             AppFormWrapperComponent
         },
@@ -103,7 +102,6 @@
                     first_name_eng: await this.user.firstNameEng,
                     last_name: await this.user.lastName,
                     last_name_eng: await this.user.lastNameEng,
-                    role: await this.user.role,
                     gender: await this.user.gender,
                     password: await this.user.password,
                 };
@@ -172,6 +170,7 @@
                 if (this.user.password && this.user.passwordDouble && this.user.password === this.user.passwordDouble) {
                     const attributes = await this.getAttributes();
                     if (this.urlKey)  {
+                        attributes.role = this.user.role;
                          await registrationRequest(attributes)
                             .then(async (response) => {
                                 console.log(response);
@@ -191,6 +190,9 @@
                                     message: error.message
                                 })
                             });
+
+                         this.user.role = USER_ROLE.ATHLETE;
+
                          console.log(this.inviteUserId)
                         let attributesInvite = {
                             who_user_id: this.inviteUserId,
@@ -405,14 +407,6 @@
                         Женский
                     </label>
                 </div>
-            </div>
-        </div>
-        <div class="form-block">
-            <label for="#">Выберите роль</label>
-            <div class="card flex justify-center">
-                <SelectButton v-model="this.user.role"
-                              :options="this.roles"
-                              aria-labelledby="basic" />
             </div>
         </div>
         <div class="form-block">
