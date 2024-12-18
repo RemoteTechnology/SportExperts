@@ -53,6 +53,6 @@ Route::prefix('tournament')->group(function () {
 });
 
 
-Route::middleware(['auth'])->namespace('Admin')->prefix('admin')->group(function () {
+Route::namespace('Admin')->prefix('admin')->group(function () {
     Route::get('', [SiteController::class, 'index']);
 });

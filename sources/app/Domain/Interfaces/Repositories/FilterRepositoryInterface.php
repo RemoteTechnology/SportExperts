@@ -11,7 +11,7 @@ interface FilterRepositoryInterface
      * @param mixed $attributes
      * @param bool $sorted
      * @param string $mode
-     * @return Collection|Model
+     * @return Collection|Model|null
      */
-    public function query(mixed $attributes, bool $sorted=false, string $mode='one'): Collection|Model;
+    public function query(mixed $attributes, bool $sorted=false, string $mode='one'): Collection|Model|null;
 }

@@ -3,6 +3,7 @@
     import { createLogOptionRequest } from "../../api/CreateLogOptionRequest";
     import Card from 'primevue/card';
     import InputText from 'primevue/inputtext';
+    import InputMask from "primevue/inputmask";
     import Button from 'primevue/button';
     import AppFormWrapperComponent from "../wrappers/AppFormWrapperComponent.vue";
     import {IDENTIFIER, TOKEN} from "../../common/fields";
@@ -13,7 +14,7 @@
         data() {
           return {
               errors: [],
-              email: null,
+              login: null,
               password: null,
               currentDate: new Date(),
           };
@@ -26,6 +27,7 @@
         components: {
             Card,
             InputText,
+            InputMask,
             Button,
             AppFormWrapperComponent,
         },
@@ -35,7 +37,7 @@
             },
             authorizationRequest: async function () {
                 const attributes = {
-                    email: this.email,
+                    login: this.login,
                     password: this.password
                 };
                 await authorizationRequest(attributes)
@@ -77,12 +79,13 @@
     <AppFormWrapperComponent>
         <div class="form-block">
             <label for="#">Введите логин</label>
-            <InputText type="email"
-                       v-model="email"
+            <InputText type="text"
+                       v-model="login"
                        class="w-100"
-                       :invalid="this.errors !== null && 'email' in this.errors" />
-            <section id="errorField" v-if="this.errors !== null && 'email' in this.errors">
-                <small v-for="error in this.errors.email">
+                       :invalid="this.errors !== null && 'login' in this.errors"
+                        placeholder="Номер телефона/почта"/>
+            <section id="errorField" v-if="this.errors !== null && 'login' in this.errors">
+                <small v-for="error in this.errors.login">
                     <i class="pi pi-times-circle"></i> {{ error }}
                 </small>
             </section>

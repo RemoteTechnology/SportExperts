@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 require_once dirname(__DIR__, 3) . '/Domain/Constants/FieldConst.php';
 
@@ -24,7 +25,12 @@ class LoginByEmailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            FIELD_EMAIL     => ['required', 'min:8', 'max:255', 'exists:users,email'],
+            FIELD_LOGIN     => ['required', 'min:8', 'max:255',
+//                Rule::exists('users', 'email')->where(function ($query) {
+//                    return $query->where('email', $this->login)
+//                            ->orWhere('phone', $this->login);
+//                }),
+                ],
             FIELD_PASSWORD  => ['required', 'max:30'],
         ];
     }
@@ -32,10 +38,10 @@ class LoginByEmailRequest extends FormRequest
     public function messages()
     {
         return [
-            FIELD_EMAIL . '.required'           => 'Электронная почта - это обязательное поле!',
-            FIELD_EMAIL . '.min'                => 'Электронная почта не может быть меньше :min-ми символов!',
-            FIELD_EMAIL . '.max'                => 'Электронная почта не может быть больше :max символов!',
-            FIELD_EMAIL . '.exists'             => 'Не правильно введён адрес электронной почты!',
+            FIELD_LOGIN . '.required'           => 'Логин - это обязательное поле!',
+            FIELD_LOGIN . '.min'                => 'Логин не может быть меньше :min-ми символов!',
+            FIELD_LOGIN . '.max'                => 'Логин не может быть больше :max символов!',
+            //FIELD_LOGIN . '.exists'             => 'Не правильно введён логин!',
 
             FIELD_PASSWORD . '.required'        => 'Пароль - это обязательное поле!',
             FIELD_PASSWORD . '.max'             => 'Пароль не может быть больше :max-х символов!',

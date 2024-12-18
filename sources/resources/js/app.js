@@ -11,6 +11,7 @@ import PrimeVue from "primevue/config";
 import 'primevue/resources/themes/aura-light-blue/theme.css';
 import "primeicons/primeicons.css";
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import 'flag-icons/css/flag-icons.min.css';
 
 /**
  * Next, we will create a fresh Vue application instance. You may thlayouten begin
