@@ -41,6 +41,7 @@ const FIELD_LAST_NAME_ENG = 'last_name_eng';
 const FIELD_BIRTH_DATE = 'birth_date';
 const FIELD_GENDER = 'gender';
 const FIELD_EMAIL = 'email';
+const FIELD_LOGIN = 'login';
 const FIELD_PHONE = 'phone';
 const FIELD_ROLE = 'role';
 const FIELD_PASSWORD = 'password';

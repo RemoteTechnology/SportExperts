@@ -36,12 +36,35 @@ class AuthService implements
     }
 
     /**
+     * @param string $sourceNumber
+     * @return string
+     */
+    private static function phoneMask(string $sourceNumber): string
+    {
+        $cleanNumber = preg_replace('/\D/', '', $sourceNumber);
+
+        $countryCode = '';
+        if (strlen($cleanNumber) > 10) {
+            $countryCode = substr($cleanNumber, 0, -10);
+            $cleanNumber = substr($cleanNumber, -10);
+        }
+
+        $maskedNumber = preg_replace('/(\d{3})(\d{3})(\d{2})(\d{2})/', '($1) $2-$3-$4', $cleanNumber);
+
+        if ($countryCode) {
+            $maskedNumber = '+' . $countryCode . ' ' . $maskedNumber;
+        }
+
+        return $maskedNumber;
+    }
+
+    /**
      * @param array $attributes
      * @return Model|null
      */
     public function identificationByEmail(array $attributes): Model|null
     {
-        $user = $this->filter->query([FIELD_EMAIL => $attributes[FIELD_EMAIL]]);
+        $user = $this->filter->query([FIELD_EMAIL => $attributes[FIELD_LOGIN]]) ?? $this->filter->query([FIELD_PHONE => self::phoneMask($attributes[FIELD_LOGIN])]);
         if (Hash::check($attributes[FIELD_PASSWORD], $user->password))
         {
             return $user;
