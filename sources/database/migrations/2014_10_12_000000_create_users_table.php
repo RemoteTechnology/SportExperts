@@ -45,8 +45,9 @@ return new class extends Migration
                 RoleEnum::SUPERUSER->value,
                 RoleEnum::ADMIN->value,
                 RoleEnum::ATHLETE->value,
+                RoleEnum::ADMIN_ATHLETE->value,
             ])
-                ->default(RoleEnum::ATHLETE->value);
+                ->default(RoleEnum::ADMIN->value);
             $table->string(FIELD_PASSWORD, 255)
                 ->nullable(false);
             $table->timestamp(FIELD_CREATED_AT);

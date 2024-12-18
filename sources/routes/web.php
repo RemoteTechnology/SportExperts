@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\SiteController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InvitedController;
@@ -19,8 +20,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'index']);
-Route::get('/login', [HomeController::class, 'login']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/login', [HomeController::class, 'login'])->name('login');
 Route::get('/registration', [HomeController::class, 'registration']);
 Route::get('/recovery', [HomeController::class, 'recovery']);
 
@@ -49,4 +50,9 @@ Route::prefix('participant')->group(function () {
 Route::prefix('tournament')->group(function () {
     Route::get('/', [TournamentController::class, 'index']);
     Route::get('/history', [TournamentController::class, 'history']);
+});
+
+
+Route::middleware(['auth'])->namespace('Admin')->prefix('admin')->group(function () {
+    Route::get('', [SiteController::class, 'index']);
 });
