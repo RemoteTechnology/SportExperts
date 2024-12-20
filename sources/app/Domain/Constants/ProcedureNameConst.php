@@ -82,3 +82,4 @@ const PROCEDURE_USER_READ = 'UserReadProcedure';
 const PROCEDURE_USER_REGISTRATION = 'UserRegistrationProcedure';
 const PROCEDURE_USER_RESET = 'UserResetProcedure';
 const PROCEDURE_USER_UPDATE = 'UserUpdateProcedure';
+const PROCEDURE_USER_ACTIVATE = 'UserActivateProcedure';

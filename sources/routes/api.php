@@ -49,6 +49,7 @@ use App\Http\Procedures\V1\Tournaments\History\TournamentHistoryReadProcedure;
 use App\Http\Procedures\V1\Tournaments\TournamentReadProcedure;
 use App\Http\Procedures\V1\Tournaments\Values\Filter\TournamentValueFreeParticipantsFilterProcedure;
 use App\Http\Procedures\V1\Tournaments\Values\TournamentValueStoreProcedure;
+use App\Http\Procedures\V1\Users\UserActivateProcedure;
 use App\Http\Procedures\V1\Users\UserResetProcedure;
 use App\Http\Procedures\V1\Users\UserReadProcedure;
 use App\Http\Procedures\V1\Users\UserRegistrationProcedure;
@@ -79,7 +80,7 @@ function operation(string $className, string $method='__invoke'): array
     return [$className, $method];
 }
 
-//// V1 USER ENDPOINTS
+//// V1 ENDPOINTS
 Route::prefix('v1')->group(function () {
     //// V1 LOGGING ENDPOINT
     Route::prefix('log')->group(function () {
@@ -112,6 +113,7 @@ Route::prefix('v1')->group(function () {
         });
         //// END V1 AUTH ENDPOINTS
         Route::rpc(ROUTE_DEFAULT . 'registration', [UserRegistrationProcedure::class])->name('v1.user.registration');
+        Route::rpc(ROUTE_DEFAULT . 'activate', [UserActivateProcedure::class])->name('v1.user.activate');
         Route::rpc(ROUTE_READ, [UserReadProcedure::class])->name('v1.user.read');
         Route::rpc('reset', [UserResetProcedure::class])->name('v1.user.reset');
         Route::middleware('auth:sanctum')->group(function () {

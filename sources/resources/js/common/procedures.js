@@ -4,6 +4,7 @@ export const PROCEDURES= {
         read:                   'UserReadProcedure',
         update:                 'UserUpdateProcedure',
         reset:                  'UserResetProcedure',
+        activate:               'UserActivateProcedure',
     },
     invites: {
         list:                   'InvitedListProcedure',

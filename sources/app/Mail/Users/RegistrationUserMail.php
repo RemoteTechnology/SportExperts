@@ -13,9 +13,18 @@ class RegistrationUserMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public array $attributes;
+    /**
+     * Create a new message instance.
+     */
+    public function __construct(array $attributes)
+    {
+        $this->attributes = $attributes;
+    }
+
     public function build(): RegistrationUserMail
     {
         return $this->subject('Регистрация на платформе SportExperts.')
-            ->view('email.users.registration');
+            ->view('email.users.registration', $this->attributes);
     }
 }

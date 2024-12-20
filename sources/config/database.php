@@ -84,8 +84,8 @@ return [
 
         'mongodb' => [
             'driver' => 'mongodb',
-            'dsn' => env('DB_LOG_URL'),
-            'database' => env('DB_LOG_DATABASE'),
+            'dsn' => env('MONGO_URL'),
+            'database' => env('MONGO_DATABASE'),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,

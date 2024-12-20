@@ -25,7 +25,7 @@ abstract class AbstractProcedure extends Procedure
     {
         return [
             'meta' => [
-                'copyright' => 'Remote Sibberian Hammer Студия разработки ПО © 2024',
+                'copyright' => 'Remote Technology Студия разработки ПО © 2024',
                 'request'   => [
                     'identifier'    => Str::uuid()->toString(),
                     'method'        => $request->method(),

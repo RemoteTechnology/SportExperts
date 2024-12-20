@@ -31,7 +31,7 @@ class MailJob implements ShouldQueue
     {
         switch ($this->mode) {
             case RegistrationUserMail::class:
-                Mail::to($this->attributes[FIELD_EMAIL])->send(new RegistrationUserMail());
+                Mail::to($this->attributes[FIELD_EMAIL])->send(new RegistrationUserMail($this->attributes));
                 break;
             case ResetToPasswordMail::class:
                 Mail::to($this->attributes[FIELD_EMAIL])->send(new ResetToPasswordMail($this->attributes[FIELD_PASSWORD]));
