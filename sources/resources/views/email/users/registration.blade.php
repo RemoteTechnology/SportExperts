@@ -22,6 +22,7 @@
         <br>
         <h1>Здравствуйте!</h1>
         <p>Благодарим Вас за регистрацию на сайте!</p>
+        <p>Для подтверждения регистрации перейдите по ссылке: <a href="http://sportexperts.su/login?activate={{ $key }}">http://sportexperts.su/login?activate={{ $key }}</a></p>
         <br>
     </div>
     <!-- FOOTER -->

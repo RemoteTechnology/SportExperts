@@ -51,3 +51,12 @@ export async function getInvitedOwnerRequest(attributes, userQuery = new UserEnd
     userQuery.setParams(attributes);
     return await userQuery.execute();
 }
+
+export async function activateUserRequest(attributes, userQuery = new UserEndpointQuery())
+{
+    userQuery.setUrl(`${API_URL}api/v1/user/activate/`);
+    userQuery.setHeaders();
+    userQuery.setMethod(`${PROCEDURES.users.activate}@${REQUEST_METHOD_DEFAULT}`);
+    userQuery.setParams(attributes);
+    return await userQuery.execute();
+}
