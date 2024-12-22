@@ -34,7 +34,7 @@
         </div>
         {{--  --}}
         <div class="row mb-3">
-            <a href="#" class="btn btn-light">
+            <a href="{{ route('admin') }}?view=users" class="btn btn-light">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width="20"
                      height="20"
@@ -46,7 +46,7 @@
             </a>
         </div>
         <div class="row mb-3">
-            <a href="#" class="btn btn-light">
+            <a href="{{ route('admin') }}?view=events" class="btn btn-light">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width="20"
                      height="20"

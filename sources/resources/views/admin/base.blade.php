@@ -32,6 +32,7 @@
             </div>
             {{-- Контентная чсть --}}
             <div class="col-10 d-flex justify-content-end" style="width: -webkit-fill-available;">
+                @include('admin.components.alert')
                 @yield('content')
             </div>
         </div>

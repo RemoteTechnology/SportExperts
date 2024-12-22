@@ -8,11 +8,7 @@ use App\Domain\Abstracts\AbstractProcedure;
 use App\Domain\Constants\EnumConstants\EntityLeadsEnum;
 use App\Domain\Constants\EnumConstants\StatusLeadEnum;
 use App\Http\Requests\Events\StoreEventRequest;
-use App\Http\Resources\Events\EventResource;
-//use App\Repository\EventRepository;
 use App\Repository\LeadRepository;
-//use App\Repository\TournamentAdminRepository;
-//use App\Repository\TournamentRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -58,28 +54,10 @@ class EventStoreProcedure extends AbstractProcedure
         return new JsonResponse(
             data: [
                 FIELD_ID => self::identifier(),
-                FIELD_ATTRIBUTES => $repository[FIELD_DATA], //new EventResource($repository),
+                FIELD_ATTRIBUTES => $repository, // TODO: возможно стоит добавить ресурс для лидов
                 ...self::meta($request, $attributes)
             ],
             status: Response::HTTP_CREATED
         );
-        /*
-        $repository = $this->eventRepository->store($attributes);
-
-        if ($repository) {
-            define("DEFAULT_STAGE", 1);
-            $tournamentRepository = $this->tournamentRepository->store([
-                FIELD_KEY       => Str::uuid()->toString(),
-                FIELD_EVENT_KEY => $repository->key,
-                FIELD_STAGE     => DEFAULT_STAGE
-            ]);
-
-            if ($tournamentRepository) {
-                $tournamentAdmin[FIELD_TOURNAMENT_ID] = $tournamentRepository->id;
-                $tournamentAdmin[FIELD_USER_ID] = $repository->user_id;
-                $this->tournamentAdminRepository->store($tournamentAdmin);
-            }
-        }
-        */
     }
 }

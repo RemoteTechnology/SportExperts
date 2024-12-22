@@ -18,11 +18,13 @@ final class LeadRepository
     /**
      * @return Collection
      */
-    public function list(): Collection
+    public function list(array $attributes=null): Collection
     {
-        return DB::connection('mongodb')
-            ->table(TABLE_LEADS)
-            ->get();
+        $query = DB::connection('mongodb')->table(TABLE_LEADS);
+        if (!empty($attributes)) {
+            $query->where($attributes);
+        }
+        return $query->get();
     }
 
     /**
