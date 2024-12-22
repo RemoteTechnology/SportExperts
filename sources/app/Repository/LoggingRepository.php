@@ -16,4 +16,12 @@ final class LoggingRepository  //implements LoggingRepositoryInterface
             ->table('logs')
             ->insert($attributes);
     }
+
+    public function list()
+    {
+        return DB::connection('mongodb')
+            ->table('logs')
+            ->select()
+            ->get();
+    }
 }
