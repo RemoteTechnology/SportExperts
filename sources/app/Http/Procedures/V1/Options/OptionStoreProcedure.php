@@ -8,7 +8,9 @@ use App\Domain\Abstracts\AbstractProcedure;
 use App\Domain\Constants\EnumConstants\EntityLeadsEnum;
 use App\Domain\Constants\EnumConstants\StatusLeadEnum;
 use App\Http\Requests\Options\StoreOptionRequest;
+use App\Http\Resources\Options\OptionResource;
 use App\Repository\LeadRepository;
+use App\Repository\OptionRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -20,9 +22,11 @@ class OptionStoreProcedure extends AbstractProcedure
 {
     public static string $name = PROCEDURE_OPTION_STORE;
     private LeadRepository $leadRepository;
+    private OptionRepository $optionRepository;
 
-    public function __construct(LeadRepository $leadRepository) {
+    public function __construct(LeadRepository $leadRepository, OptionRepository $optionRepository) {
         $this->leadRepository = $leadRepository;
+        $this->optionRepository = $optionRepository;
     }
 
     /**
@@ -35,7 +39,12 @@ class OptionStoreProcedure extends AbstractProcedure
         define('ATTRIBUTES', $request->validated());
         $key = Str::uuid()->toString();
 
-        if ($this->leadRepository->store(
+        if (ATTRIBUTES[FIELD_NAME] === 'Weight' || ATTRIBUTES[FIELD_NAME] === 'Height')
+        {
+            $repository = new OptionResource($this->optionRepository->store(ATTRIBUTES));
+        }
+
+        if (count($repository) === 0 && $this->leadRepository->store(
             $key,
             EntityLeadsEnum::OPTION_LEAD,
             StatusLeadEnum::NOT_PROCESSED,

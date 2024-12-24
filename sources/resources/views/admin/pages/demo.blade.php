@@ -18,10 +18,10 @@
     <section class="row">
         <div class="col-12" style="margin-top: 10em;"></div>
         <div class="col-6">
-            <img src="{{ asset('/storage/uploads/' . $content['banner']->name) }}" alt="{{ $content['event']['data']['name'] }}">
+            <img class="img-fluid" src="{{ asset('/storage/uploads/' . $content['banner']->name) }}" alt="{{ $content['event']['data']['name'] }}">
             <div class="mt-4">
                 <h4 class="mb-5">Информация:</h4>
-                <p>{{ $content['event']['data']['description'] }}</p>
+                {!! $content['event']['data']['description'] !!}
             </div>
         </div>
         <div class="col-6">
@@ -36,7 +36,7 @@
                     <b>{{ $content['event']['data']['name']  }}</b>
                 </h4>
                 <p><i class="pi pi-map-marker" style="color: rgb(34, 34, 34);"></i> <b>{{ $content['event']['data']['location'] }}</b></p>
-                <p><i class="pi pi-calendar-clock" style="color: rgb(34, 34, 34);"></i> <b>{{ $content['event']['data']['start_date'] }}</b></p>
+                <p><i class="pi pi-calendar-clock" style="color: rgb(34, 34, 34);"></i> <b>{{ \Carbon\Carbon::parse($content['event']['data']['start_date'])->format('d.m.Y') }}</b></p>
                 <p><i class="pi pi-users" style="color: rgb(34, 34, 34);"></i> <b>0 участников</b></p>
             </div>
             @if(count($content['options']) > 0)

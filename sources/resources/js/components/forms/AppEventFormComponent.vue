@@ -230,6 +230,7 @@
                 for (let i=0; i < this.options.length; i++)
                 {
                     let attributes = {
+                        key: this.event.key,
                         event_key: eventKey,
                         entity: 'event',
                         name: this.options[i].name,
