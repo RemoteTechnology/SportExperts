@@ -63,7 +63,7 @@ class UserRegistrationProcedure extends AbstractProcedure
         return new JsonResponse(
              data: [
                  FIELD_ID => self::identifier(),
-                 FIELD_ATTRIBUTES => $repository[FIELD_DATA],
+                 FIELD_ATTRIBUTES => $repository, // TODO: возможно стоит добавить ресурс для лидов
                  ...self::meta($request, $attributes)
             ],
             status: Response::HTTP_CREATED

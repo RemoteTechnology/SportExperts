@@ -1,12 +1,14 @@
 <div class="h-100 p-3">
-    <section id="navbarBrand">
-        <img src="{{ asset('images/logo.png') }}" class="img-fluid" alt="SportExperts">
-        <strong class="text-light">Панель администратора</strong>
-    </section>
+    <a href="{{ route('admin') }}?view=index" style="color: rgb(13 110 253 / 0%);">
+        <section id="navbarBrand">
+            <img src="{{ asset('images/logo.png') }}" class="img-fluid" alt="SportExperts">
+            <strong class="text-light">Панель администратора</strong>
+        </section>
+    </a>
     <div class="mt-5"></div>
     <section id="navbarMenu">
         <div class="row mb-3">
-            <a href="#" class="btn btn-light position-relative">
+            <a href="{{ route('admin') }}?view=order_event" class="btn btn-light position-relative">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width="20"
                      height="20"
@@ -15,10 +17,7 @@
                     <path d="M8 15h3v3h2v-3h3v-2h-3v-3h-2v3H8z"></path>
                     <path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm.002 16H5V8h14l.002 12z"></path>
                 </svg>
-                Заявки на события
-                <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
-                    <span class="visually-hidden">New alerts</span>
-                </span>
+                Заявки на события <b>(+1)</b>
             </a>
         </div>
         <div class="row mb-3">
@@ -30,27 +29,12 @@
                      style="fill: rgba(0, 0, 0, 1);">
                     <path d="M19 8h-2v3h-3v2h3v3h2v-3h3v-2h-3zM4 8a3.91 3.91 0 0 0 4 4 3.91 3.91 0 0 0 4-4 3.91 3.91 0 0 0-4-4 3.91 3.91 0 0 0-4 4zm6 0a1.91 1.91 0 0 1-2 2 1.91 1.91 0 0 1-2-2 1.91 1.91 0 0 1 2-2 1.91 1.91 0 0 1 2 2zM4 18a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v1h2v-1a5 5 0 0 0-5-5H7a5 5 0 0 0-5 5v1h2z"></path>
                 </svg>
-                Заявки на смену роли
-                <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
-                    <span class="visually-hidden">New alerts</span>
-                </span>
+                Заявки на смену роли  <b>(+1)</b>
             </a>
         </div>
         {{--  --}}
         <div class="row mb-3">
-            <a href="#" class="btn btn-light">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     width="20"
-                     height="20"
-                     viewBox="0 0 24 24"
-                     style="fill: rgba(0, 0, 0, 1);">
-                    <path d="M20 7h-4V4c0-1.103-.897-2-2-2h-4c-1.103 0-2 .897-2 2v5H4c-1.103 0-2 .897-2 2v9a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V9c0-1.103-.897-2-2-2zM4 11h4v8H4v-8zm6-1V4h4v15h-4v-9zm10 9h-4V9h4v10z"></path>
-                </svg>
-                Лиды
-            </a>
-        </div>
-        <div class="row mb-3">
-            <a href="#" class="btn btn-light">
+            <a href="{{ route('admin') }}?view=users" class="btn btn-light">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width="20"
                      height="20"
@@ -62,7 +46,7 @@
             </a>
         </div>
         <div class="row mb-3">
-            <a href="#" class="btn btn-light">
+            <a href="{{ route('admin') }}?view=events" class="btn btn-light">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width="20"
                      height="20"
@@ -75,7 +59,7 @@
             </a>
         </div>
         <div class="row mb-3">
-            <a href="#" class="btn btn-light">
+            <a href="{{ route('admin') }}?view=logs" class="btn btn-light">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width="20"
                      height="20"

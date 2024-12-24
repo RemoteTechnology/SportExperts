@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Form\AllowEventFormController;
 use App\Http\Controllers\Admin\SiteController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
@@ -19,6 +20,17 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+/**
+ * @param string $className
+ * @param $action
+ * @return array
+ */
+function formAction(string $className, $action='__invoke'): array
+{
+    return [$className, $action];
+}
+
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/login', [HomeController::class, 'login'])->name('login');
@@ -54,5 +66,10 @@ Route::prefix('tournament')->group(function () {
 
 
 Route::namespace('Admin')->prefix('admin')->group(function () {
-    Route::get('', [SiteController::class, 'index']);
+    Route::get('', [SiteController::class, 'index'])->name('admin');
+    Route::prefix('form')->group(function () {
+        Route::prefix('event')->group(function () {
+            Route::post('/store', formAction(AllowEventFormController::class))->name('admin.form.event.store');
+        });
+    });
 });

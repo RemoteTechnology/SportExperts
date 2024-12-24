@@ -26,12 +26,13 @@
     <div id="wrapper" class="container-fluid">
         <div class="row row-wrapper">
             {{-- Меню авминки --}}
-            <div class="col-2 bg-dark">
+            <div class="col-2 bg-dark position-fixed h-100">
                 <div class="mt-5"></div>
                 @include('admin.components.navbar')
             </div>
             {{-- Контентная чсть --}}
-            <div class="col-10">
+            <div class="col-10 d-flex justify-content-end" style="width: -webkit-fill-available;">
+                @include('admin.components.alert')
                 @yield('content')
             </div>
         </div>
