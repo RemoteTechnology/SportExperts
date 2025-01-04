@@ -106,8 +106,8 @@ Route::prefix('v1')->group(function () {
             Route::rpc(ROUTE_DEFAULT, [AuthByEmailProcedure::class])->name('v1.user.auth.email');
             //// V1 AUTH SOCIAL ENDPOINTS
             Route::prefix('social')->group(function (){
-                Route::rpc(ROUTE_DEFAULT, [AuthByVkontakteProcedure::class])->name('v1.user.auth.vkontakte');
-                Route::rpc(ROUTE_DEFAULT, [AuthByGoogleProcedure::class])->name('v1.user.auth.google');
+                Route::rpc(ROUTE_DEFAULT . 'vk', [AuthByVkontakteProcedure::class])->name('v1.user.auth.vkontakte');
+                Route::rpc(ROUTE_DEFAULT . 'google', [AuthByGoogleProcedure::class])->name('v1.user.auth.google');
             });
             //// END V1 AUTH SOCIAL ENDPOINTS
         });

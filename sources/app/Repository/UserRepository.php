@@ -35,4 +35,13 @@ final class UserRepository implements LCRUD_OperationInterface
     {
         return $this->model::where('role', $role[0])->orWhere('role', $role[1])->get();
     }
+
+    /**
+     * @param int $googleId
+     * @return Model|null
+     */
+    public function findByGoogleId(int $googleId): Model|null
+    {
+        return $this->model::where([FIELD_GOOGLE_ID => $googleId])->first();
+    }
 }

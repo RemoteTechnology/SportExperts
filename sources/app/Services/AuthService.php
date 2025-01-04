@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Domain\Interfaces\Repositories\Entities\UserRepositoryInterface;
-use App\Domain\Interfaces\Repositories\Filters\Users\FindByEmailRepositoryInterface;
 use App\Domain\Interfaces\Services\Auth\AuthenticationServiceInterface;
 use App\Domain\Interfaces\Services\Auth\AuthenticationSocialServiceInterface;
 use App\Domain\Interfaces\Services\Auth\AuthorizationServiceInterface;
@@ -112,5 +110,22 @@ class AuthService implements
         $user = $this->operation->findById($userContext[FIELD_ID]);
         self::deleteBearerToken($user);
         return $user;
+    }
+
+    public function createOrAuthSocial(array $attributes): AuthenticationException|array
+    {
+        if (isset($attributes[FIELD_GOOGLE_ID])) {
+            // Вход по гуглу
+            if (!empty($this->operation->findByGoogleId($attributes[FIELD_GOOGLE_ID]))) {
+                return $this->authorization($attributes);
+            } else {
+                $this->operation->store($attributes);
+                $this->createOrAuthSocial($attributes);
+            }
+        } else {
+            // Вход по вк
+            return [];
+        }
+        return new AuthenticationException();
     }
 }

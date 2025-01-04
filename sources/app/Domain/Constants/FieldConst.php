@@ -72,3 +72,4 @@ const FIELD_ATTRIBUTES = 'attributes';
 const FIELD_WIDTH = 'width';
 const FIELD_HEIGHT = 'height';
 const FIELD_PARTICIPANTS_POSITION = 'participants_position';
+const FIELD_GOOGLE_ID = 'google_id';
