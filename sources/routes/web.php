@@ -66,7 +66,7 @@ Route::prefix('tournament')->group(function () {
 
 
 Route::namespace('Admin')->prefix('admin')->group(function () {
-    Route::get('', [SiteController::class, 'index'])->name('admin');
+    Route::get('', [SiteController::class, 'index'])->name('admin')->middleware(['admin']);
     Route::prefix('form')->group(function () {
         Route::prefix('event')->group(function () {
             Route::post('/store', formAction(AllowEventFormController::class))->name('admin.form.event.store');

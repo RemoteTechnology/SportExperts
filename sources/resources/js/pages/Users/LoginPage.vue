@@ -47,8 +47,9 @@
                         const data = response.data.result.original;
                         if (data.attributes.status === 'Обработан'){
                             this.addMessageSuccess(data.attributes.message);
+                        } else {
+                            this.addMessageError(data.attributes.message);
                         }
-                        this.addMessageError(data.attributes.message);
                     })
                     .catch(async (error) => {
                         this.addMessageError('Ошибка активации аккаунта!');
