@@ -6,12 +6,14 @@ namespace App\Http\Procedures\V1\Users;
 
 use App\Domain\Abstracts\AbstractProcedure;
 use App\Domain\Constants\EnumConstants\EntityLeadsEnum;
+use App\Domain\Constants\EnumConstants\RoleEnum;
 use App\Domain\Constants\EnumConstants\StatusLeadEnum;
 use App\Http\Requests\Users\RegistrationUserRequest;
 use App\Http\Resources\Users\UserResource;
 use App\Jobs\MailJob;
 use App\Mail\Users\RegistrationUserMail;
 use App\Repository\LeadRepository;
+use App\Repository\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -26,10 +28,12 @@ class UserRegistrationProcedure extends AbstractProcedure
 {
     public static string $name = PROCEDURE_USER_REGISTRATION;
     private LeadRepository $leadRepository;
+    private UserRepository $userRepository;
 
-    public function __construct(LeadRepository $leadRepository)
+    public function __construct(LeadRepository $leadRepository, UserRepository $userRepository)
     {
         $this->leadRepository = $leadRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -43,7 +47,7 @@ class UserRegistrationProcedure extends AbstractProcedure
         $repository = [];
         $key = Str::uuid()->toString();
 
-        if ($this->leadRepository->store(
+        if ($attributes[FIELD_ROLE] === RoleEnum::ATHLETE && $this->leadRepository->store(
             $key,
             EntityLeadsEnum::USER_LEAD,
             StatusLeadEnum::NOT_PROCESSED,
@@ -51,14 +55,16 @@ class UserRegistrationProcedure extends AbstractProcedure
             Carbon::now()->timestamp,
         )) {
             $repository = $this->leadRepository->findByKey($key);
+
+            MailJob::dispatch(RegistrationUserMail::class, [
+                FIELD_EMAIL => $attributes[FIELD_EMAIL],
+                FIELD_KEY => $key
+            ]);
+        } else {
+            $repository = $this->userRepository->store($attributes);  // TODO: Пока ничего лучше не придумал
         }
 
         unset($attributes[FIELD_PASSWORD]);
-
-        MailJob::dispatch(RegistrationUserMail::class, [
-            FIELD_EMAIL => $attributes[FIELD_EMAIL],
-            FIELD_KEY => $key
-        ]);
 
         return new JsonResponse(
              data: [

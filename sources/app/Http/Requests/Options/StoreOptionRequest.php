@@ -24,7 +24,10 @@ class StoreOptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            FIELD_KEY               => ['required', 'string'],
+            // Парамет используется при обновлении опций в уже существующем событии
+            'is_event'              => ['nullable', 'boolean'],
+            // end;
+            FIELD_KEY               => ['nullable', 'string'],
             FIELD_EVENT_KEY         => ['nullable', /* 'exists:events,key' */],
             FIELD_USER_ID           => ['nullable', 'exists:users,id'],
             FIELD_ENTITY            => ['required', 'string'],

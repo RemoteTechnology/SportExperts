@@ -39,12 +39,12 @@ class OptionStoreProcedure extends AbstractProcedure
         define('ATTRIBUTES', $request->validated());
         $key = Str::uuid()->toString();
 
-        if (ATTRIBUTES[FIELD_NAME] === 'Weight' || ATTRIBUTES[FIELD_NAME] === 'Height')
+        if ((ATTRIBUTES[FIELD_NAME] === 'Weight' || ATTRIBUTES[FIELD_NAME] === 'Height') || isset(ATTRIBUTES['is_event']))
         {
             $repository = new OptionResource($this->optionRepository->store(ATTRIBUTES));
         }
 
-        if (count($repository) === 0 && $this->leadRepository->store(
+        if (empty($repository) && $this->leadRepository->store(
             $key,
             EntityLeadsEnum::OPTION_LEAD,
             StatusLeadEnum::NOT_PROCESSED,

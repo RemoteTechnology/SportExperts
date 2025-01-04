@@ -444,7 +444,7 @@
                 if (this.user.password && this.user.passwordDouble && this.user.password === this.user.passwordDouble) {
                     const attributes = await this.getAttributes();
                     if (this.urlKey)  {
-                        attributes.role = this.user.role;
+                        attributes.role = 'athlete';
                          await registrationRequest(attributes)
                             .then(async (response) => {
                                 console.log(response);
@@ -465,9 +465,8 @@
                                 })
                             });
 
-                         this.user.role = USER_ROLE.ATHLETE;
+                        this.user.role = USER_ROLE.ATHLETE;
 
-                         console.log(this.inviteUserId)
                         let attributesInvite = {
                             who_user_id: this.inviteUserId,
                             user_id: this.user.id,
@@ -494,17 +493,20 @@
                                 type: "string",
                             }
                         ];
+
                          await this.createInvite(attributesInvite);
+
                         let i = 0;
                         while(i < attributesOptions.length) {
                              await this.createOption(attributesOptions[i]);
                             i++;
                         }
                         await this.eventRecord(attributesRecord);
-                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                        //window.location = this.baseUrl + ENDPOINTS.LOGIN;
                         return;
                     }
 
+                    attributes.role = 'admin';
                     registrationRequest(attributes)
                         .then(async (response) => {
                             console.log(response);
@@ -515,7 +517,7 @@
                             const data = response.data.result.original;
                             await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
                             this.userModel = Object.assign(new UserModel(), data.attributes);
-                            window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                            //window.location = this.baseUrl + ENDPOINTS.LOGIN;
                         })
                         .catch(async (error) => {
                             console.log(error)
