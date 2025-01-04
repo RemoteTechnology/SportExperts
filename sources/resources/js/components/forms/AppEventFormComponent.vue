@@ -28,6 +28,7 @@
                 currentDate: new Date(),
                 errors: [],
                 file: null,
+                leadKey: null,
                 event: {
                     user_id: 1,
                     name: null,
@@ -80,7 +81,6 @@
                 try {
                     let inputFile = await this.onUpload()
                         .then(async (response) => {
-                            console.log(response);
                             if ('error' in response.data) {
                                 this.isValid(response.data.error.data);
                                 return;
@@ -89,7 +89,6 @@
                             this.file = await data.key;
                         })
                         .catch(async (error) => {
-                            console.log(error);
                             await createLogOptionRequest({
                                 current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                                 current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -122,7 +121,6 @@
                 }
                 await updateEventRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         if ('error' in response.data) {
                             this.isValid(response.data.error.data);
                             return;
@@ -133,7 +131,6 @@
                         this.$emit('triggerEmit', 'update');
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -160,7 +157,6 @@
                 };
                 await createEventRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         if ('error' in response.data) {
                             this.isValid(response.data.error.data);
                             return;
@@ -171,7 +167,6 @@
                         this.$emit('triggerEmit', 'create');
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -202,14 +197,12 @@
                     };
                     await deleteOptionRequest(attributes)
                         .then((response) => {
-                            console.log(response);
                             if ('error' in response.data) {
                                 this.isValid(response.data.error.data);
                                 return;
                             }
                         })
                         .catch(async(error) => {
-                            console.log(error);
                             await createLogOptionRequest({
                                 current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                                 current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -225,21 +218,22 @@
             },
             createOptions: async function ()
             {
-                console.log(this.options)
-                const eventKey = this.event.key;
+                const leadKey = this.event.key;
+                const eventKey = this.event.data.key;
                 for (let i=0; i < this.options.length; i++)
                 {
                     let attributes = {
-                        key: this.event.key,
+                        key: leadKey,
                         event_key: eventKey,
                         entity: 'event',
                         name: this.options[i].name,
                         value: this.options[i].value,
                         type: this.options[i].type,
                     };
+                    console.log('add option')
+                    console.log(attributes)
                     await createEventOptionRequest(attributes)
                         .then(async (response) => {
-                            console.log(response);
                             if ('error' in response.data) {
                                 this.isValid(response.data.error.data);
                                 return;
@@ -247,7 +241,6 @@
                             this.event = await response.data.result.original;
                         })
                         .catch(async (error) => {
-                            console.log(response);
                             await createLogOptionRequest({
                                 current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                                 current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -262,6 +255,7 @@
             },
             updateOrCreateOptions: async function ()
             {
+
                 for (let i=0; i < this.options.length; i++)
                 {
                     if (Object.hasOwn(this.options[i], 'id'))
@@ -273,9 +267,11 @@
                             value: this.options[i].value,
                             type: this.options[i].type,
                         };
+                        console.log('update option')
+                        console.log(attributes)
                         await updateEventOptionRequest(attributes)
                             .then(async (response) => {
-                                console.log(response);
+                                // console.log(response);
                                 if ('error' in response.data) {
                                     this.isValid(response.data.error.data);
                                     return;
@@ -298,6 +294,7 @@
                     else
                     {
                         const attributes = {
+                            is_event: true,
                             event_key: this.event.key,
                             entity: 'event',
                             name: this.options[i].name,
@@ -333,7 +330,7 @@
                 await this.createFile();
                 await this.createEvent();
                 await this.createOptions();
-                window.location = this.baseUrlProps + ENDPOINTS.BASE;
+                // window.location = this.baseUrlProps + ENDPOINTS.BASE;
 
             },
             updateEventObject: async function()
@@ -341,7 +338,7 @@
                 await this.createFile();
                 await this.updateEvent();
                 await this.updateOrCreateOptions();
-                window.location = this.baseUrlProps + ENDPOINTS.BASE;
+                //window.location = this.baseUrlProps + ENDPOINTS.BASE;
             },
         },
         watch: {

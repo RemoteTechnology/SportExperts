@@ -156,7 +156,8 @@
                     event_key: this.eventKey,
                     participants_position: participants_position,
                     user_id: this.participant.user.id,
-                    stage: stage
+                    stage: stage,
+                    admin_id: this.userIdProps
                 };
                 await participantUserRemoveAdditionallyRequest(attributes)
                     .then(async (response) => {
@@ -296,6 +297,8 @@
                     </div>
                 </div>
             </section>
+            <!--
+            TODO: задача 41080799
             <hr>
             <h3 class="text-center">Заменить спортсмена</h3>
             <section>
@@ -335,6 +338,7 @@
                     <hr class="w-100">
                 </div>
             </section>
+            -->
         </div>
     </Dialog>
 </template>
