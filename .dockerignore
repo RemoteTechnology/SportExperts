@@ -1,3 +1,4 @@
 .env
 sources/vendor
 data
+app/rsa/id_rsa*

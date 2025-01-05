@@ -9,8 +9,8 @@ services:
       - ${JENKINS_WEB_PORT}:5000
     volumes:
       - jenkins_home:${JENKINS_DATA}
-      - ./app/id_rsa:${JENKINS_DATA}/id_rsa:ro
-      - ./app/id_rsa.pub:${JENKINS_DATA}/id_rsa.pub:ro
+#      - ./app/id_rsa:${JENKINS_DATA}/id_rsa:ro
+#      - ./app/id_rsa.pub:${JENKINS_DATA}/id_rsa.pub:ro
     networks:
       - jenkins-network
 

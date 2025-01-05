@@ -97,8 +97,8 @@
     <li>
         <p>
             <span style="color: #2c2c2c;">Сгенерировать rsa ключ:</span><br>
-            <b style="color: #2c2c2c;">(sudo) ssh-keygen -t rsa -b 4096 -C "vuacheslav.mir@gmail.com"</b><br>
-            <small style="color: #2c2c2c;">Необходимо указать путь в папку /app</small><br>
+            <b style="color: #2c2c2c;">(sudo) ssh-keygen -t rsa -b 4096 -C "vuacheslav.mir@gmail.com" -f id_rsa</b><br>
+            <small style="color: #2c2c2c;">Необходимо выполнить в папке /app/rsa</small><br>
             <span style="color: #2c2c2c;">Скопировать ключ на целевой сервер:</span><br>
             <b style="color: #2c2c2c;">(sudo) ssh-copy-id root@SERVER IP</b><br>
         </p>
