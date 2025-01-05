@@ -3,42 +3,51 @@ pipeline {
     environment {
         SERVER_IP = '176.113.80.94'
         PROJECT_DIR = 'SportExperts'
-        SSH_CREDS = credentials('ssh-creds-id') // Используем credentials из Jenkins
     }
     stages {
         stage('Стягивание изменений') {
             steps {
-                sh """
-                    ssh -o StrictHostKeyChecking=no -i ${SSH_CREDS} root@${SERVER_IP} 'cd ${PROJECT_DIR} && git status && git pull'
-                """
+                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-creds-id', keyFileVariable: 'SSH_KEY')]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} root@${SERVER_IP} 'cd ${PROJECT_DIR} && git status && git pull'
+                    """
+                }
             }
         }
         stage('Сборка проекта') {
             steps {
-                sh """
-                    ssh -o StrictHostKeyChecking=no -i ${SSH_CREDS} root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose down && docker-compose up --build -d'
-                """
+                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-creds-id', keyFileVariable: 'SSH_KEY')]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose down && docker-compose up --build -d'
+                    """
+                }
             }
         }
         stage('Установка зависимостей') {
             steps {
-                sh """
-                    ssh -o StrictHostKeyChecking=no -i ${SSH_CREDS} root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run php-fpm composer install && docker-compose run node install'
-                """
+                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-creds-id', keyFileVariable: 'SSH_KEY')]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run php-fpm composer install && docker-compose run node install'
+                    """
+                }
             }
         }
         stage('Применение миграций') {
             steps {
-                sh """
-                    ssh -o StrictHostKeyChecking=no -i ${SSH_CREDS} root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run php-fpm php artisan migrate'
-                """
+                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-creds-id', keyFileVariable: 'SSH_KEY')]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run php-fpm php artisan migrate'
+                    """
+                }
             }
         }
         stage('Сборка фронтенда') {
             steps {
-                sh """
-                    ssh -o StrictHostKeyChecking=no -i ${SSH_CREDS} root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run node run build'
-                """
+                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-creds-id', keyFileVariable: 'SSH_KEY')]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run node run build'
+                    """
+                }
             }
         }
     }
