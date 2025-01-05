@@ -15,6 +15,7 @@ export const PROCEDURES= {
     },
     auth: {
         login:                  'AuthByEmailProcedure',
+        loginGoogle:            'AuthByGoogleProcedure',
     },
     filter: {
         userRecord:             'EventDateFilterProcedure',

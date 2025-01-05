@@ -18,6 +18,8 @@ return new class extends Migration
     {
         Schema::create(TABLE_USERS, function (Blueprint $table) {
             $table->id(FIELD_ID);
+            $table->string(FIELD_GOOGLE_ID)
+                ->nullable();
             $table->string(FIELD_FIRST_NAME, 255)
                 ->nullable(false);
             $table->string(FIELD_FIRST_NAME_ENG)
@@ -49,7 +51,7 @@ return new class extends Migration
             ])
                 ->default(RoleEnum::ADMIN->value);
             $table->string(FIELD_PASSWORD, 255)
-                ->nullable(false);
+                ->nullable();
             $table->timestamp(FIELD_CREATED_AT);
             $table->timestamp(FIELD_UPDATED_AT);
             $table->timestamp(FIELD_DELETED_AT)
