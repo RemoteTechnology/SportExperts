@@ -32,7 +32,7 @@ pipeline {
         }
         stage('Применение миграций') {
             steps {
-                sh "ssh -o StrictHostKeyChecking=no -i ${SSH_CREDS} root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run php-fpm php artisan migrate'"
+                sh "ssh -o StrictHostKeyChecking=no root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run php-fpm php artisan migrate'"
             }
         }
         stage('Сборка фронтенда') {
