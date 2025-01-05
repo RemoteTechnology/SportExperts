@@ -27,7 +27,7 @@ pipeline {
         }
         stage('Установка зависимостей') {
             steps {
-                sh "ssh -o StrictHostKeyChecking=no root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run php-fpm composer install && docker-compose run node install'"
+                sh "ssh -o StrictHostKeyChecking=no root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run php-fpm composer --ignore-platform-req=ext-sockets install'"
             }
         }
         stage('Применение миграций') {
@@ -36,16 +36,10 @@ pipeline {
             }
         }
         stage('Сборка фронтенда') {
-                    steps {
-                        sh "ssh -o StrictHostKeyChecking=no root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run node run build'"
-                    }
-                }
-//         stage('Очистка/Обновление кэша') {
-//             steps {
-//                 sh "ssh -o StrictHostKeyChecking=no root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run php-fpm php artisan cache:clear && docker-compose run php-fpm php artisan optimize:clear'"
-//                 sh "ssh -o StrictHostKeyChecking=no root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run php-fpm php artisan app:cache-update-command'"
-//             }
-//         }
+            steps {
+                sh "ssh -o StrictHostKeyChecking=no root@${SERVER_IP} 'cd ${PROJECT_DIR} && docker-compose run node run build'"
+            }
+        }
     }
 
     post {
