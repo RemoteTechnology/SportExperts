@@ -6,6 +6,7 @@
     import {authorizationGoogleRequest} from "../api/AuthRequest";
     import {IDENTIFIER, TOKEN} from "../common/fields";
     import {ENDPOINTS} from "../common/route/api";
+    import {WEB_URL} from "../common/route/web";
 
     export default {
         data() {
@@ -24,7 +25,7 @@
             handleGoogleUserInfo: async function() {
                 // TODO: вынести этот венигрет в .env
                 const clientId = GOOGLE_CLIENT_ID;
-                const redirectUri = 'http://localhost:8080/login';
+                const redirectUri = WEB_URL + '/login';
                 const scope = 'profile email';
                 const responseType = 'token';
                 const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
