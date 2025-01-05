@@ -34,7 +34,7 @@ class AuthByGoogleProcedure extends AbstractProcedure
      * @param string $mode
      * @return JsonResponse
      */
-    public function handle(LoginByGoogleRequest $request, string $mode): JsonResponse
+    public function handle(LoginByGoogleRequest $request): JsonResponse
     {
         define('ATTRIBUTES', $request->validated());
         $service = $this->authService->createOrAuthSocial(ATTRIBUTES);

@@ -18,7 +18,7 @@ return new class extends Migration
     {
         Schema::create(TABLE_USERS, function (Blueprint $table) {
             $table->id(FIELD_ID);
-            $table->integer(FIELD_GOOGLE_ID)
+            $table->string(FIELD_GOOGLE_ID)
                 ->nullable();
             $table->string(FIELD_FIRST_NAME, 255)
                 ->nullable(false);

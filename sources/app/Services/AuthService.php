@@ -12,6 +12,7 @@ use App\Repository\Filter\Entities\Users\FindByEmailRepository;
 use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Mockery\Exception;
 
 require_once dirname(__DIR__) . '/Domain/Constants/FieldConst.php';
 
@@ -63,7 +64,7 @@ class AuthService implements
     public function identificationByEmail(array $attributes): Model|null
     {
         $user = $this->filter->query([FIELD_EMAIL => $attributes[FIELD_LOGIN]]) ?? $this->filter->query([FIELD_PHONE => self::phoneMask($attributes[FIELD_LOGIN])]);
-        if (Hash::check($attributes[FIELD_PASSWORD], $user->password))
+        if (isset($attributes[FIELD_GOOGLE_ID]) || Hash::check($attributes[FIELD_PASSWORD], $user->password))
         {
             return $user;
         }
@@ -112,20 +113,24 @@ class AuthService implements
         return $user;
     }
 
-    public function createOrAuthSocial(array $attributes): AuthenticationException|array
+    /**
+     * @param array $attributes
+     * @return array|AuthenticationException
+     */
+    public function createOrAuthSocial(array $attributes): array|AuthenticationException
     {
         if (isset($attributes[FIELD_GOOGLE_ID])) {
             // Вход по гуглу
             if (!empty($this->operation->findByGoogleId($attributes[FIELD_GOOGLE_ID]))) {
+                $attributes[FIELD_LOGIN] = $attributes[FIELD_EMAIL];
                 return $this->authorization($attributes);
             } else {
                 $this->operation->store($attributes);
-                $this->createOrAuthSocial($attributes);
+                return $this->createOrAuthSocial($attributes);
             }
         } else {
             // Вход по вк
             return [];
         }
-        return new AuthenticationException();
     }
 }

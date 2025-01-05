@@ -40,7 +40,7 @@ final class UserRepository implements LCRUD_OperationInterface
      * @param int $googleId
      * @return Model|null
      */
-    public function findByGoogleId(int $googleId): Model|null
+    public function findByGoogleId(string $googleId): Model|null
     {
         return $this->model::where([FIELD_GOOGLE_ID => $googleId])->first();
     }

@@ -3,7 +3,7 @@
     import {GOOGLE_CLIENT_ID, VK_CLIENT_ID, VK_CODE_VERIFIER, VK_STATE} from "../common/social";
     import {createLogOptionRequest} from "../api/CreateLogOptionRequest";
     import {MESSAGES} from "../common/messages";
-    import {authorizationRequest} from "../api/AuthRequest";
+    import {authorizationGoogleRequest} from "../api/AuthRequest";
     import {IDENTIFIER, TOKEN} from "../common/fields";
     import {ENDPOINTS} from "../common/route/api";
 
@@ -13,6 +13,9 @@
                 currentDate: new Date(),
                 user: null
             }
+        },
+        props: {
+            baseUrl: String,
         },
         components: {
             Button
@@ -48,7 +51,6 @@
                                 })
                                     .then(async (response) => {
                                         const data = response.data;
-                                        console.log(response);
                                         const attributes = {
                                             google_id: data.sub,
                                             first_name: data.given_name,
@@ -58,8 +60,10 @@
                                             email: data.email,
                                             role: 'admin',
                                         };
-                                        await authorizationRequest(attributes)
+                                        console.log(attributes)
+                                        await authorizationGoogleRequest(attributes)
                                             .then(async (response) => {
+                                                console.log(response)
                                                 if ('error' in response.data) {
                                                     this.isValid(response.data.error.data);
                                                     return;

@@ -26,11 +26,11 @@ class LoginByGoogleRequest extends FormRequest
         return [
             FIELD_GOOGLE_ID         => ['required'],
             FIELD_FIRST_NAME        => ['required', 'min:2', 'max:255'],
-            FIELD_FIRST_NAME_ENG    => ['required', 'min:2', 'max:255'],
+            FIELD_FIRST_NAME_ENG    => ['required'],
             FIELD_LAST_NAME         => ['required', 'min:2', 'max:255'],
-            FIELD_LAST_NAME_ENG     => ['required', 'min:2', 'max:255'],
+            FIELD_LAST_NAME_ENG     => ['required'],
             FIELD_ROLE              => ['nullable'],
-            FIELD_EMAIL             => ['required', 'min:8', 'max:255', 'unique:users'],
+            FIELD_EMAIL             => ['required', 'min:8', 'max:255'],
         ];
     }
 }

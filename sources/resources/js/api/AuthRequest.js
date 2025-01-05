@@ -12,3 +12,12 @@ export async function authorizationRequest(attributes, authQuery = new AuthEndpo
     authQuery.setParams(attributes)
     return await authQuery.execute();
 }
+
+export async function authorizationGoogleRequest(attributes, authQuery = new AuthEndpointQuery())
+{
+    authQuery.setUrl(`${API_URL}api/v1/user/auth/social/google`);
+    authQuery.setHeaders();
+    authQuery.setMethod(`${PROCEDURES.auth.loginGoogle}@${REQUEST_METHOD_DEFAULT}`)
+    authQuery.setParams(attributes)
+    return await authQuery.execute();
+}

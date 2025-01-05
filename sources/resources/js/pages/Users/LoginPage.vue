@@ -87,6 +87,8 @@
             :baseUrl="this.webUrl"
             :endPoint="this.route.RECOVERY"
             @messageErrorEmit="addMessageError"/>
-       <AppSocialOAuthComponent />
+       <AppSocialOAuthComponent
+            :baseUrl="this.webUrl"
+            @messageErrorEmit="addMessageError"/>
     </AppWrapperComponent>
 </template>
