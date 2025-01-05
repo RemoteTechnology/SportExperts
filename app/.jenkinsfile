@@ -11,7 +11,7 @@ pipeline {
         // Задаем переменные окружения
         SERVER_IP = '176.113.80.94'
         PROJECT_DIR = 'SportExperts'
-        SSH_CREDS = credentials('ssh-creds-id')
+//         SSH_CREDS = credentials('ssh-creds-id')
     }
 
     stages {

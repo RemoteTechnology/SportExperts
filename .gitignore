@@ -1,3 +1,4 @@
 .idea
 .env
 schema.drawio.bkp
+app/id_rsa*
