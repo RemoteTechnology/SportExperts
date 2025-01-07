@@ -32,7 +32,8 @@
     <li>
         <p>
             <span style="color: #2c2c2c;">Поднять docker:</span><br>
-            <b style="color: #2c2c2c;">(sudo) docker-compose up --build -d</b>
+            <b style="color: #2c2c2c;">На локалке: (sudo)docker-compose --profile debug up --build -d</b><br>
+            <b style="color: #2c2c2c;">На проде: (sudo) docker-compose up --build -d</b>
         </p>
     </li>
     <br />

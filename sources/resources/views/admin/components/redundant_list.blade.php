@@ -5,6 +5,8 @@
         'events' => ['Заголовок', 'Локация', 'Даты', 'Турнирная сетка', ''],
     ];
 
+    $param = request('filter');
+
     $getTitle = function (array $attributes) {
         $html = '';
         foreach ($attributes as $item) {
@@ -13,11 +15,11 @@
         return $html;
     };
 
-    $getContent = function (mixed $attributes, string $tableEntity) {
+    $getContent = function (mixed $attributes, string $tableEntity) use($param) {
         $html = '';
         foreach($attributes as $item) {
              if ($tableEntity === 'orders') {
-                $html = '<tr>
+                $data = '<tr>
                     <td>' . $item["status"] . '</td>
                     <td>' . $item["data"]["name"] . '</td>
                     <td>' . $item["data"]["location"] . '</td>
@@ -31,8 +33,16 @@
                         </a>
                     </td>
                 </tr>';
+                if (
+                    (!empty((string)$param) &&  $param === 'Обработанные заявки' && $item["status"] === 'Обработан') ||
+                    (!empty((string)$param) &&  $param === 'Необработанные заявки' && $item["status"] === 'Не обработан') ||
+                    (empty((string)$param) || (!empty((string)$param) &&  $param === 'Все заявки'))
+                )
+                {
+                    $html .= $data;
+                }
             } else {
-                $html = '<tr>
+                $html .= '<tr>
                     <td>' . $item->first_name . '</td>
                     <td>' . $item->last_name . '</td>
                     <td>' . $item->email . '<hr />' . $item->phone . '</td>
@@ -50,6 +60,16 @@
 @endphp
 
 <div>
+    @if(request('view') === 'order_event')
+    <div class="row mb-2">
+        <section>
+            <a href="admin?view=order_event&&filter=Все заявки" class="btn btn-dark">Все заявки</a>
+            <a href="admin?view=order_event&&filter=Обработанные заявки" class="btn btn-light">Обработанные заявки</a>
+            <a href="admin?view=order_event&&filter=Необработанные заявки" class="btn btn-light">Необработанные заявки</a>
+            <hr>
+        </section>
+    </div>
+    @endif
     <table class="table table-primarytable-striped table-hover table-bordered table-borderless">
         <thead class="table-dark">
         <tr>

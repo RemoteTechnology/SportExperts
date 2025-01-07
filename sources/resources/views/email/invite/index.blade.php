@@ -21,7 +21,7 @@
     <div style="color: #222; text-align: center;">
         <br>
         <h1 style="text-align: center;">Вас пригласили на событие!</h1>
-        <a href="{{ $host }}:{{ $port }}/registration/?invite_user_id={{ $attributes['invited_user_id'] }}&&event_id={{ $attributes['event_id'] }}">Записаться</a>
+        <a style="padding: 5px;border-radius: 5px;background-color: white;color: black;" href="{{ $host }}:{{ $port }}/registration/?invite_user_id={{ $attributes['invited_user_id'] }}&&event_id={{ $attributes['event_id'] }}">Записаться</a>
         <br>
     </div>
     <!-- FOOTER -->
