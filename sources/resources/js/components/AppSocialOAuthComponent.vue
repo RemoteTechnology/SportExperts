@@ -7,6 +7,7 @@
     import {IDENTIFIER, TOKEN} from "../common/fields";
     import {ENDPOINTS} from "../common/route/api";
     import {WEB_URL} from "../common/route/web";
+    import {getVkUser} from "../api/VkApiRequest";
 
     export default {
         data() {
@@ -20,6 +21,9 @@
         },
         components: {
             Button
+        },
+        mounted() {
+            this.handleVkUserInfo();
         },
         methods: {
             handleGoogleUserInfo: async function() {
@@ -109,29 +113,61 @@
                             }
                         }
                     } catch (e) {
-                        // Ошибка возникает при попытке доступа к окну на другом домене
                     }
                 }, 1000);
 
             },
-            handleVkUserInfo: async function() {
+            handleVkUserInfo: async function () {
                 const clientId = VK_CLIENT_ID;
-                const redirectUri = 'http://localhost:8080/';
-
+                const redirectUri = 'http://localhost/login'; //WEB_URL + 'login';
                 const VKID = window.VKIDSDK;
+
                 VKID.Config.init({
                     app: clientId,
                     redirectUrl: redirectUri,
-                    state: VK_STATE,
-                    codeVerifier: VK_CODE_VERIFIER,
-                    scope: 'email phone',
+                    responseMode: VKID.ConfigResponseMode.Callback,
+                    source: VKID.ConfigSource.LOWCODE,
+                    scope: 'email',
                 });
 
-                const oauthList = new VKID.OAuthList();
-                oauthList.on(VKID.OAuthListInternalEvents.LOGIN_SUCCESS, function (payload) {
-                    console.log(payload);
-                });
-            }
+                const oneTap = new VKID.OneTap();
+
+                oneTap
+                    .render({
+                        container: this.$refs.container,
+                        fastAuthEnabled: false,
+                        showAlternativeLogin: true,
+                        styles: {
+                            borderRadius: 6,
+                        },
+                    })
+                    .on(VKID.WidgetEvents.ERROR, this.vkidOnError.bind(this))
+                    .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, (payload) => {
+                        const code = payload.code;
+                        const deviceId = payload.device_id;
+
+                        VKID.Auth.exchangeCode(code, deviceId)
+                            .then((data) => {
+                                this.vkidOnSuccess(data);
+                            })
+                            .catch((error) => {
+                                this.vkidOnError(error);
+                            });
+                    });
+            },
+             vkidOnSuccess(data) {
+                console.log(data)
+                getVkUser(data.user_id, data.access_token)
+                    .then((response) => {
+                        console.log(response);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
+            },
+            vkidOnError(error) {
+                console.error('Ошибка:', error);
+            },
         }
     }
 </script>
@@ -149,15 +185,6 @@
                 "
                 @click="this.handleGoogleUserInfo"/>
     </section>
-    <section class="mb-1">
-        <Button label="Войти через ВКонтакте"
-                class="w-100"
-                style="
-                    background-color: rgb(0, 119, 255);
-                    border-color: rgb(0, 119, 255);
-                    color: rgb(255, 255, 255);
-                "
-                @click="this.handleVkUserInfo"/>
-    </section>
+    <section ref="container" class="mb-1"><!-- Тут Вк кнопка --></section>
 </template>
 
