@@ -119,7 +119,7 @@
             },
             handleVkUserInfo: async function () {
                 const clientId = VK_CLIENT_ID;
-                const redirectUri = 'http://localhost/login'; //WEB_URL + 'login';
+                const redirectUri = WEB_URL + 'login';
                 const VKID = window.VKIDSDK;
 
                 VKID.Config.init({
