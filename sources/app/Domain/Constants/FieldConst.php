@@ -3,6 +3,7 @@
 const FIELD_ALL = '*';
 const FIELD_ID = 'id';
 const FIELD_USER_ID = 'user_id';
+const FIELD_VK_ID = 'vk_id';
 const FIELD_ADMIN_ID = 'admin_id';
 const FIELD_WHO_USER_ID = 'who_user_id';
 const FIELD_EVENT_ID = 'event_id';
@@ -17,6 +18,7 @@ const FIELD_TOURNAMENT_KEY = 'tournament_key';
 const FIELD_TEAM_KEY = 'team_key';
 const FIELD_EVENT_KEY = 'event_key';
 const FIELD_NAME = 'name';
+const FIELD_TITLE = 'title';
 const FIELD_ENTITY = 'entity';
 const FIELD_VALUE = 'value';
 const FIELD_TYPE = 'type';

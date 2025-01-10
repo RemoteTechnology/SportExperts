@@ -21,3 +21,13 @@ export async function authorizationGoogleRequest(attributes, authQuery = new Aut
     authQuery.setParams(attributes)
     return await authQuery.execute();
 }
+
+export async function authorizationVKRequest(attributes, authQuery = new AuthEndpointQuery())
+{
+    console.log(attributes);
+    authQuery.setUrl(`${API_URL}api/v1/user/auth/social/vkontakte`);
+    authQuery.setHeaders();
+    authQuery.setMethod(`${PROCEDURES.auth.loginVKontakte}@${REQUEST_METHOD_DEFAULT}`)
+    authQuery.setParams(attributes)
+    return await authQuery.execute();
+}

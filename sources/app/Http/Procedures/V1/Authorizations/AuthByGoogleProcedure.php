@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 require_once dirname(__DIR__, 4) . '/Domain/Constants/ProcedureNameConst.php';
+require_once dirname(__DIR__, 4) . '/Domain/Constants/FieldConst.php';
 
 class AuthByGoogleProcedure extends AbstractProcedure
 {
@@ -42,7 +43,7 @@ class AuthByGoogleProcedure extends AbstractProcedure
         return new JsonResponse(
             data: [
                 FIELD_ID => self::identifier(),
-                FIELD_ATTRIBUTES => new AuthResource($service),
+                FIELD_ATTRIBUTES => $service,//new AuthResource($service),
                 ...self::meta($request, ATTRIBUTES)
             ],
             status: Response::HTTP_CREATED

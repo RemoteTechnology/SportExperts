@@ -2,6 +2,7 @@
 
 const PROCEDURE_AUTH_BY_EMAIL = 'AuthByEmailProcedure';
 const PROCEDURE_AUTH_BY_GOOGLE = 'AuthByGoogleProcedure';
+const PROCEDURE_AUTH_BY_VKONTAKTE = 'AuthByVkontakteProcedure';
 const PROCEDURE_LOGOUT = 'LogoutProcedure';
 const PROCEDURE_NOTIFICATION = 'NotificationProcedure';
 const PROCEDURE_LOG_STORE = 'LogStoreProcedure';

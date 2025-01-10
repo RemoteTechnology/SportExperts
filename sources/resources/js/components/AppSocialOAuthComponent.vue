@@ -3,11 +3,10 @@
     import {GOOGLE_CLIENT_ID, VK_CLIENT_ID, VK_CODE_VERIFIER, VK_STATE} from "../common/social";
     import {createLogOptionRequest} from "../api/CreateLogOptionRequest";
     import {MESSAGES} from "../common/messages";
-    import {authorizationGoogleRequest} from "../api/AuthRequest";
+    import {authorizationGoogleRequest, authorizationVKRequest} from "../api/AuthRequest";
     import {IDENTIFIER, TOKEN} from "../common/fields";
     import {ENDPOINTS} from "../common/route/api";
     import {WEB_URL} from "../common/route/web";
-    import {getVkUser} from "../api/VkApiRequest";
 
     export default {
         data() {
@@ -27,7 +26,6 @@
         },
         methods: {
             handleGoogleUserInfo: async function() {
-                // TODO: вынести этот венигрет в .env
                 const clientId = GOOGLE_CLIENT_ID;
                 const redirectUri = WEB_URL + 'login';
                 const scope = 'profile email';
@@ -119,7 +117,9 @@
             },
             handleVkUserInfo: async function () {
                 const clientId = VK_CLIENT_ID;
-                const redirectUri = WEB_URL + 'login';
+                let redirectUri = WEB_URL + 'login';
+                redirectUri = redirectUri.replace(':80', '');
+                console.log(redirectUri)
                 const VKID = window.VKIDSDK;
 
                 VKID.Config.init({
@@ -155,19 +155,38 @@
                             });
                     });
             },
-             vkidOnSuccess(data) {
-                console.log(data)
-                getVkUser(data.user_id, data.access_token)
-                    .then((response) => {
+            vkidOnSuccess(data) {
+                const attributes = {
+                    user_id: data.user_id,
+                    access_token: data.access_token
+                };
+                authorizationVKRequest(attributes)
+                    .then(async (response) => {
                         console.log(response);
+                        if ('error' in response.data) {
+                            this.isValid(response.data.error.data);
+                            return;
+                        }
+                        const data = response.data.result.original[0];
+                        await window.$cookies.set(TOKEN, data.token);
+                        await window.$cookies.set(IDENTIFIER, data.user.id);
+                        window.location = this.baseUrl + ENDPOINTS.PROFILE;
                     })
-                    .catch((error) => {
+                    .catch(async (error) => {
                         console.log(error);
                     })
             },
             vkidOnError(error) {
-                console.error('Ошибка:', error);
-            },
+                 createLogOptionRequest({
+                    current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                    current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                    method: 'authorizationVKRequest',
+                    status: error.code,
+                    request_data: 'No data',
+                    message: error.message
+                });
+                this.$emit('messageErrorEmit', MESSAGES.NO_VALID_DATA);
+            }
         }
     }
 </script>
@@ -179,6 +198,7 @@
                 label="Войти через Google аккаунт"
                 class="w-100"
                 style="
+                    padding: 0.85em;
                     background-color: #ed572d;
                     border-color: #ed572d;
                     color: #fff;
@@ -187,4 +207,3 @@
     </section>
     <section ref="container" class="mb-1"><!-- Тут Вк кнопка --></section>
 </template>
-

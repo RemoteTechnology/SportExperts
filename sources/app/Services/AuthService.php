@@ -61,10 +61,16 @@ class AuthService implements
      * @param array $attributes
      * @return Model|null
      */
-    public function identificationByEmail(array $attributes): Model|null
+    public function identification(array $attributes): Model|null
     {
-        $user = $this->filter->query([FIELD_EMAIL => $attributes[FIELD_LOGIN]]) ?? $this->filter->query([FIELD_PHONE => self::phoneMask($attributes[FIELD_LOGIN])]);
-        if (isset($attributes[FIELD_GOOGLE_ID]) || Hash::check($attributes[FIELD_PASSWORD], $user->password))
+        $user = (
+            $this->filter->query([FIELD_EMAIL => $attributes[FIELD_LOGIN]]) ??
+            $this->filter->query([FIELD_PHONE => self::phoneMask($attributes[FIELD_LOGIN])])
+        ) ?? (
+            $this->filter->query([FIELD_GOOGLE_ID => $attributes[FIELD_LOGIN]]) ??
+            $this->filter->query([FIELD_VK_ID => $attributes[FIELD_LOGIN]])
+        );
+        if (isset($attributes[FIELD_GOOGLE_ID]) || isset($attributes[FIELD_VK_ID]) || Hash::check($attributes[FIELD_PASSWORD], $user->password))
         {
             return $user;
         }
@@ -87,7 +93,7 @@ class AuthService implements
      */
     public function authorization(array $attributes): array|AuthenticationException
     {
-        $user = $this->identificationByEmail($attributes);
+        $user = $this->identification($attributes);
         return !is_null($user) ? ['user' => $user, 'token' => $this->generateBearerToken($user)] : new AuthenticationException();
     }
 
@@ -128,9 +134,17 @@ class AuthService implements
                 $this->operation->store($attributes);
                 return $this->createOrAuthSocial($attributes);
             }
+        } elseif (isset($attributes[FIELD_VK_ID])) {
+            if (!empty($this->operation->findByVkId($attributes[FIELD_VK_ID]))) {
+                $attributes[FIELD_LOGIN] = $attributes[FIELD_VK_ID];
+                return $this->authorization($attributes);
+            } else {
+//                return $attributes;
+                $this->operation->store($attributes);
+                return $this->createOrAuthSocial($attributes);
+            }
         } else {
-            // Вход по вк
-            return [];
+            return new AuthenticationException('Вы не прошли идентификацию профиля!');
         }
     }
 }

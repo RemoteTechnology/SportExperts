@@ -20,6 +20,8 @@ return new class extends Migration
             $table->id(FIELD_ID);
             $table->string(FIELD_GOOGLE_ID)
                 ->nullable();
+            $table->bigInteger(FIELD_VK_ID)
+                ->nullable();
             $table->string(FIELD_FIRST_NAME, 255)
                 ->nullable(false);
             $table->string(FIELD_FIRST_NAME_ENG)
@@ -59,6 +61,8 @@ return new class extends Migration
             // Индексы
             $table->index([
                 FIELD_ID,
+                FIELD_GOOGLE_ID,
+                FIELD_VK_ID,
                 FIELD_EMAIL,
                 FIELD_PHONE,
                 FIELD_GENDER,

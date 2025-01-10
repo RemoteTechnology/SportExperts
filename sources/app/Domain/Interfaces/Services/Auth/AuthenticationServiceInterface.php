@@ -13,5 +13,5 @@ interface AuthenticationServiceInterface
      * @param array $attributes
      * @return Model|null
      */
-    public function identificationByEmail(array $attributes): Model|null;
+    public function identification(array $attributes): Model|null;
 }

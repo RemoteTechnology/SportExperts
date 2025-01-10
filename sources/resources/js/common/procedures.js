@@ -16,6 +16,7 @@ export const PROCEDURES= {
     auth: {
         login:                  'AuthByEmailProcedure',
         loginGoogle:            'AuthByGoogleProcedure',
+        loginVKontakte:         'AuthByVkontakteProcedure',
     },
     filter: {
         userRecord:             'EventDateFilterProcedure',

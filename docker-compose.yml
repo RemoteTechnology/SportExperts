@@ -44,6 +44,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./${DOCKER_PATH}/${HTTP_LOCAL_CONFIG_PATH}:${HTTP_CONTAINER_CONFIG_PATH}:ro
+      - ./${DOCKER_PATH}/${HTTP_LOCAL_COMMON_CONFIG_PATH}:${HTTP_COMMON_CONFIG_PATH}:ro
       - ./${APP_LOCAL_PATH}:${APP_CONTAINER_PATH}
       - ./app/certs:/etc/nginx/certs
 
