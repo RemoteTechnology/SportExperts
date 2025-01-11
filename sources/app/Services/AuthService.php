@@ -126,7 +126,6 @@ class AuthService implements
     public function createOrAuthSocial(array $attributes): array|AuthenticationException
     {
         if (isset($attributes[FIELD_GOOGLE_ID])) {
-            // Вход по гуглу
             if (!empty($this->operation->findByGoogleId($attributes[FIELD_GOOGLE_ID]))) {
                 $attributes[FIELD_LOGIN] = $attributes[FIELD_EMAIL];
                 return $this->authorization($attributes);
@@ -139,7 +138,6 @@ class AuthService implements
                 $attributes[FIELD_LOGIN] = $attributes[FIELD_VK_ID];
                 return $this->authorization($attributes);
             } else {
-//                return $attributes;
                 $this->operation->store($attributes);
                 return $this->createOrAuthSocial($attributes);
             }
