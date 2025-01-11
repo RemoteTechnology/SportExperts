@@ -65,7 +65,6 @@
                 let attributes = { id: this.eventId };
                 await getEventRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         const data = await response.data.result.original;
                         this.event = await data.attributes;
                     })

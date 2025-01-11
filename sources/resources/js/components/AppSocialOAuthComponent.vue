@@ -63,10 +63,8 @@
                                             email: data.email,
                                             role: 'admin',
                                         };
-                                        console.log(attributes)
                                         await authorizationGoogleRequest(attributes)
                                             .then(async (response) => {
-                                                console.log(response)
                                                 if ('error' in response.data) {
                                                     this.isValid(response.data.error.data);
                                                     return;
@@ -80,6 +78,7 @@
                                                 }
                                                 catch (TypeError)
                                                 {
+                                                    // TODO: записать в лог
                                                     await this.$emit('messageErrorEmit', MESSAGES.LOGIN_ERROR);
                                                 }
                                             })
@@ -119,7 +118,6 @@
                 const clientId = VK_CLIENT_ID;
                 let redirectUri = WEB_URL + 'login';
                 redirectUri = redirectUri.replace(':80', '');
-                console.log(redirectUri)
                 const VKID = window.VKIDSDK;
 
                 VKID.Config.init({
@@ -162,7 +160,6 @@
                 };
                 authorizationVKRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         if ('error' in response.data) {
                             this.isValid(response.data.error.data);
                             return;
@@ -173,7 +170,7 @@
                         window.location = this.baseUrl + ENDPOINTS.PROFILE;
                     })
                     .catch(async (error) => {
-                        console.log(error);
+                        // TODO: записать в лог
                     })
             },
             vkidOnError(error) {

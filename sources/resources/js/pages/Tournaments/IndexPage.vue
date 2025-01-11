@@ -76,12 +76,10 @@
                 };
                 await getKeyEventRequest(attributes)
                     .then(async (response) => {
-                        console.log(response)
                         const data = await response.data.result.original;
                         this.event = await data.attributes;
                     })
                     .catch(async (error) => {
-                        console.log(error)
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -99,7 +97,6 @@
                 };
                 await tournamentReadRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         const data = await response.data.result.original;
                         this.values = await data.attributes;
                         // Сортировка "tournament_values", у кого нет пары смещаем в конец
@@ -108,7 +105,6 @@
                         }
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -126,13 +122,10 @@
                 };
                 getTournamentAdminRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         const data = await response.data.result.original;
                         this.admins = await data.attributes;
                         const rules = ['OWNER', 'ADMIN'];
                         this.admins.forEach((admin) => {
-                            console.log(this.event.owner.id);
-                            console.log(admin.users.id);
                             if (this.event.owner.id === admin.users.id && admin.users.id === this.user.id) {
                                 this.rule = rules[0];
                             } else if (admin.users.id === this.user.id) {
@@ -141,7 +134,6 @@
                         });
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -158,11 +150,9 @@
                 };
                 await statusEventUpdate(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         window.location = this.baseUrl + ENDPOINTS.TOURNAMENT + '?event=' + this.event.key;
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,

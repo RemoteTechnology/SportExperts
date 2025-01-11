@@ -1,6 +1,5 @@
 <script>
     import AppParticipantInfoModalComponent from "./modals/AppParticipantInfoModalComponent.vue";
-    import LeaderLine from "leader-line-vue";
     import Card from "primevue/card";
     import {tournamentReadRequest} from "../api/TournamentRequest";
     import {createLogOptionRequest} from "../api/CreateLogOptionRequest";
@@ -33,12 +32,10 @@
                 };
                 await tournamentReadRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         const data = await response.data.result.original;
                         this.values = await data.attributes;
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -49,37 +46,10 @@
                         });
                         await this.$emit('messageErrorEmit', MESSAGES.ERROR_ERROR);
                     });
-            },
-             tyingAthlete() {
-                for (let key in this.values)
-                {
-                     this.values[key].forEach(async (value) => {
-                        await value.tournament_values.forEach((participant) => {
-                            try {
-                                let line = new LeaderLine.setLine(
-                                    document.getElementById(participant.participants_A.key),
-                                    document.getElementById(participant.participants_B.key),
-                                    {
-                                        color: "#5c5c5c",
-                                        path: "arc",
-                                        endPlug: "behind",
-                                    }
-                                );
-                                line.setOptions({ startSocket: 'top', endSocket: 'right' });
-                            } catch (e)
-                            {
-                                console.log('Message Error: ' + e.message)
-                            }
-                        });
-                    });
-                }
-            },
+            }
         },
         async mounted() {
             await this.readTournament();
-            //await this.$nextTick(() => {
-            //    this.tyingAthlete();
-            //});
         },
         watch: {
             eventKeyProps: {

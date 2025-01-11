@@ -2,8 +2,6 @@
 
 namespace App\Domain\Interfaces\Services;
 
-use Psr\Http\Message\StreamInterface;
-
 interface VK_APIServiceInterface
 {
     /**

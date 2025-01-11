@@ -53,12 +53,10 @@
                 }
                 await getUser(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         const data = await response.data.result.original;
                         this.participant.user = await data.attributes;
                     })
                     .catch(async (error) => {
-                        console.log(response);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -76,12 +74,10 @@
                 };
                 await readUserParticipantInvitedRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         const data = await response.data.result.original;
                         this.participant.invite = await data.attributes;
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -99,7 +95,6 @@
                 };
                 await getParticipantsToEventRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         const data = await response.data.result.original;
                         if (mode === 'card')
                         {
@@ -110,7 +105,6 @@
                         }
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -133,12 +127,10 @@
                 };
                 await tournamentReadRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         const data = await response.data.result.original;
                         this.values = await data.attributes;
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -161,7 +153,6 @@
                 };
                 await participantUserRemoveAdditionallyRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         const data = response.data.result.original;
                         if (data.attributes.id)
                         {
@@ -171,7 +162,6 @@
                         }
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -194,13 +184,10 @@
                 };
                 await participantUserSkipAdditionallyRequest(attributes)
                     .then((response) => {
-                        console.log(response);
                         window.$cookies.set(TRIGGER, true);
-                        //window.location.reload();
-
+                        window.location.reload();
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -220,7 +207,6 @@
                         window.$cookies.set(TRIGGER, true);
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,

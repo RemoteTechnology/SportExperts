@@ -42,7 +42,6 @@
                 };
                 await authorizationRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         if ('error' in response.data) {
                             this.isValid(response.data.error.data);
                             return;
@@ -56,11 +55,11 @@
                         }
                         catch (TypeError)
                         {
+                            // TODO: записать в лог
                             await this.$emit('messageErrorEmit', MESSAGES.LOGIN_ERROR);
                         }
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,

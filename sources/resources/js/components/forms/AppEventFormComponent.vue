@@ -330,7 +330,7 @@
                 await this.createFile();
                 await this.createEvent();
                 await this.createOptions();
-                // window.location = this.baseUrlProps + ENDPOINTS.BASE;
+                window.location = this.baseUrlProps + ENDPOINTS.BASE;
 
             },
             updateEventObject: async function()
@@ -338,7 +338,7 @@
                 await this.createFile();
                 await this.updateEvent();
                 await this.updateOrCreateOptions();
-                //window.location = this.baseUrlProps + ENDPOINTS.BASE;
+                window.location = this.baseUrlProps + ENDPOINTS.BASE;
             },
         },
         watch: {

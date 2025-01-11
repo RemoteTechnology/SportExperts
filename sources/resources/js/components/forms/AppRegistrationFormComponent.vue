@@ -393,12 +393,10 @@
             eventRecord: async function(attributesRecord) {
                 await eventRecordRequest(attributesRecord)
                     .then(async (response) => {
-                        console.log(response);
                         const data = response.data.result.original;
                         this.participants = await data.attributes;
                     })
                     .catch(async(error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -412,7 +410,6 @@
             createOption: async function(attributesOptions) {
                 await createOptionRequest(attributesOptions)
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -426,10 +423,9 @@
             createInvite: async function(attributesInvite) {
                 await createInvitedRequest(attributesInvite)
                     .then(async (response) => {
-                        console.log(response)
+                        // TODO: выполнить действие
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         await createLogOptionRequest({
                             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -447,14 +443,12 @@
                         attributes.role = 'athlete';
                          await registrationRequest(attributes)
                             .then(async (response) => {
-                                console.log(response);
                                 await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
                                 const data = response.data.result.original;
                                 // this.userModel = await Object.assign(new UserModel(), data.attributes)
                                 this.user = data.attributes;
                             })
                             .catch(async (error) => {
-                                console.log(error);
                                 await createLogOptionRequest({
                                     current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                                     current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -502,14 +496,13 @@
                             i++;
                         }
                         await this.eventRecord(attributesRecord);
-                        //window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
                         return;
                     }
 
                     attributes.role = 'admin';
                     registrationRequest(attributes)
                         .then(async (response) => {
-                            console.log(response);
                             if ('error' in response.data) {
                                 this.isValid(response.data.error.data);
                                 return;
@@ -517,10 +510,9 @@
                             const data = response.data.result.original;
                             await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
                             this.userModel = Object.assign(new UserModel(), data.attributes);
-                            //window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                            window.location = this.baseUrl + ENDPOINTS.LOGIN;
                         })
                         .catch(async (error) => {
-                            console.log(error)
                             await createLogOptionRequest({
                                 current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                                 current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,

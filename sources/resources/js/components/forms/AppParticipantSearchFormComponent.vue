@@ -50,7 +50,6 @@
                 };
                 await participantSearchAthleteRequest(attributes)
                     .then(async (response) => {
-                        console.log(response);
                         if ('error' in response.data) {
                             this.isValid(response.data.error.data);
                             return;

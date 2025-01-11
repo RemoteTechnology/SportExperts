@@ -72,7 +72,6 @@ export default {
                     this.user = data.attributes;
                 })
                 .catch(async (error) => {
-                    console.log(error);
                     await createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
@@ -90,12 +89,10 @@ export default {
             };
             await getOptionRequest(attributes)
                 .then(async (response) => {
-                    console.log(response);
                     const data = await response.data.result.original;
                     this.options = await data.attributes;
                 })
                 .catch(async (error) => {
-                    console.log(error);
                     await createLogOptionRequest({
                         current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
                         current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
