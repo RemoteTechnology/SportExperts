@@ -21,14 +21,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/**
- * @param string $className
- * @param $action
- * @return array
- */
-function formAction(string $className, $action='__invoke'): array
-{
-    return [$className, $action];
+if (!function_exists('formAction')) {
+    /**
+     * @param string $className
+     * @param $action
+     * @return array
+     */
+    function formAction(string $className, $action='__invoke'): array
+    {
+        return [$className, $action];
+    }
 }
 
 

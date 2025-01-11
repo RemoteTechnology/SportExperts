@@ -94,7 +94,7 @@
              class="container d-flex d-flex-wrap">
         <Card v-for="event in this.events"
               style="overflow: hidden"
-              class="mb-3 m-card-list w-22">
+              class="mb-3 m-card-list w-22 event-list">
             <template #header>
                 <div :style="
                             'background-size: cover;' +

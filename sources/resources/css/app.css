@@ -288,7 +288,14 @@ ul.p-listbox-list{
     font-weight: 500;
     padding: 0.4em;
 }
-
+.event-list .p-card-body{
+    height: -webkit-fill-available;
+    display: flex;
+    flex-direction: column;
+}
+.event-list .p-card-footer{
+    margin-top: auto;
+}
 
 @media(max-width: 480px) {
     h2{

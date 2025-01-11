@@ -70,14 +70,16 @@ require_once dirname(__DIR__) . '/app/Domain/Constants/SocialConst.php';
 |
 */
 
-/**
- * @param string $className
- * @param string $method
- * @return string[]
- */
-function operation(string $className, string $method='__invoke'): array
-{
-    return [$className, $method];
+if (!function_exists('operation')) {
+    /**
+     * @param string $className
+     * @param string $method
+     * @return string[]
+     */
+    function operation(string $className, string $method='__invoke'): array
+    {
+        return [$className, $method];
+    }
 }
 
 //// V1 ENDPOINTS

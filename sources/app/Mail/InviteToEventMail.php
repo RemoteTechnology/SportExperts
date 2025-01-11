@@ -23,9 +23,8 @@ class InviteToEventMail extends Mailable
     {
         return $this->subject('Приглашение на событие!')
             ->view('email.invite.index', [
-            'attributes'    => $this->attributes,
-            'host'          => env('DEBUG') ? 'http://localhost' : env('HTTP_PRODUCTION_DOMAIN'),
-            'port'          => env('DEBUG') ? env('HTTP_PORT') : env('HTTP_PRODUCTION_PORT'),
+                'attributes' => $this->attributes,
+                'host' => "https://sportexperts.su", //TODO: Вернуться к проблеме
             ]);
     }
 }

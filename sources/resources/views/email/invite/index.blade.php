@@ -5,34 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Laravel') }}</title>
 </head>
-<body style="background-color: #f8fafc;">
+<body style="background-color: #0f172a; padding: 5%;">
     <!-- HEADER -->
     <div style="
         display: block;
         height: 70px;
         padding: 6px;
     ">
-        <img src="https://sun9-78.userapi.com/impg/5PWOED6aeUkUUIVrFQ4SV_f0kReS0W0N82tBLw/lrsuuOdmOlY.jpg?size=980x112&quality=95&sign=e909f7068aa27189391b02718a59ef3f&type=album" alt="SportExperts" style="
-                    width: 100%;
+        <img src="https://sportexperts.su/images/logo.png" alt="SportExperts" style="
+                    width: 50%;
                     display: block;
                     height: 55px;
                 ">
     </div>
-    <div style="color: #222; text-align: center;">
-        <br>
-        <h1 style="text-align: center;">Вас пригласили на событие!</h1>
-        <a style="padding: 5px;border-radius: 5px;background-color: white;color: black;" href="{{ $host }}:{{ $port }}/registration/?invite_user_id={{ $attributes['invited_user_id'] }}&&event_id={{ $attributes['event_id'] }}">Записаться</a>
+    <div style="color: #fff; font-size: 1.2em;">
+        <p>Уважаемый [Имя спортсмена]!</p>
+
+        <p>Мы рады пригласить Вас принять участие в [название спортивного события], которое состоится [дата] в [место проведения]. Ваши достижения и профессионализм вдохновляют многих, и мы уверены, что Ваше участие станет важной частью нашего мероприятия.</p>
+        <p>Программа события, а также дополнительные детали будут отправлены Вам в ближайшее время. Пожалуйста, подтвердите Ваше участие до [дата] по электронной почте или по телефону [контактные данные].</p>
+        <p>Будем рады видеть Вас среди участников!</p>
+
+        <p>С уважением</p>
+        <p><b>SportExperts</b></p>
+        <p>[Контактная информация]</p>
+        <a style="
+            padding: 8px;
+            border-radius: 2px;
+            background-color: #fff;
+            color: #0f172a;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 900;
+        " href="https://sportexperts.su/registration/?invite_user_id={{ $attributes['invited_user_id'] }}&&event_id={{ $attributes['event_id'] }}">Записаться</a>
         <br>
     </div>
-    <!-- FOOTER -->
-    <div style="color: #222; text-align: center;">
-        <hr>
-        <p>
-            <b>Хорошего дня!</b>
-        </p>
-        <p>С уважением, команда SportExperts.</p>
-        <br>
-    </div>
+
 </body>
 </html>
 
