@@ -20,7 +20,7 @@
     export default {
         data() {
             return {
-                selectedCountries: null,
+                selectedCountries: {'icon': 'fi-ru', 'name': 'Россия', 'countryCode': '+7'},
                 // TODO: подумать выносить это в апи или нет
                  countries: [
                      {'icon': 'fi-ad', 'name': 'Андорра', 'countryCode': '+376'},
@@ -501,27 +501,28 @@
                     }
 
                     attributes.role = 'admin';
-                    registrationRequest(attributes)
-                        .then(async (response) => {
-                            if ('error' in response.data) {
-                                this.isValid(response.data.error.data);
-                                return;
-                            }
-                            const data = response.data.result.original;
-                            await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
-                            this.userModel = Object.assign(new UserModel(), data.attributes);
-                            window.location = this.baseUrl + ENDPOINTS.LOGIN;
-                        })
-                        .catch(async (error) => {
-                            await createLogOptionRequest({
-                                current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                                current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                                method: 'registrationRequest',
-                                status: error.code,
-                                request_data: attributes.toString(),
-                                message: error.message
-                            })
-                        });
+                    console.log(attributes);
+                    // registrationRequest(attributes)
+                    //     .then(async (response) => {
+                    //         if ('error' in response.data) {
+                    //             this.isValid(response.data.error.data);
+                    //             return;
+                    //         }
+                    //         const data = response.data.result.original;
+                    //         await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
+                    //         this.userModel = Object.assign(new UserModel(), data.attributes);
+                    //         window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                    //     })
+                    //     .catch(async (error) => {
+                    //         await createLogOptionRequest({
+                    //             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
+                    //             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
+                    //             method: 'registrationRequest',
+                    //             status: error.code,
+                    //             request_data: attributes.toString(),
+                    //             message: error.message
+                    //         })
+                    //     });
                 } else {
                     this.$emit('messageErrorEmit', MESSAGES.PASSWORD_DOUBLE);
                 }
@@ -639,6 +640,12 @@
                           placeholder="Выберите страну"
                           checkmark
                           :highlightOnSelect="false" >
+                    <template #value="slotProps">
+                        <div class="flex items-center">
+                            <span class="fi fi-ru"></span>
+                            Россия
+                        </div>
+                    </template>
                     <template #option="slotProps">
                         <div class="flex items-center">
                              <span :class="'fi ' + slotProps.option.icon"></span>
