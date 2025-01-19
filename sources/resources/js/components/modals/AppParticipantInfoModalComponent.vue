@@ -269,14 +269,14 @@
                     </section>
                 </div>
                 <div class="w-30">
+<!--                    <div class="mb-2">-->
+<!--                        <Button label="Дисквалифицировать"-->
+<!--                                severity="danger"-->
+<!--                                class="w-100"-->
+<!--                                @click="this.dropTournamentParticipant(this.participantsPositionProps, this.stageProps)" />-->
+<!--                    </div>-->
                     <div class="mb-2">
-                        <Button label="Дисквалифицировать"
-                                severity="danger"
-                                class="w-100"
-                                @click="this.dropTournamentParticipant(this.participantsPositionProps, this.stageProps)" />
-                    </div>
-                    <div class="mb-2">
-                        <Button label="Пропустить"
+                        <Button label="Победа"
                                 severity="success"
                                 class="w-100"
                                 @click="this.skipToParticipant(this.valueIdProps, this.stageProps, {user_id: this.participant.user.id})" />
