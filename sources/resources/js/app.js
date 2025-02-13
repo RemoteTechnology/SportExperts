@@ -7,6 +7,7 @@
 import './bootstrap';
 import {createApp} from 'vue';
 import VueCookies from 'vue-cookies'
+import { createPinia } from 'pinia'
 import PrimeVue from "primevue/config";
 import 'primevue/resources/themes/aura-light-blue/theme.css';
 import "primeicons/primeicons.css";
@@ -19,7 +20,10 @@ import 'flag-icons/css/flag-icons.min.css';
  * to use in your application's pages. An example is included for you.
  */
 
+const pinia = createPinia()
 const app = createApp({});
+
+app.use(pinia)
 app.use(PrimeVue, {unstyled: false});
 app.use(VueCookies, {
     expires: '7d',

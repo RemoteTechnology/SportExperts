@@ -7,7 +7,6 @@
     import Password from "primevue/password";
     import Dropdown from 'primevue/dropdown';
     import { registrationRequest } from "../../api/UserRequest";
-    import { UserModel } from "../../models/UserModel";
     import { createLogOptionRequest } from "../../api/CreateLogOptionRequest";
     import { createInvitedRequest } from "../../api/InvitedRequest";
     import { createOptionRequest } from "../../api/OptionRequest";
@@ -16,6 +15,9 @@
     import AppFormWrapperComponent from "../wrappers/AppFormWrapperComponent.vue";
     import {IDENTIFIER, USER_ROLE} from "../../common/fields";
     import {ENDPOINTS} from "../../common/route/api";
+
+    import { useUsersStore } from "../../stores/userStore";
+    import {mapActions, mapState} from "pinia";
 
     export default {
         data() {
@@ -302,13 +304,14 @@
                     'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ы': 'y',
                     'э': 'e', 'ю': 'yu', 'я': 'ya'
                 },
-                currentDate: new Date(),
+                //currentDate: new Date(),
                 participants: null,
                 userModel: null,
                 eventId: null,
                 baseUrl: null,
                 inviteUserId: null,
                 errors: null,
+                userRequest: useUsersStore(),
                 user: {
                     firstName: null,
                     firstNameEng: null,
@@ -356,7 +359,11 @@
             AppFormWrapperComponent,
             Dropdown
         },
+        computed: {
+            ...mapState(useUsersStore, ['getUser', 'getMessageSuccessEmit', 'getMessageErrorEmit']),
+        },
         methods: {
+            ...mapActions(useUsersStore, ['v1UserCreate']),
             translationFirstName: function (event) { this.user.firstNameEng = this.translation(this.user.firstName) },
             translationLastName: function (event) { this.user.lastNameEng = this.translation(this.user.lastName) },
             translation: function (argField) { return argField.split('').map(char => this.symbols[char] || char).join(''); },
@@ -501,28 +508,19 @@
                     }
 
                     attributes.role = 'admin';
-                    console.log(attributes);
-                    // registrationRequest(attributes)
-                    //     .then(async (response) => {
-                    //         if ('error' in response.data) {
-                    //             this.isValid(response.data.error.data);
-                    //             return;
-                    //         }
-                    //         const data = response.data.result.original;
-                    //         await this.$emit('messageSuccessEmit', MESSAGES.FORM_SUCCESS);
-                    //         this.userModel = Object.assign(new UserModel(), data.attributes);
-                    //         window.location = this.baseUrl + ENDPOINTS.LOGIN;
-                    //     })
-                    //     .catch(async (error) => {
-                    //         await createLogOptionRequest({
-                    //             current_date: `${this.currentDate.getDate().toString().padStart(2, '0')}-${(this.currentDate.getMonth() + 1).toString().padStart(2, '0')}-${this.currentDate.getFullYear()}`,
-                    //             current_time: `${this.currentDate.getHours().toString().padStart(2, '0')}:${this.currentDate.getMinutes().toString().padStart(2, '0')}:${this.currentDate.getSeconds().toString().padStart(2, '0')}`,
-                    //             method: 'registrationRequest',
-                    //             status: error.code,
-                    //             request_data: attributes.toString(),
-                    //             message: error.message
-                    //         })
-                    //     });
+
+                    await this.userRequest.v1UserCreate(attributes);
+
+                    if (this.userRequest.getMessageSuccessEmit) {
+                        this.$emit('messageSuccessEmit', this.userRequest.messageSuccessEmit);
+                        window.location = this.baseUrl + ENDPOINTS.LOGIN;
+                    }
+                    else if (this.userRequest.getMessageErrorEmit) {
+                        this.$emit('messageSuccessEmit', this.userRequest.messageSuccessEmit);
+                    }
+                    else if (this.userRequest.getResponseError) {
+                        this.isValid(this.userRequest.responseError);
+                    }
                 } else {
                     this.$emit('messageErrorEmit', MESSAGES.PASSWORD_DOUBLE);
                 }
